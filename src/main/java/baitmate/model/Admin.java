@@ -1,5 +1,7 @@
 package baitmate.model;
 
+
+import jakarta.validation.constraints.Pattern;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,7 +15,16 @@ public class Admin {
 	private String name;
 	private String email;
 	private String adress;
+	@Pattern(regexp="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\\\\\\\-\\\\\\\\[\\\\\\\\]{};':\\\\\\\"\\\\\\\\\\\\\\\\|,.<>\\\\\\\\/?]).{6,10}$", message = "Password must contain at least 6 characters at most 10 characters, including uppercase, lowercase letters, special character and numbers.")
+	private String password;
 	
+	
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	public int getId() {
 		return id;
 	}
