@@ -1,5 +1,5 @@
 package baitmate.ImplementationMethod;
 
-public class AdminInterface {
+public interface AdminInterface {
 
 }
