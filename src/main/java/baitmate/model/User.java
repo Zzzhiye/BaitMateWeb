@@ -35,21 +35,26 @@ public class User {
 
     private String userStatus;
 
-    @ElementCollection
-    private List<String> savedLocations;
+    @ManyToMany
+    @JoinTable(
+            name = "saved_locations",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
+    private List<FishingLocation> savedLocations;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CatchRecord> catchRecords;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
+    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<Post> posts;
 
-    @ManyToMany
-    @JoinTable(
-            name = "saved_posts",
-            joinColumns = @JoinColumn(name = "userid"),
-            inverseJoinColumns = @JoinColumn(name = "postId")
-    )
-    private List<Post> savedPosts;
+//    @ManyToMany
+//    @JoinTable(
+//            name = "saved_posts",
+//            joinColumns = @JoinColumn(name = "userid"),
+//            inverseJoinColumns = @JoinColumn(name = "postId")
+//    )
+//    private List<Post> savedPosts;
 
 }

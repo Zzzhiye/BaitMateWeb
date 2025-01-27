@@ -9,5 +9,4 @@ public class BaitMateWebApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BaitMateWebApplication.class, args);
 	}
-
 }

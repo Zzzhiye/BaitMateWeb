@@ -14,19 +14,19 @@ public class CatchRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "catchid")
+    @Column(name = "catch_id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userid", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "fishid", nullable = false)
+    @JoinColumn(name = "fish_id", nullable = false)
     private Fish fish;
 
     @ManyToOne
-    @JoinColumn(name = "locationid", nullable = false)
+    @JoinColumn(name = "location_id", nullable = false)
     private FishingLocation location;
 
     @Column(name = "date_time")

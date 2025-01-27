@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminController {
 	
 	
-	@Autowired
+	//@Autowired
 	//CustomerRepository adminRepo;
 	
 	
 	@RequestMapping("/home/{id}")
 	public String hello(@PathVariable int id) {
-		
-		
+
+
 		return "Home";
 	}
 

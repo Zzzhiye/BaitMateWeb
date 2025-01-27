@@ -37,8 +37,8 @@ public class FishingLocation {
     @ManyToMany
     @JoinTable(
             name = "fish_in_fishing_location",
-            joinColumns = @JoinColumn(name = "locationid"),
-            inverseJoinColumns = @JoinColumn(name = "fishid")
+            joinColumns = @JoinColumn(name = "location_id"),
+            inverseJoinColumns = @JoinColumn(name = "fish_id")
     )
     private List<Fish> fishes;
 
