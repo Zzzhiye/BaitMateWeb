@@ -20,10 +20,12 @@ public class FishingLocation {
     @Column(name = "location_name", nullable = false)
     private String locationName;
 
+    @Column
     private String address;
-
-    @Column(name = "latin_name")
-    private String latinName;
+    @Column
+    private long latitude;
+    @Column
+    private long longitude;
 
     @Column(name = "opening_hours")
     private String openingHours;
