@@ -14,29 +14,28 @@ public class FishingLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "locationid")
+    @Column(name = "location_id")
     private Long id;
 
     @Column(name = "location_name", nullable = false)
     private String locationName;
 
     @Column
+    private String address;
+    @Column
+    private String openingHours;
+    @Column
     private double latitude;
     @Column
     private double longitude;
 
+    @OneToMany(mappedBy = "fishingLocation")
+    private List<CatchRecord> catchRecords;
+
     @ManyToMany(mappedBy = "savedLocations")
     private List<User> usersSaved;
 
-    @OneToMany(mappedBy = "location")
-    private List<CatchRecord> catchRecords;
-
-    @ManyToMany
-    @JoinTable(
-            name = "fish_in_fishing_location",
-            joinColumns = @JoinColumn(name = "location_id"),
-            inverseJoinColumns = @JoinColumn(name = "fish_id")
-    )
+    @ManyToMany(mappedBy = "fishingLocations")
     private List<Fish> fishes;
 
 }

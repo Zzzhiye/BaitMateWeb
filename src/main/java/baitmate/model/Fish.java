@@ -22,6 +22,11 @@ public class Fish {
     @Lob
     private byte[] FishImage;
 
-    @ManyToMany(mappedBy = "fishes")
+    @ManyToMany
+    @JoinTable(
+            name = "fish_in_fishing_location",
+            joinColumns = @JoinColumn(name = "fish_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
     private List<FishingLocation> fishingLocations;
 }

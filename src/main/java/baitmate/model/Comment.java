@@ -3,23 +3,25 @@ package baitmate.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-public class Review {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;
+    private String comment;
+    private LocalDateTime time;
+    private int likeCount;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "review")
-    private List<Post> posts;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 }

@@ -1,8 +1,13 @@
 package baitmate.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import java.util.List;
+import java.time.LocalDate;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "app_user")
 public class User {
@@ -12,45 +17,35 @@ public class User {
 
     private String username;
     private String password;
+    private String phoneNumber;
+    private String email;
+    private int age;
+    private String gender;
+    private String address;
+    @Lob
+    private byte[] profileImage;
+    private LocalDate joinDate;
+    private String userStatus;
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
 
-    @ManyToMany(mappedBy = "posts")
-    private List<Post> savedPost;
+    @OneToMany(mappedBy = "user")
+    private List<CatchRecord> catchRecords;
 
+    @ManyToMany
+    @JoinTable(
+            name = "saved_locations",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id")
+    )
+    private List<FishingLocation> savedLocations;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
+    @ManyToMany
+    @JoinTable(
+            name = "saved_posts",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private List<Post> savedPosts;
 }
