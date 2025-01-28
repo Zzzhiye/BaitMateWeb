@@ -21,14 +21,9 @@ public class FishingLocation {
     private String locationName;
 
     @Column
-    private String address;
-    @Column
     private double latitude;
     @Column
     private double longitude;
-
-    @Column(name = "opening_hours")
-    private String openingHours;
 
     @ManyToMany(mappedBy = "savedLocations")
     private List<User> usersSaved;
