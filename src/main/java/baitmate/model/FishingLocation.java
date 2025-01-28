@@ -23,9 +23,9 @@ public class FishingLocation {
     @Column
     private String address;
     @Column
-    private long latitude;
+    private double latitude;
     @Column
-    private long longitude;
+    private double longitude;
 
     @Column(name = "opening_hours")
     private String openingHours;
