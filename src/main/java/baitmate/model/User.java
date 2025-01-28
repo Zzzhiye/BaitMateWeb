@@ -1,60 +1,56 @@
 package baitmate.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Date;
 import java.util.List;
 
-@Setter
-@Getter
 @Entity
-@Table(name = "users", schema = "baitmate")
+@Table(name = "app_user")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String username;
-
-    @JsonIgnore
     private String password;
 
-    private String phoneNumber;
-    private String email;
-    private int age;
-    private String gender;
-    private String address;
-    private String profileImage;
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date joinDate;
+    @ManyToMany(mappedBy = "posts")
+    private List<Post> savedPost;
 
-    private String userStatus;
 
-    @ManyToMany
-    @JoinTable(
-            name = "saved_locations",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "location_id")
-    )
-    private List<FishingLocation> savedLocations;
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CatchRecord> catchRecords;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<Post> posts;
+    public String getUsername() {
+        return username;
+    }
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "saved_posts",
-//            joinColumns = @JoinColumn(name = "userid"),
-//            inverseJoinColumns = @JoinColumn(name = "postId")
-//    )
-//    private List<Post> savedPosts;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
 
 }

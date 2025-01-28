@@ -25,7 +25,6 @@ public class FishingSpot {
     @Column
     private String environment;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -74,5 +73,3 @@ public class FishingSpot {
         this.environment = environment;
     }
 }
-
-
