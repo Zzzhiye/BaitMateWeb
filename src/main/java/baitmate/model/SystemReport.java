@@ -1,24 +1,18 @@
 package baitmate.model;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.UUID;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
 @Setter
 public class SystemReport {
-
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "report_id", updatable = false, nullable = false)
     private UUID reportId;
 
     @ManyToOne
@@ -33,7 +27,6 @@ public class SystemReport {
 
     private LocalDate periodStart;
     private LocalDate periodEnd;
-
     private Float systemUptime;
     private Float serverResponseTime;
     private Integer activeUsers;
