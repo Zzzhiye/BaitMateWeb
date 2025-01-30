@@ -13,6 +13,7 @@ public class CatchRecord {
     private long id;
 
     private String time;
+    @Lob
     private byte[] image;
     private double length;
     private double weight;
