@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+	<meta charset="UTF-8">
+
+	<title>post</title>
+	<style>
+		table {
+			border: 1px solid black;
+			border-collapse: collapse;
+			text-align: center;
+		}
+
+		td,
+		th {
+			border: 1px solid black;
+			padding: 5px;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div style="display: flex; height: 100vh; flex-direction: column;">
+		<!-- Back Button -->
+		    <div style="display: flex; justify-content: flex-end; padding: 10px;">
+		        <button id="Back" type="button" style="padding: 10px 20px;" onclick="window.history.back()">Back</button>
+		    </div>
+	    <!-- Main Content -->
+		
+	    <div style="flex-grow: 1; display: flex;">
+	        <div style="width: 700px; position: relative;">
+	            <div th:each="post : ${postList}" style="margin-bottom: 20px;">
+	                <!-- Post Content -->
+	                <div style="display: flex;">
+	                    <div style="width: 20%;" th:text="${post.user.username}"></div>
+	                    <div th:text="${post.postTime}"></div>
+	                </div>
+					<div th:each="image : ${post.images}">
+						<img th:src="${image.imagePath}" style="height: 400px; width: 400px;">
+					</div>
+	                <div th:text="${post.postContent}"></div>
+	            </div>
+	        </div>
+	    </div>
+
+	   
+	</div>
+
+
+
+
+</body>
+
+</html>

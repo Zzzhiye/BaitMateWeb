@@ -1,12 +1,55 @@
-<!-- Author: Xu Ziyi -->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" th:href="@{/styles/homepagestyle.css?v=1.0}">
-    <title>About Us</title>
+	<meta charset="UTF-8">
+	<title>Home</title>
+	<style>
+	     table {
+	         border: 1px solid black;
+	         border-collapse: collapse;
+	         text-align: center;
+	     }
+	     td, th {
+	         border: 1px solid black;
+	         padding: 5px;
+	     }
+	 </style>
 </head>
+
 <body>
-	<p>Hello </p>
+	<!--  	<div th:replace="fragments ::header"></div>  -->
+
+	<table>
+		<tr>
+			<th>User</th>
+			<th>Post Title</th>
+			<th>Post Date</th>
+			<th>Accuracy Score</th>
+			<th>Actions</th>
+		</tr>
+		<div th:each="post : ${postList}">
+			<tr>
+				<td th:text=${post.user.username}></td>
+				<td th:text=${post.postTitle}></td>
+				<td th:text=${post.postTime}></td>
+				<td th:text=${post.accuracyScore}></td>
+				<td >
+					<a th:if="${#strings.equals(post.postStatus,'pending')} or ${#strings.equals(post.postStatus,'petition')} " th:href="@{/admin/post/user/}+${post.id}" th:text=${post.postStatus}></a>
+					<span th:if="${!#strings.equals(post.postStatus,'pending')} and ${!#strings.equals(post.postStatus,'petition')}" th:text=${post.postStatus}></span>
+				</td>
+			</tr>
+		</div>
+	</table>
+	
+	<div>
+		<span th:if="${postList.totalPages !=null}" th:each="i : ${#numbers.sequence(1,postList.totalPages)}">
+			<a th:href="@{/admin/post/}+${i}" th:text="${i}"></a>
+		</span>
+	</div>
+
+
 </body>
+
 </html>
