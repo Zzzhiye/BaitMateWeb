@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+	<title>My Website</title>
+	<link rel="stylesheet" th:href="@{/styles/homepagestyle.css}" />
+</head>
+
+<body>
+
+
+
+	<div th:fragment="header">
+		<!-- Header Section -->
+		<header>
+			
+			<div class="header-icons">
+				<a href="#" class="icon">
+					<img src="/images/profile.svg" alt="Profile"> Profile
+				</a>
+				<a href="#" class="icon">
+					<img src="/images/home.svg" alt="Home"> Home
+				</a>
+				<div class="image-preview">
+								<img src="/images/headerImage.jpg" alt="Post Image">
+							</div>
+				<a href="#" class="icon">
+					<img src="/images/notifications.svg" alt="Notifications"> Notifications
+				</a>
+				<a href="#" class="icon">
+					<img src="/images/logout.svg" alt="Log Out"> Log Out
+				</a>
+			</div>
+		</header>
+
+
+	</div>
+
+	<div th:fragment="sidebar">
+		<!-- Sidebar Section -->
+		<aside class="sidebar">
+			<div class="menu">
+				<div class="menu-item active">
+					<span>Posts</span>
+					<span class="notification-dot"></span>
+				</div>
+				<div class="menu-item">
+					<span>Reports</span>
+					<span class="notification-dot"></span>
+				</div>
+			</div>
+		</aside>
+	</div>
+
+</body>
+
+</html>

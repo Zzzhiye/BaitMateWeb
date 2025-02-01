@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import baitmate.Repository.PostRepository;
 import baitmate.Repository.UserRepository;
@@ -33,19 +34,12 @@ public class AdminController {
 	
 	
 	@RequestMapping("")
-	public String post(Model model) {
-		Pageable pageable=PageRequest.of(0, 3,Sort.by("postStatus").descending());
-		Page<Post> postList=postRepo.searchPostByPostStatus("appeal",pageable);
-		model.addAttribute("postList", postList);
-		return "Home";
-	}
-	
-	@RequestMapping("/{id}")
-	public String post(@PathVariable int id, Model model) {
+	public String post(@RequestParam(defaultValue = "1") int id, Model model) {
 		Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postStatus").descending());
-		Page<Post> postList=postRepo.searchPostByPostStatus("appeal",pageable);
+		Page<Post> postList=postRepo.findAll(pageable);
 		model.addAttribute("totalPages", postList.getTotalPages());
 		model.addAttribute("postList", postList);
+		model.addAttribute("currentPage", id);
 		return "Home";
 	}
 	

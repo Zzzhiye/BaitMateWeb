@@ -5,19 +5,7 @@
 	<meta charset="UTF-8">
 
 	<title>post</title>
-	<style>
-		table {
-			border: 1px solid black;
-			border-collapse: collapse;
-			text-align: center;
-		}
-
-		td,
-		th {
-			border: 1px solid black;
-			padding: 5px;
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/styles/styles.css}">
 	<script th:inline="javascript">
 		// Function to change the cover image when an additional image is clicked
 		function setStatus1(status) {
@@ -65,7 +53,7 @@
 </head>
 
 <body>
-	<!--  	<div th:replace="fragments ::header"></div>  -->
+	<div th:replace="fragments :: header"></div>
 	<div>
 		<div style="height: 600px; width: 100%;display: flex;">
 			<div style="width: 70%;">
