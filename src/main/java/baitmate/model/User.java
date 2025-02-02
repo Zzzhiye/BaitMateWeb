@@ -13,18 +13,38 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userid")
     private Long id;
 
+    @Column(name = "username")
     private String username;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "phonenumber")
     private String phoneNumber;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "age")
     private int age;
+
+    @Column(name = "gender")
     private String gender;
+
+    @Column(name = "address")
     private String address;
+
     @Lob
+    @Column(name = "profileimage")
     private byte[] profileImage;
+
+    @Column(name = "joindate")
     private LocalDate joinDate;
+
+    @Column(name = "userstatus")
     private String userStatus;
 
     @OneToMany(mappedBy = "user")

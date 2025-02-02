@@ -19,8 +19,6 @@ import baitmate.Repository.UserRepository;
 import baitmate.model.Post;
 import baitmate.model.User;
 
-
-
 @Controller
 @RequestMapping("/admin/post")
 public class AdminController {
@@ -45,8 +43,9 @@ public class AdminController {
 	
 	@RequestMapping("/user/{id}")
 	public String userPost(@PathVariable int id, Model model) {
-		Post post=postRepo.searchPostByPostId(id);
+		Post post = postRepo.findById((long) id).orElseThrow(() -> new RuntimeException("Post not found"));
 		
+		//Post post=postRepo.searchPostByPostId(id);
 		
 		model.addAttribute("post", post);
 		
@@ -58,7 +57,7 @@ public class AdminController {
 	
 	@GetMapping("/user/userPost/{status}/{id}")
 	public String postStatus(@PathVariable int id, @PathVariable String status) {
-		Post post=postRepo.searchPostByPostId(id);
+		Post post = postRepo.findById((long) id).orElseThrow(() -> new RuntimeException("Post not found"));
 		if(post.getPostStatus().equals("pending") || post.getPostStatus().equals("petition")) {
 			post.setPostStatus(status);
 			postRepo.save(post);

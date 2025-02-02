@@ -10,22 +10,39 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "post", schema = "baitmate")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "postid")
     private Long id;
 
+    @Column(name = "title")
     private String postTitle;
+
+    @Column(name = "content")
     private String postContent;
+
+    @Column(name = "poststatus")
     private String postStatus;
+
+    @Column(name = "location")
     private String location;
+
+    @Column(name = "posttime")
     private LocalDateTime postTime;
-    private int likeCount;
-    private int savedCount;
-    private double accuracyScore;
+
+    @Column(name = "likecount")
+    private int likeCount = 0;
+
+    @Column(name = "savedcount")
+    private int savedCount = 0;
+
+    @Column(name = "accuracyscore")
+    private double accuracyScore = 0.0;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userid")
     private User user;
 
     @OneToMany(mappedBy = "post")
@@ -37,8 +54,6 @@ public class Post {
     @ManyToMany(mappedBy = "savedPosts")
     private List<User> savedByUsers;
 
-    @ManyToOne
-    @JoinColumn(name = "review_id")
-    private Review review;
+    @OneToMany(mappedBy = "post")
+    private List<Review> reviews;
 }
-

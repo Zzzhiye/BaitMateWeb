@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Setter
@@ -22,10 +24,13 @@ public class FishingLocation {
 
     @Column
     private String address;
+
     @Column
     private String openingHours;
+
     @Column
     private double latitude;
+
     @Column
     private double longitude;
 
@@ -38,4 +43,21 @@ public class FishingLocation {
     @ManyToMany(mappedBy = "fishingLocations")
     private List<Fish> fishes;
 
+    @Transient
+    public String getStatus() {
+        if (openingHours == null || openingHours.equals("24/7")) {
+            return "Open";
+        }
+
+        try {
+            String[] times = openingHours.split("-");
+            LocalTime openTime = LocalTime.parse(times[0], DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime closeTime = LocalTime.parse(times[1], DateTimeFormatter.ofPattern("HH:mm"));
+            LocalTime currentTime = LocalTime.now();
+
+            return (currentTime.isAfter(openTime) && currentTime.isBefore(closeTime)) ? "Open" : "Closed";
+        } catch (Exception e) {
+            return "Unknown";
+        }
+    }
 }

@@ -4,22 +4,24 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Entity
+@Table(name = "review", schema = "baitmate")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reviewid")
     private Long id;
 
+    @Column(name = "content")
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userid")
     private User user;
 
-    @OneToMany(mappedBy = "review")
-    private List<Post> posts;
+    @ManyToOne
+    @JoinColumn(name = "postid")
+    private Post post;
 }
