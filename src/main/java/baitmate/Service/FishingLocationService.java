@@ -1,9 +1,9 @@
-package baitmate.ImplementationMethod;
+package baitmate.Service;
 
 import baitmate.model.FishingLocation;
 
 import java.util.List;
 
-public interface FishingLocationInterface {
+public interface FishingLocationService {
     List<FishingLocation> findAllLocations();
 }

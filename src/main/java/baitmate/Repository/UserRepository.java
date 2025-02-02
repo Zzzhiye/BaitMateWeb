@@ -7,10 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import baitmate.model.User;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
 	@Query("Select u from User u where u.Id=:userId")
 	public User searchByUserId(@Param("userId") long userId);
+	Optional<User> findByUsername(String username);
 
 }

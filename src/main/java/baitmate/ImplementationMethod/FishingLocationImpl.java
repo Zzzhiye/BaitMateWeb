@@ -1,7 +1,7 @@
-package baitmate.Service;
+package baitmate.ImplementationMethod;
 
-import baitmate.ImplementationMethod.FishingLocationInterface;
 import baitmate.Repository.FishingLocationRepository;
+import baitmate.Service.FishingLocationService;
 import baitmate.model.FishingLocation;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class FishingLocationImpl implements FishingLocationInterface {
+public class FishingLocationImpl implements FishingLocationService {
     @Autowired
     FishingLocationRepository fishinglocationRepo;
 

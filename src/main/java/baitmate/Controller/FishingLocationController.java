@@ -1,6 +1,6 @@
 package baitmate.Controller;
 
-import baitmate.ImplementationMethod.FishingLocationInterface;
+import baitmate.Service.FishingLocationService;
 import baitmate.model.FishingLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class FishingLocationController {
     @Autowired
-    FishingLocationInterface fishingLocationInt;
+    FishingLocationService fishingLocationInt;
 
     @GetMapping("/locations")
     public List<FishingLocation> getLocations() {
