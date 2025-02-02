@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 import baitmate.model.Post;
@@ -28,4 +29,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     
     @Query("SELECT COUNT(c) FROM Post p JOIN p.comments c")
     long countComments();
+    
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user WHERE p.postStatus = :status ORDER BY p.postTime DESC")
+    Page<Post> searchPostByFilter(@Param("status") String status, Pageable pageable);
 }
