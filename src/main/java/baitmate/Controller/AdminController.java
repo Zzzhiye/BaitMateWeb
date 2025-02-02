@@ -34,14 +34,26 @@ public class AdminController {
 	
 	
 	@RequestMapping("")
-	public String post(@RequestParam(defaultValue = "1") int id, Model model) {
-		Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postStatus").descending());
-		Page<Post> postList=postRepo.findAll(pageable);
+	public String post(@RequestParam(defaultValue = "1") int id, @RequestParam(required=false) String status, Model model) {
+	
+		Page<Post> postList;
+		if(status==null || status.equals("")) {
+			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postStatus").descending());
+			postList=postRepo.findAll(pageable);
+			
+		}else {
+			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postTime").descending());
+			System.out.println("aaa"+status);
+			postList=postRepo.searchPostByFilter(status, pageable);
+		}
+		
 		model.addAttribute("totalPages", postList.getTotalPages());
 		model.addAttribute("postList", postList);
 		model.addAttribute("currentPage", id);
+		model.addAttribute("selectedStatus", status);
 		return "Home";
 	}
+	
 	
 	@RequestMapping("/user/{id}")
 	public String userPost(@PathVariable int id, Model model) {
