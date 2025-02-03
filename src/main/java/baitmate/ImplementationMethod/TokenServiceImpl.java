@@ -33,12 +33,12 @@ public class TokenServiceImpl implements TokenService {
         return storedToken != null && storedToken.isActive() && storedToken.getExpiryDate().isAfter(LocalDateTime.now());
     }
 
-    public void deactivateToken(String token) {
+    public boolean deactivateToken(String token) {
         Token storedToken = tokenRepo.findByToken(token);
-        if (storedToken != null) {
-            storedToken.setActive(false);
-            tokenRepo.save(storedToken);
-        }
+        storedToken.setActive(false);
+        tokenRepo.save(storedToken);
+        System.out.println(storedToken.isActive());
+        return !storedToken.isActive();
     }
 
     @Scheduled(fixedRate = 3600000) // Runs every hour

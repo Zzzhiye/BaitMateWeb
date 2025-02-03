@@ -47,8 +47,18 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
-        tokenService.deactivateToken(token);
-        return ResponseEntity.ok("Logged out successfully");
+        System.out.println("Received Token: " + token); // Debugging
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.badRequest().body("Token is missing");
+        }
+
+        boolean deactivated = tokenService.deactivateToken(token);
+        if (deactivated) {
+            return ResponseEntity.ok("Logged out successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token not found or already invalidated");
+        }
     }
 
 
