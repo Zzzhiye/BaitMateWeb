@@ -32,10 +32,6 @@ public class CatchRecord {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "spot_id")
-    private FishingSpot fishingSpot;
-
-    @ManyToOne
     @JoinColumn(name = "location_id")
     private FishingLocation fishingLocation;
 }
