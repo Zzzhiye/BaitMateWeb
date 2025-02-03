@@ -1,5 +1,7 @@
 package baitmate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,6 +53,9 @@ public class User {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
     private List<CatchRecord> catchRecords;
 
     @ManyToMany
@@ -68,4 +73,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "post_id")
     )
     private List<Post> savedPosts;
+
+    @ManyToMany
+    @JoinTable(
+            name = "liked_posts",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private List<Post> likedPosts;
 }
