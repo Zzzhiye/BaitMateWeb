@@ -1,16 +1,25 @@
 package baitmate.Controller;
 
 import baitmate.DTO.LoginRequest;
+import baitmate.DTO.LoginResponse;
 import baitmate.DTO.RegisterRequest;
+import baitmate.Service.TokenService;
 import baitmate.Service.UserService;
 import baitmate.model.User;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -18,15 +27,30 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TokenService tokenService;
+
+    private static final MacAlgorithm ALGORITHM = Jwts.SIG.HS256;
+    private static final Key SECRET_KEY = ALGORITHM.key().build();
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userService.validateUser(loginRequest.getUsername(),loginRequest.getPassword());
-            return ResponseEntity.ok(user);
+            String token = tokenService.generateToken(user);
+            LoginResponse loginResponse = new LoginResponse(user, token);
+            return ResponseEntity.ok(loginResponse);
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(ex.getMessage()));
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
+        tokenService.deactivateToken(token);
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {

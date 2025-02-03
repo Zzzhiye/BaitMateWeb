@@ -21,7 +21,12 @@ public class UserServiceImpl implements UserService {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 if (user.getPassword().equals(password)) {
-                    return user;
+                    if ("active".equalsIgnoreCase(user.getUserStatus())) {
+                        return user;
+                    } else {
+                        throw new IllegalArgumentException("Account status is inactive.");
+                    }
+
                 }
             }
             throw new IllegalArgumentException("Invalid username or password");
