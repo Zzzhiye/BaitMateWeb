@@ -12,7 +12,8 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imagePath;
+    @Lob
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
