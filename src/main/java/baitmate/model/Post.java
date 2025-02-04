@@ -16,7 +16,7 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "postid")
+    @Column(name = "post_id")
     private Long id;
 
     @Column(name = "title")
@@ -25,26 +25,26 @@ public class Post {
     @Column(name = "content")
     private String postContent;
 
-    @Column(name = "poststatus")
+    @Column(name = "post_status")
     private String postStatus;
 
     @Column(name = "location")
     private String location;
 
-    @Column(name = "posttime")
+    @Column(name = "post_time")
     private LocalDateTime postTime;
 
-    @Column(name = "likecount")
+    @Column(name = "like_count")
     private int likeCount = 0;
 
-    @Column(name = "savedcount")
+    @Column(name = "saved_count")
     private int savedCount = 0;
 
-    @Column(name = "accuracyscore")
+    @Column(name = "accuracy_score")
     private double accuracyScore = 0.0;
 
     @ManyToOne
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "post")

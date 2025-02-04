@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "username")
@@ -24,7 +24,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "phonenumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "email")
@@ -40,13 +40,13 @@ public class User {
     private String address;
 
     @Lob
-    @Column(name = "profileimage")
+    @Column(name = "profile_image")
     private byte[] profileImage;
 
-    @Column(name = "joindate")
+    @Column(name = "join_date")
     private LocalDate joinDate;
 
-    @Column(name = "userstatus")
+    @Column(name = "user_status")
     private String userStatus;
 
     @OneToMany(mappedBy = "user")
