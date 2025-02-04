@@ -59,24 +59,33 @@ public class UserController {
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         Optional<User> userOptional = userService.findByUsername(request.getUsername());
         if (userOptional.isEmpty()) {
+            System.out.println("User with username " + request.getUsername() + " not found.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         User user = userOptional.get();
-        String email = user.getEmail();
+        System.out.println("Checking if email " + request.getEmail() + " matches the user's email.");
+
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
+            System.out.println("Email does not match for username: " + request.getUsername() +
+                    ". Provided: " + request.getEmail() + ". Stored: " + user.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email does not match");
+        }
 
         try {
-            String otp = userService.generateAndSendOTP(email);
-            return ResponseEntity.ok("OTP sent successfully to " + email);
+            String otp = userService.generateAndSendOTP(request.getEmail());
+            System.out.println("Generating and sending OTP to email: " + request.getEmail());
+            return ResponseEntity.ok("OTP sent successfully to " + request.getEmail());
         } catch (IllegalArgumentException ex) {
+            System.out.println("Failed to send OTP for email: " + request.getEmail() + ". Error: " + ex.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
-        if (userService.verifyOTP(request.getUsername(), request.getOtp())) {
-            userService.updatePassword(request.getUsername(), request.getNewPassword());
+        if (userService.verifyOTP(request.getEmail(), request.getOtp())) {
+            userService.updatePassword(request.getEmail(), request.getNewPassword());
             return ResponseEntity.ok("Password reset successfully");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");

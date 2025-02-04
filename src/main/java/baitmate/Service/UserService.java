@@ -10,6 +10,6 @@ public interface UserService  {
     User registerUser(RegisterRequest registerRequest);
     String generateAndSendOTP(String email);
     boolean verifyOTP(String username, String otp);
-    void updatePassword(String username, String newPassword);
+    void updatePassword(String email, String newPassword);
     Optional<User> findByUsername(String username);
 }

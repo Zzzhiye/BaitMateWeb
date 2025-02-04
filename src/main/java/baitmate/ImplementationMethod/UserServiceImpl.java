@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String otp = String.valueOf(new Random().nextInt(900000) + 100000); // Generate 6-digit OTP
-        otpStorage.put(userOptional.get().getUsername(), otp);
+        otpStorage.put(email, otp);
 
         // Send OTP via email
         emailService.sendSimpleMessage(email, "Password Reset OTP", "Your OTP is: " + otp);
@@ -81,12 +81,12 @@ public class UserServiceImpl implements UserService {
         return otp;
     }
 
-    public boolean verifyOTP(String username, String otp) {
-        return otpStorage.containsKey(username) && otpStorage.get(username).equals(otp);
+    public boolean verifyOTP(String email, String otp) {
+        return otpStorage.containsKey(email) && otpStorage.get(email).equals(otp);
     }
 
-    public void updatePassword(String username, String newPassword) {
-        Optional<User> userOptional = userRepo.findByUsername(username);
+    public void updatePassword(String email, String newPassword) {
+        Optional<User> userOptional = userRepo.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setPassword(newPassword);
