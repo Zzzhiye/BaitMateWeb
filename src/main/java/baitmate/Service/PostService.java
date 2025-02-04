@@ -1,8 +1,12 @@
 package baitmate.Service;
 
 import baitmate.DTO.PostDto;
+import baitmate.model.Post;
 
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PostService {
 
@@ -13,4 +17,9 @@ public interface PostService {
     PostDto getPostById(Long id);
     PostDto toggleLikePost(Long postId, Long userId);
     PostDto toggleSavePost(Long postId, Long userId);
+    
+    Page<Post> searchPostByFilter(String status, Pageable pageable);
+    Post save(Post post);
+    Page<Post> findAll(Pageable pageable);
+    Post findById(Long id);
 }

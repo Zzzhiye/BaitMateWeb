@@ -22,23 +22,21 @@ import baitmate.Repository.ImageRepository;
 import baitmate.Repository.PostRepository;
 import baitmate.Repository.UserRepository;
 import baitmate.Service.ImageService;
+import baitmate.Service.PostService;
+import baitmate.Service.UserService;
 import baitmate.model.Image;
 import baitmate.model.Post;
 import baitmate.model.User;
 
 @Controller
 @RequestMapping("/admin/post")
-public class AdminController {
-	
-	
-	@Autowired
-	PostRepository postRepo;
+public class AdminController {	
 	
 	@Autowired
-	UserRepository userRepo;
+	PostService postServiceImpl;
 	
 	@Autowired
-	ImageRepository imgRepo;
+	UserService userServiceImpl;
 	
 	@Autowired
 	ImageService imageServiceimpl;
@@ -50,11 +48,11 @@ public class AdminController {
 		Page<Post> postList;
 		if(status==null || status.equals("")) {
 			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postStatus").descending());
-			postList=postRepo.findAll(pageable);
+			postList=postServiceImpl.findAll(pageable);
 			
 		}else {
 			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postTime").descending());
-			postList=postRepo.searchPostByFilter(status, pageable);
+			postList=postServiceImpl.searchPostByFilter(status, pageable);
 		}
 		
 		model.addAttribute("totalPages", postList.getTotalPages());
@@ -80,7 +78,7 @@ public class AdminController {
 	
 	@GetMapping("/verifyPost/{id}")
 	public String userPost(@PathVariable int id, Model model) {
-		Post post = postRepo.findById((long) id).orElseThrow(() -> new RuntimeException("Post not found"));
+		Post post = postServiceImpl.findById((long) id);
 		model.addAttribute("post", post);
 		List<Image> imageIds = imageServiceimpl.getImageByPostId(post.getId());
 		model.addAttribute("imageIds", imageIds);
@@ -94,10 +92,10 @@ public class AdminController {
 	@GetMapping("/user/userPost/{status}/{id}")
 	public String postStatus(@PathVariable int id, @PathVariable String status) {
 		//update post status
-		Post post = postRepo.findById((long) id).orElseThrow(() -> new RuntimeException("Post not found"));
+		Post post = postServiceImpl.findById((long) id);
 		if(post.getPostStatus().equals("pending") || post.getPostStatus().equals("petition")) {
 			post.setPostStatus(status);
-			postRepo.save(post);
+			postServiceImpl.save(post);
 		}
 		return "redirect:/admin/post";
 		
@@ -106,10 +104,10 @@ public class AdminController {
 	@GetMapping("/user/userAccount/{status}/{id}")
 	public String userStatus(@PathVariable int id, @PathVariable String status) {
 		//update user status
-		User user=userRepo.searchByUserId(id);
+		User user=userServiceImpl.searchByUserId(id);
 		if(user.getUserStatus().equals("active")) {
 			user.setUserStatus(status);
-			userRepo.save(user);
+			userServiceImpl.save(user);
 		}
 		return "redirect:/admin/post";
 		
@@ -117,7 +115,7 @@ public class AdminController {
 	
 	@GetMapping("/user/userPost/{id}")
 	public String userPastpost(@PathVariable int id, Model model) {
-		User u= userRepo.searchByUserId(id);
+		User u= userServiceImpl.searchByUserId(id);
 	
 		List<Post> pastPostList=u.getPosts();
 		

@@ -30,4 +30,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByJoinDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     boolean existsByUsername(String username);
+
 }

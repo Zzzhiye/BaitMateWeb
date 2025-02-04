@@ -11,6 +11,8 @@ import baitmate.model.Image;
 import baitmate.model.Post;
 import baitmate.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -175,4 +177,32 @@ public class PostServiceImpl implements PostService {
 
         return postConverter.toDto(post);
     }
+
+	@Override
+	public Page<Post> searchPostByFilter(String status, Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
+		return postList;
+	}
+
+	@Override
+	public Post save(Post post) {
+		// TODO Auto-generated method stub
+		Post p=postRepository.save(post);
+		return p;
+	}
+
+	@Override
+	public Page<Post> findAll(Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<Post> postList=postRepository.findAll(pageable);
+		return postList;
+	}
+
+	@Override
+	public Post findById(Long id) {
+		// TODO Auto-generated method stub
+		Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+		return post;
+	}
 }

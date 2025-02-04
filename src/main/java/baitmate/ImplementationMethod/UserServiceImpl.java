@@ -93,4 +93,18 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user);
         }
     }
+
+	@Override
+	public User searchByUserId(long userId) {
+		// TODO Auto-generated method stub
+		User u= userRepo.searchByUserId(userId);
+		return u ;
+	}
+
+	@Override
+	public User save(User user) {
+		// TODO Auto-generated method stub
+		User u=userRepo.save(user);
+		return u;
+	}
 }
