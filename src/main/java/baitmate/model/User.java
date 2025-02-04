@@ -1,7 +1,5 @@
 package baitmate.model;
 
-import baitmate.Service.UniqueUsername;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -24,7 +22,6 @@ public class User {
     private Long id;
 
     @Column(name = "username", unique = true)
-    @UniqueUsername
     @NotBlank(message = "Username cannot be blank")
     private String username;
 

@@ -47,13 +47,13 @@ public class UserServiceImpl implements UserService {
         }
 
         public User registerUser(RegisterRequest registerRequest) {
-            Optional<User> existingUser = userRepo.findByUsername(registerRequest.getUserName());
+            Optional<User> existingUser = userRepo.findByUsername(registerRequest.getUsername());
             if (existingUser.isPresent()) {
                 throw new IllegalArgumentException("Username is already taken");
             }
 
             User user = new User();
-            user.setUsername(registerRequest.getUserName());
+            user.setUsername(registerRequest.getUsername());
             user.setPassword(registerRequest.getPassword());
             user.setPhoneNumber(registerRequest.getPhoneNumber());
             user.setEmail(registerRequest.getEmail());
@@ -92,6 +92,10 @@ public class UserServiceImpl implements UserService {
             user.setPassword(newPassword);
             userRepo.save(user);
         }
+    }
+
+    public boolean existsByUsername(String username) {
+            return userRepo.existsByUsername(username);
     }
 
 	@Override
