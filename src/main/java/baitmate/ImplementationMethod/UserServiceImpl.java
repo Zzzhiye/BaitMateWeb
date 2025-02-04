@@ -2,19 +2,32 @@ package baitmate.ImplementationMethod;
 
 import baitmate.DTO.RegisterRequest;
 import baitmate.Repository.UserRepository;
+import baitmate.Service.EmailService;
 import baitmate.Service.UserService;
 import baitmate.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 
 @Service
 public class UserServiceImpl implements UserService {
         @Autowired
         UserRepository userRepo;
+
+        @Autowired
+        EmailService emailService;
+
+        private Map<String, String> otpStorage = new HashMap<>();
+
+        public Optional<User> findByUsername(String username) {
+            return userRepo.findByUsername(username);
+        }
 
         public User validateUser(String username, String password) {
             Optional<User> userOptional = userRepo.findByUsername(username);
@@ -26,10 +39,11 @@ public class UserServiceImpl implements UserService {
                     } else {
                         throw new IllegalArgumentException("Account status is inactive.");
                     }
-
+                } else {
+                    throw new IllegalArgumentException("Invalid password.");
                 }
             }
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new IllegalArgumentException("Username does not exist.");
         }
 
         public User registerUser(RegisterRequest registerRequest) {
@@ -51,4 +65,32 @@ public class UserServiceImpl implements UserService {
 
             return userRepo.save(user);
         }
+
+    public String generateAndSendOTP(String email) {
+        Optional<User> userOptional = userRepo.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            throw new IllegalArgumentException("Email not registered");
+        }
+
+        String otp = String.valueOf(new Random().nextInt(900000) + 100000); // Generate 6-digit OTP
+        otpStorage.put(userOptional.get().getUsername(), otp);
+
+        // Send OTP via email
+        emailService.sendSimpleMessage(email, "Password Reset OTP", "Your OTP is: " + otp);
+
+        return otp;
+    }
+
+    public boolean verifyOTP(String username, String otp) {
+        return otpStorage.containsKey(username) && otpStorage.get(username).equals(otp);
+    }
+
+    public void updatePassword(String username, String newPassword) {
+        Optional<User> userOptional = userRepo.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(newPassword);
+            userRepo.save(user);
+        }
+    }
 }
