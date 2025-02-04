@@ -7,7 +7,6 @@
 	<title>post</title>
 	<link rel="stylesheet" th:href="@{/styles/styles.css}">
 	<script th:inline="javascript">
-		// Function to change the cover image when an additional image is clicked
 		function setStatus1(status) {
 
 			var postId = /*[[${post.id}]]*/ 0;
@@ -29,7 +28,6 @@
 
 	</script>
 	<script th:inline="javascript">
-			// Function to change the cover image when an additional image is clicked
 			function setStatus2(status) {
 
 				var userId = /*[[${post.user.id}]]*/ 0;
@@ -53,7 +51,7 @@
 </head>
 
 <body>
-	<div th:replace="fragments :: header"></div>
+	<div th:replace="~{fragments :: header}"></div>
 	<div>
 		<div style="height: 600px; width: 100%;display: flex;">
 			<div style="width: 70%;">
@@ -63,8 +61,8 @@
 					</div>
 					<div th:text="${post.postTime}"></div>
 				</div>
-				<div th:each="image : ${post.images}">
-					<img th:src="${image.imagePath}" style="height: 400px; width: 400px;">
+				<div th:each="imageOid : ${imageIds}">
+					<img th:src="@{/admin/post/image/}+${imageOid.id}"  style="height: 400px; width: 400px;">
 				</div>
 				<div th:text="${post.postContent}"></div>
 			</div>

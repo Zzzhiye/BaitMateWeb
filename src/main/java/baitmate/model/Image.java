@@ -15,7 +15,7 @@ public class Image {
     private Long id;
 
     @Lob
-    private String image;
+    private Long image;
 
     @ManyToOne
     @JoinColumn(name = "post_id")

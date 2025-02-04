@@ -27,7 +27,7 @@
 	                    <div th:text="${post.postTime}"></div>
 	                </div>
 					<div th:each="image : ${post.images}">
-						<img th:src="${image.imagePath}" style="height: 400px; width: 400px;">
+						<img th:src="${image.image}" style="height: 400px; width: 400px;">
 					</div>
 	                <div th:text="${post.postContent}"></div>
 	            </div>

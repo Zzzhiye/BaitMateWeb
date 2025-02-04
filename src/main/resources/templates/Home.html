@@ -34,7 +34,7 @@
 					<td th:text=${post.accuracyScore}></td>
 					<td>
 						<a th:if="${#strings.equals(post.postStatus,'pending')} or ${#strings.equals(post.postStatus,'petition')} "
-							th:href="@{/admin/post/user/}+${post.id}" th:text=${post.postStatus}></a>
+							th:href="@{/admin/post/verifyPost/}+${post.id}" th:text=${post.postStatus}></a>
 						<span
 							th:if="${!#strings.equals(post.postStatus,'pending')} and ${!#strings.equals(post.postStatus,'petition')}"
 							th:text=${post.postStatus}></span>
