@@ -1,5 +1,6 @@
 package baitmate.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -45,6 +46,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "post")
@@ -54,9 +56,11 @@ public class Post {
     private List<Image> images;
 
     @ManyToMany(mappedBy = "savedPosts")
+    @JsonBackReference
     private List<User> savedByUsers;
 
     @ManyToMany(mappedBy = "likedPosts")
+    @JsonBackReference
     private List<User> likedByUsers;
 }
 

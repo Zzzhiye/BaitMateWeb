@@ -4,10 +4,13 @@ import baitmate.Repository.TokenRepository;
 import baitmate.Service.TokenService;
 import baitmate.model.Token;
 import baitmate.model.User;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

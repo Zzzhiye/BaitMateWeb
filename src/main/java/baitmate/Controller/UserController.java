@@ -9,10 +9,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Key;
+import java.util.Collections;
 import java.util.Optional;
 
 @RestController
@@ -24,18 +26,17 @@ public class UserController {
     @Autowired
     private TokenService tokenService;
 
-    private static final MacAlgorithm ALGORITHM = Jwts.SIG.HS256;
-    private static final Key SECRET_KEY = ALGORITHM.key().build();
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userService.validateUser(loginRequest.getUsername(),loginRequest.getPassword());
             String token = tokenService.generateToken(user);
-            LoginResponse loginResponse = new LoginResponse(user, token);
+            LoginResponse loginResponse = new LoginResponse(user.getId(), token);
+            System.out.println(loginResponse);
             return ResponseEntity.ok(loginResponse);
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(ex.getMessage()));
+            LoginResponse errorResponse = new LoginResponse(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
         }
     }
 
@@ -89,6 +90,17 @@ public class UserController {
             return ResponseEntity.ok("Password reset successfully");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
+        }
+    }
+
+    @GetMapping("/validate-token")
+    public ResponseEntity<?> validateToken(@RequestParam String token) {
+        boolean isValid = tokenService.validateToken(token);
+
+        if (isValid) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "Token is valid"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Invalid or expired token"));
         }
     }
 

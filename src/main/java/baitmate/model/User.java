@@ -50,12 +50,15 @@ public class User {
     private String userStatus;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Comment> comments;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<CatchRecord> catchRecords;
 
     @ManyToMany
@@ -64,6 +67,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "location_id")
     )
+    @JsonManagedReference
     private List<FishingLocation> savedLocations;
 
     @ManyToMany
@@ -72,6 +76,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id")
     )
+    @JsonManagedReference
     private List<Post> savedPosts;
 
     @ManyToMany
@@ -80,5 +85,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id")
     )
+    @JsonManagedReference
     private List<Post> likedPosts;
 }
