@@ -1,8 +1,13 @@
 package baitmate.model;
 
+import baitmate.Service.UniqueUsername;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -18,16 +23,23 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
+    @UniqueUsername
+    @NotBlank(message = "Username cannot be blank")
     private String username;
 
     @Column(name = "password")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$", message = "Password must contain at least one letter and one number")
+    @NotBlank(message = "Password cannot be blank")
     private String password;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "email")
+    @NotBlank(message = "Email is mandatory")
+    @Email(message = "Please enter a valid email")
     private String email;
 
     @Column(name = "age")
