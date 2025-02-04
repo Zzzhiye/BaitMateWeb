@@ -1,5 +1,6 @@
 package baitmate.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,6 @@ public class AdminController {
 			
 		}else {
 			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postTime").descending());
-			System.out.println("aaa"+status);
 			postList=postRepo.searchPostByFilter(status, pageable);
 		}
 		
@@ -67,7 +67,6 @@ public class AdminController {
 	@GetMapping("/image/{imageId}")
     public ResponseEntity<byte[]> getImage(@PathVariable("imageId") Long imageId) {
         try {
-        	System.out.println("into getImage method");
             byte[] imageData = imageServiceimpl.getImageByImageId(imageId);
 
             HttpHeaders headers = new HttpHeaders();
@@ -82,13 +81,9 @@ public class AdminController {
 	@GetMapping("/verifyPost/{id}")
 	public String userPost(@PathVariable int id, Model model) {
 		Post post = postRepo.findById((long) id).orElseThrow(() -> new RuntimeException("Post not found"));
-		System.out.println("into userPost method");
 		model.addAttribute("post", post);
-		
-		System.out.println("image ID ");
 		List<Image> imageIds = imageServiceimpl.getImageByPostId(post.getId());
 		model.addAttribute("imageIds", imageIds);
-		//System.out.println("aaa"+imageIds.get(0).getImage());
 		List<Post> allPosts = post.getUser().getPosts();
 		model.addAttribute("postTotal", allPosts.size());
 		model.addAttribute("postRej", allPosts.stream().filter(p -> "banned".equalsIgnoreCase(p.getPostStatus())).count());
@@ -123,7 +118,15 @@ public class AdminController {
 	@GetMapping("/user/userPost/{id}")
 	public String userPastpost(@PathVariable int id, Model model) {
 		User u= userRepo.searchByUserId(id);
-		model.addAttribute("postList", u.getPosts());
+	
+		List<Post> pastPostList=u.getPosts();
+		
+		for (Post p : pastPostList) {
+			p.setImages(imageServiceimpl.getImageByPostId(p.getId()));
+		}
+		
+		model.addAttribute("postList", pastPostList);
+
 		return "PastPost";
 	}
 

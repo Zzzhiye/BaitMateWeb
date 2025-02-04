@@ -26,8 +26,8 @@
 	                    <div style="width: 20%;" th:text="${post.user.username}"></div>
 	                    <div th:text="${post.postTime}"></div>
 	                </div>
-					<div th:each="image : ${post.images}">
-						<img th:src="${image.image}" style="height: 400px; width: 400px;">
+					<div th:each="imageOid : ${post.images}">
+						<img th:src="@{/admin/post/image/{id}(id=${imageOid.id})}"  style="height: 400px; width: 400px;">
 					</div>
 	                <div th:text="${post.postContent}"></div>
 	            </div>
