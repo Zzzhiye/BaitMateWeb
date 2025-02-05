@@ -47,6 +47,12 @@ public class TokenServiceImpl implements TokenService {
     @Scheduled(fixedRate = 3600000) // Runs every hour
     public void deactivateExpiredTokens() {
         List<Token> expiredTokens = tokenRepo.findAllByExpiryDateBefore(LocalDateTime.now());
+
+        if (expiredTokens == null || expiredTokens.isEmpty()) {
+            System.out.println("No expired tokens found to deactivate.");
+            return;
+        }
+
         for (Token token : expiredTokens) {
             token.setActive(false);
             tokenRepo.save(token);

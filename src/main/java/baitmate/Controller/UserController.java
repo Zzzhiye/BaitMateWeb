@@ -70,11 +70,10 @@ public class UserController {
         }
 
         User user = userOptional.get();
-        System.out.println("Checking if email " + request.getEmail() + " matches the user's email.");
+        //System.out.println("Checking if email " + request.getEmail() + " matches the user's email.");
 
         if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
-            System.out.println("Email does not match for username: " + request.getUsername() +
-                    ". Provided: " + request.getEmail() + ". Stored: " + user.getEmail());
+            //System.out.println("Email does not match for username: " + request.getUsername() +". Provided: " + request.getEmail() + ". Stored: " + user.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email does not match");
         }
 
