@@ -4,6 +4,7 @@ import baitmate.DTO.PostDto;
 import baitmate.model.Post;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,5 @@ public interface PostService {
     Post save(Post post);
     Page<Post> findAll(Pageable pageable);
     Post findById(Long id);
+    Map<Integer, Long> getTodayPostActivity();
 }

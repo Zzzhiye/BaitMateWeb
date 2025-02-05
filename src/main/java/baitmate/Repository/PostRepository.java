@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findTopLikedPosts(Pageable pageable);
     
     @Query("SELECT COUNT(p) FROM Post p WHERE p.postTime BETWEEN :startDate AND :endDate")
-    long countByPostTimeBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    long countPostsInDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
     
     @Query("SELECT COALESCE(SUM(p.likeCount), 0) FROM Post p")
     long sumLikeCount();
@@ -33,5 +33,27 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user WHERE p.postStatus = :status ORDER BY p.postTime DESC")
     Page<Post> searchPostByFilter(@Param("status") String status, Pageable pageable);
     
+    List<Post> findByPostTimeBetween(LocalDateTime start, LocalDateTime end);
     
+    @Query("SELECT p FROM Post p ORDER BY p.postTime DESC")
+    List<Post> findRecentPosts(Pageable pageable);
+
+    @Query("SELECT p FROM Post p ORDER BY p.likeCount DESC")
+    List<Post> findTopLikedPostsByPage(Pageable pageable);
+
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.postTime BETWEEN :start AND :end")
+    long countByPostTimeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT SUM(p.likeCount) FROM Post p")
+    long sumLikeCountAlternative();
+
+    @Query("SELECT COUNT(c) FROM Post p JOIN p.comments c")
+    long countCommentsAlternative();
+
+    @Query(value = "SELECT EXTRACT(HOUR FROM post_time) as hour, COUNT(*) as count " +
+           "FROM post " +
+           "WHERE DATE(post_time) = DATE(NOW()) " +
+           "GROUP BY EXTRACT(HOUR FROM post_time) " +
+           "ORDER BY hour", nativeQuery = true)
+    List<Object[]> findHourlyPostCountForToday();
 }

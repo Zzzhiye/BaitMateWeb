@@ -1,7 +1,14 @@
 package baitmate.Controller;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import baitmate.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,15 +23,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import baitmate.Repository.CatchRecordRepository;
 import baitmate.Service.AdminService;
 import baitmate.Service.ImageService;
 import baitmate.Service.PostService;
 import baitmate.Service.UserService;
-import baitmate.model.Admin;
-import baitmate.model.Image;
-import baitmate.model.Post;
-import baitmate.model.User;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -41,6 +46,9 @@ public class AdminController {
 	
 	@Autowired
 	ImageService imageServiceimpl;
+	
+	@Autowired
+	CatchRecordRepository catchRecordRepository;
 	
 	
 	@GetMapping("/login")
@@ -85,11 +93,11 @@ public class AdminController {
 	public String post(@RequestParam(defaultValue = "1") int id, @RequestParam(required=false) String status, Model model) {
 		Page<Post> postList;
 		if(status==null || status.equals("")) {
-			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postStatus").descending());
+			Pageable pageable=PageRequest.of(id-1, 10,Sort.by("postStatus").descending());
 			postList=postServiceImpl.findAll(pageable);
 			
 		}else {
-			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postTime").descending());
+			Pageable pageable=PageRequest.of(id-1, 10,Sort.by("postTime").descending());
 			postList=postServiceImpl.searchPostByFilter(status, pageable);
 		}
 		
@@ -165,5 +173,44 @@ public class AdminController {
 
 		return "PastPost";
 	}
-
+	
+	@GetMapping("/api/dashboard-data")
+    @ResponseBody
+    public Map<String, Object> getDashboardData() {
+        Map<String, Object> data = new HashMap<>();
+        
+        // Get today's post activity (hourly)
+        Map<Integer, Long> postActivity = postServiceImpl.getTodayPostActivity();
+        
+        // Get today's catch records (hourly)
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfDay = now.with(LocalTime.MIN);
+        LocalDateTime endOfDay = now.with(LocalTime.MAX);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String startTime = startOfDay.format(formatter);
+        String endTime = endOfDay.format(formatter);
+        
+        List<CatchRecord> todayCatches = catchRecordRepository.findByTimeBetween(startTime, endTime);
+        Map<Integer, Long> catchActivity = new HashMap<>();
+        for (CatchRecord c : todayCatches) {
+            LocalDateTime recordTime = LocalDateTime.parse(c.getTime(), formatter);
+            int hour = recordTime.getHour();
+            catchActivity.merge(hour, 1L, Long::sum);
+        }
+        
+        // Convert to format needed by Chart.js
+        List<Long> postData = new ArrayList<>(24);
+        List<Long> catchData = new ArrayList<>(24);
+        
+        for (int i = 0; i < 24; i++) {
+            postData.add(postActivity.getOrDefault(i, 0L));
+            catchData.add(catchActivity.getOrDefault(i, 0L));
+        }
+        
+        data.put("postActivity", postData);
+        data.put("catchActivity", catchData);
+        
+        return data;
+    }
 }
