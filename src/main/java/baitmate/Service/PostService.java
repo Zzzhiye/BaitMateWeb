@@ -13,4 +13,5 @@ public interface PostService {
     PostDto getPostById(Long id);
     PostDto toggleLikePost(Long postId, Long userId);
     PostDto toggleSavePost(Long postId, Long userId);
+    byte[] getImageDataByOid(Long oid);
 }

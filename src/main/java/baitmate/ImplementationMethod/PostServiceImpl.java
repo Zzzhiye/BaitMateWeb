@@ -10,9 +10,15 @@ import baitmate.converter.UserConverter;
 import baitmate.model.Image;
 import baitmate.model.Post;
 import baitmate.model.User;
+import org.postgresql.PGConnection;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +36,9 @@ public class PostServiceImpl implements PostService {
     private PostConverter postConverter;
     @Autowired
     private UserConverter userConverter;
+
+    @Autowired
+    private DataSource dataSource;
 
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
@@ -125,29 +134,25 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Post> likedPosts = user.getLikedPosts();
-
         if (likedPosts.contains(post)) {
             // 已点赞 -> 取消点赞
             likedPosts.remove(post);
             post.getLikedByUsers().remove(user);
-            // likeCount -1
             post.setLikeCount(post.getLikeCount() - 1);
         } else {
             // 未点赞 -> 点赞
             likedPosts.add(post);
             post.getLikedByUsers().add(user);
-            // likeCount +1
             post.setLikeCount(post.getLikeCount() + 1);
         }
 
-        // 保存
-        // 注意顺序，一般先保存 post 再保存 user 或都保存
         postRepository.save(post);
         userRepository.save(user);
 
-        // 转换返回
-        return postConverter.toDto(post);
+        // 这里需要一个带 currentUserId 的 toDto
+        return postConverter.toDto(post, userId);
     }
+
 
     public PostDto toggleSavePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
@@ -174,5 +179,31 @@ public class PostServiceImpl implements PostService {
         userRepository.save(user);
 
         return postConverter.toDto(post);
+    }
+
+    @Transactional
+    public byte[] getImageDataByOid(Long oid) {
+        try (Connection conn = dataSource.getConnection()) {
+            // 注：Spring @Transactional 默认已关了 autoCommit，
+            // 但仍可手动 setAutoCommit(false) 以防万一
+            conn.setAutoCommit(false);
+
+            PGConnection pgConn = conn.unwrap(PGConnection.class);
+            LargeObjectManager lobj = pgConn.getLargeObjectAPI();
+
+            // 打开 OID 对应的大对象 (只读)
+            LargeObject lo = lobj.open(oid, LargeObjectManager.READ);
+            int size = (int) lo.size();
+            byte[] data = new byte[size];
+            lo.read(data, 0, size);
+            lo.close();
+
+            // 不要忘了提交事务
+            conn.commit();
+
+            return data;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read large object OID=" + oid, e);
+        }
     }
 }
