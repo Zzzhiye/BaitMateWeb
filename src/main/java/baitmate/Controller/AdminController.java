@@ -1,6 +1,5 @@
 package baitmate.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +14,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import baitmate.Repository.ImageRepository;
-import baitmate.Repository.PostRepository;
-import baitmate.Repository.UserRepository;
+import baitmate.Service.AdminService;
 import baitmate.Service.ImageService;
 import baitmate.Service.PostService;
 import baitmate.Service.UserService;
+import baitmate.model.Admin;
 import baitmate.model.Image;
 import baitmate.model.Post;
 import baitmate.model.User;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/admin/post")
 public class AdminController {	
+	
+	@Autowired
+	AdminService adminServiceImpl;
 	
 	@Autowired
 	PostService postServiceImpl;
@@ -42,9 +43,46 @@ public class AdminController {
 	ImageService imageServiceimpl;
 	
 	
-	@RequestMapping("")
-	public String post(@RequestParam(defaultValue = "1") int id, @RequestParam(required=false) String status, Model model) {
+	@GetMapping("/login")
+	public String loginPage(Model model) {
+		model.addAttribute("admin", new Admin());
+		return "login";
+	}
 	
+	@PostMapping("/validate/login")
+	public String login(Admin admin, HttpSession sessionObj,Model model) {
+		Admin dataU = adminServiceImpl.searchUserByUserName(admin.getUsername());
+		if (dataU == null) {
+			model.addAttribute("errorMsg", "Your user name or password are wrong, please try again!");
+			model.addAttribute("user", new Admin());
+			return "login";
+		} else {
+			if (dataU.getPassword().equals(admin.getPassword())) {
+				sessionObj.setAttribute("username", dataU.getUsername());
+				sessionObj.setAttribute("customerId", dataU.getUsername());
+				return "redirect:/admin/home";
+			} else {
+				model.addAttribute("errorMsg", "Your user name or password are wrong, please try again!");
+				model.addAttribute("user", new Admin());
+				return "login";
+			}
+		}
+	}
+	
+	@GetMapping("/admin/logout")
+	public String logout(HttpSession sessionObj, Model model) {
+		sessionObj.invalidate();
+		return "redirect:/login";
+	}
+	
+	@GetMapping("/admin/home")
+	public String home(HttpSession sessionObj, Model model) {
+        return "homePage";
+    }
+	
+	
+	@GetMapping("/admin/post")
+	public String post(@RequestParam(defaultValue = "1") int id, @RequestParam(required=false) String status, Model model) {
 		Page<Post> postList;
 		if(status==null || status.equals("")) {
 			Pageable pageable=PageRequest.of(id-1, 3,Sort.by("postStatus").descending());
@@ -59,10 +97,10 @@ public class AdminController {
 		model.addAttribute("postList", postList);
 		model.addAttribute("currentPage", id);
 		model.addAttribute("selectedStatus", status);
-		return "Home";
+		return "PostVerification";
 	}
 	
-	@GetMapping("/image/{imageId}")
+	@GetMapping("/admin/post/image/{imageId}")
     public ResponseEntity<byte[]> getImage(@PathVariable("imageId") Long imageId) {
         try {
             byte[] imageData = imageServiceimpl.getImageByImageId(imageId);
@@ -76,7 +114,7 @@ public class AdminController {
         }
     }
 	
-	@GetMapping("/verifyPost/{id}")
+	@GetMapping("/admin/post/verifyPost/{id}")
 	public String userPost(@PathVariable int id, Model model) {
 		Post post = postServiceImpl.findById((long) id);
 		model.addAttribute("post", post);
@@ -89,7 +127,7 @@ public class AdminController {
 		return "Post";
 	}
 	
-	@GetMapping("/user/userPost/{status}/{id}")
+	@GetMapping("/admin/post/user/userPost/{status}/{id}")
 	public String postStatus(@PathVariable int id, @PathVariable String status) {
 		//update post status
 		Post post = postServiceImpl.findById((long) id);
@@ -101,7 +139,7 @@ public class AdminController {
 		
 	}
 	
-	@GetMapping("/user/userAccount/{status}/{id}")
+	@GetMapping("/admin/post/user/userAccount/{status}/{id}")
 	public String userStatus(@PathVariable int id, @PathVariable String status) {
 		//update user status
 		User user=userServiceImpl.searchByUserId(id);
@@ -113,7 +151,7 @@ public class AdminController {
 		
 	}
 	
-	@GetMapping("/user/userPost/{id}")
+	@GetMapping("/admin/post/user/userPost/{id}")
 	public String userPastpost(@PathVariable int id, Model model) {
 		User u= userServiceImpl.searchByUserId(id);
 	

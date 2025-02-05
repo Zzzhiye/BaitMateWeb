@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang ="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>BaitMate Admin Login</title>	
+
+	
+</head>
+
+<body>
+<div></div>
+
+	<section>
+	<form th:action="@{/validate/login}" th:object="${admin}" method="post">
+		<h2 style="text-align: center;">Member Login</h2>
+		<div style="text-align: center;">
+			User Name: <input type="text" id="username" th:field="*{username}" placeholder="User name" required />
+		</div>
+		<div style="text-align: center;">
+			Password: <input type="password" id="password" th:field="*{password}" placeholder="Password" required />
+		</div>
+		<div style="text-align: center;">
+			<button type="submit">Login</button>
+		</div>
+		
+		<div style="text-align: center;"><a th:href="@{/user/resetPassword}">Forget/Change Password</a></div>
+		<div style="text-align: center;"><span th:text="${MSG}" /></div>
+		<div style="text-align: center;"><p><span th:text="${errorMsg}" /></p></div>
+	</form>
+	</section>
+
+
+</body>
+
+</html>
