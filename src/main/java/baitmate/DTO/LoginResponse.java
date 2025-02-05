@@ -7,18 +7,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginResponse {
-    private User user;
+    private long userId;
     private String token;
     private String errorMessage;
 
-    public LoginResponse(User user, String token) {
-        this.user = user;
+    public LoginResponse() {}
+
+    public LoginResponse(long id, String token) {
+        this.userId = id;
         this.token = token;
     }
 
     public LoginResponse(String errorMessage) {
         this.errorMessage = errorMessage;
     }
-
 
 }

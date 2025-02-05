@@ -14,6 +14,8 @@ import org.postgresql.PGConnection;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -134,25 +136,29 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Post> likedPosts = user.getLikedPosts();
+
         if (likedPosts.contains(post)) {
             // 已点赞 -> 取消点赞
             likedPosts.remove(post);
             post.getLikedByUsers().remove(user);
+            // likeCount -1
             post.setLikeCount(post.getLikeCount() - 1);
         } else {
             // 未点赞 -> 点赞
             likedPosts.add(post);
             post.getLikedByUsers().add(user);
+            // likeCount +1
             post.setLikeCount(post.getLikeCount() + 1);
         }
 
+        // 保存
+        // 注意顺序，一般先保存 post 再保存 user 或都保存
         postRepository.save(post);
         userRepository.save(user);
 
         // 这里需要一个带 currentUserId 的 toDto
         return postConverter.toDto(post, userId);
     }
-
 
     public PostDto toggleSavePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
@@ -206,4 +212,32 @@ public class PostServiceImpl implements PostService {
             throw new RuntimeException("Failed to read large object OID=" + oid, e);
         }
     }
+
+	@Override
+	public Page<Post> searchPostByFilter(String status, Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
+		return postList;
+	}
+
+	@Override
+	public Post save(Post post) {
+		// TODO Auto-generated method stub
+		Post p=postRepository.save(post);
+		return p;
+	}
+
+	@Override
+	public Page<Post> findAll(Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<Post> postList=postRepository.findAll(pageable);
+		return postList;
+	}
+
+	@Override
+	public Post findById(Long id) {
+		// TODO Auto-generated method stub
+		Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+		return post;
+	}
 }

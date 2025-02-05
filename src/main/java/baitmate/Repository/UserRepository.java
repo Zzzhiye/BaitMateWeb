@@ -28,4 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     @Query("SELECT COUNT(u) FROM User u WHERE u.joinDate BETWEEN :startDate AND :endDate")
     long countByJoinDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    boolean existsByUsername(String username);
+
 }

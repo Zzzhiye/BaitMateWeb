@@ -1,5 +1,6 @@
 package baitmate.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,7 @@ public class FishingLocation {
     private List<CatchRecord> catchRecords;
 
     @ManyToMany(mappedBy = "savedLocations")
+    @JsonBackReference
     private List<User> usersSaved;
 
     @ManyToMany(mappedBy = "fishingLocations")
