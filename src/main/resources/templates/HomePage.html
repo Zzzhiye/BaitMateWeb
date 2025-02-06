@@ -2,20 +2,211 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<title>Home Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaitMate Admin - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+        }
 
-	
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            color: var(--accent-color);
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .feature-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0;
+            min-height: 3em;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+    </style>
 </head>
 
 <body>
-	<div>Analytic report</div>
-	<div><a th:href="@{/admin/post}" th:text="'Post Verification'">Post Verification</a></div>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand">
+                <i class="fas fa-fish me-2"></i>BaitMate Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/home">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <!--
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-chart-line me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/post">
+                            <i class="fas fa-camera me-1"></i>Posts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/report">
+                            <i class="fas fa-file-alt me-1"></i>Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/notification">
+                            <i class="fas fa-bell me-1"></i>Notification
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/profile">
+                            <i class="fas fa-user me-1"></i>Profile
+                        </a>
+                    </li>
+                    -->
+                </ul>
+                <button class="btn btn-outline-light" onclick="location.href='/admin/logout'">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </button>
+            </div>
+        </div>
+    </nav>
 
-	
+    <div class="container py-4">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome to BaitMate Admin</h1>
+            <p class="welcome-subtitle">Manage and monitor your fishing community platform</p>
+        </div>
 
-	
+        <!-- Feature Cards -->
+        <div class="feature-grid">
+            <a href="/admin/dashboard" class="feature-card">
+                <i class="fas fa-chart-line feature-icon"></i>
+                <h3 class="feature-title">Analytics Dashboard</h3>
+                <p class="feature-description">View detailed statistics and insights about user activity</p>
+            </a>
+            <a href="/admin/post" class="feature-card">
+                <i class="fas fa-camera feature-icon"></i>
+                <h3 class="feature-title">Post Verification</h3>
+                <p class="feature-description">Review and manage user posts and content</p>
+            </a>
+            <a href="/admin/report" class="feature-card">
+                <i class="fas fa-file-alt feature-icon"></i>
+                <h3 class="feature-title">Reports & Analytics</h3>
+                <p class="feature-description">Access detailed reports on catches and activities</p>
+            </a>
+            <a href="/admin/notification" class="feature-card">
+                <i class="fas fa-bell feature-icon"></i>
+                <h3 class="feature-title">Notifications</h3>
+                <p class="feature-description">Manage system notifications and alerts</p>
+            </a>
+            <a href="/admin/profile" class="feature-card">
+                <i class="fas fa-user feature-icon"></i>
+                <h3 class="feature-title">Profile Management</h3>
+                <p class="feature-description">Manage your admin profile settings</p>
+            </a>
+            <a href="#" class="feature-card" onclick="event.preventDefault(); showHelp();">
+                <i class="fas fa-question-circle feature-icon"></i>
+                <h3 class="feature-title">Help & Support</h3>
+                <p class="feature-description">Get help and access documentation</p>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showHelp() {
+            alert('For support, please contact the BaitMate development team.');
+        }
+    </script>
 </body>
-
 
 </html>

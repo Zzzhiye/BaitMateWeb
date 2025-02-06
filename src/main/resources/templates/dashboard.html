@@ -78,6 +78,11 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="/admin/home">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="/admin/dashboard">
                             <i class="fas fa-chart-line me-1"></i>Dashboard
                         </a>
@@ -103,7 +108,7 @@
                         </a>
                     </li>
                 </ul>
-                <button class="btn btn-outline-light" onclick="location.href='/logout'">
+                <button class="btn btn-outline-light" onclick="location.href='/admin/logout'">
                     <i class="fas fa-sign-out-alt me-1"></i>Logout
                 </button>
             </div>
@@ -249,29 +254,37 @@
             <!-- Today's Most Caught Fish -->
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-fish me-2"></i>Today's Most Caught Fish</h5>
+                    <div class="card-header" style="background-color: var(--secondary-color); color: white;">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-fish me-2"></i>Today's Most Caught Fish
+                        </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="height: 300px; overflow-y: auto;">
                         <div class="table-responsive">
-                            <table id="fishTable" class="table">
-                                <thead>
+                            <table id="fishTable" class="table table-hover">
+                                <thead class="table-light sticky-top">
                                     <tr>
                                         <th>Fish</th>
                                         <th>Count</th>
-                                        <th>Popular Location</th>
+                                        <th>Location</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="fish : ${todayMostCaughtFish}">
-                                        <td th:text="${fish.fishName}"></td>
+                                        <td>
+                                            <i class="fas fa-fish text-primary me-2"></i>
+                                            <span th:text="${fish.get('fishName')}">Fish Name</span>
+                                        </td>
                                         <td>
                                             <span class="badge bg-info">
                                                 <i class="fas fa-fish me-1"></i>
-                                                <span th:text="${fish.count}"></span>
+                                                <span th:text="${fish.get('count')}">0</span>
                                             </span>
                                         </td>
-                                        <td th:text="${fish.location}"></td>
+                                        <td>
+                                            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                            <span th:text="${fish.get('location')}">Location</span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -305,7 +318,10 @@
             if (fishTableBody && fishData && fishData.length > 0) {
                 fishTableBody.innerHTML = fishData.map(fish => `
                     <tr>
-                        <td>${fish.fishName}</td>
+                        <td>
+                            <i class="fas fa-fish text-primary me-2"></i>
+                            ${fish.fishName}
+                        </td>
                         <td>
                             <span class="badge bg-info">
                                 <i class="fas fa-fish me-1"></i>

@@ -85,6 +85,11 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="/admin/home">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/admin/dashboard">
                         <i class="fas fa-chart-line me-1"></i>Dashboard
                     </a>
@@ -110,7 +115,7 @@
                     </a>
                 </li>
             </ul>
-            <button class="btn btn-outline-light" onclick="location.href='/logout'">
+            <button class="btn btn-outline-light" onclick="location.href='/admin/logout'">
                 <i class="fas fa-sign-out-alt me-1"></i>Logout
             </button>
         </div>
@@ -143,7 +148,7 @@
         </div>
         <div class="col-md-3">
             <div class="stats-card text-center">
-                <i class="fas fa-fish text-info me-2"></i>
+                <i class="fas fa-fish text-info me-2 stats-icon"></i>
                 <h3 th:text="${stats.totalCatches}">0</h3>
                 <p class="text-muted mb-0">Total Catches</p>
             </div>
