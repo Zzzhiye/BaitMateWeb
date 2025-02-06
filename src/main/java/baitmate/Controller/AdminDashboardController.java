@@ -1,7 +1,6 @@
 package baitmate.Controller;
 
-import baitmate.ImplementationMethod.DashboardService;
-
+import baitmate.ImplementationMethod.DashboardServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,43 +20,43 @@ import java.time.LocalDate;
 public class AdminDashboardController {
 
     @Autowired
-    private DashboardService dashboardService;
+    private DashboardServiceImpl dashboardServiceImpl;
 
     @GetMapping("/dashboard")
     public String getDashboard(Model model) {
         // Basic Statistics
-        model.addAttribute("stats", dashboardService.getDashboardStats());
+        model.addAttribute("stats", dashboardServiceImpl.getDashboardStats());
 
         // Timeline Data
-        model.addAttribute("timelineData", dashboardService.getTimelineData());
+        model.addAttribute("timelineData", dashboardServiceImpl.getTimelineData());
 
         // Catch Statistics
-        model.addAttribute("catchStats", dashboardService.getCatchStatistics());
+        model.addAttribute("catchStats", dashboardServiceImpl.getCatchStatistics());
 
         // Today's Most Caught Fish
-        List<Map<String, Object>> todayMostCaughtFish = dashboardService.getTodayMostCaughtFish();
+        List<Map<String, Object>> todayMostCaughtFish = dashboardServiceImpl.getTodayMostCaughtFish();
         model.addAttribute("todayMostCaughtFish", todayMostCaughtFish);
 
         // User Related
-        model.addAttribute("recentUsers", dashboardService.getRecentUsers());
-        model.addAttribute("mostActiveUsers", dashboardService.getMostActiveUsers());
+        model.addAttribute("recentUsers", dashboardServiceImpl.getRecentUsers());
+        model.addAttribute("mostActiveUsers", dashboardServiceImpl.getMostActiveUsers());
 
         // Post Related
-        model.addAttribute("recentPosts", dashboardService.getRecentPosts());
-        model.addAttribute("topLikedPosts", dashboardService.getTopLikedPosts());
+        model.addAttribute("recentPosts", dashboardServiceImpl.getRecentPosts());
+        model.addAttribute("topLikedPosts", dashboardServiceImpl.getTopLikedPosts());
 
         // Catch Record Related
-        model.addAttribute("recentCatches", dashboardService.getRecentCatches());
-        model.addAttribute("topCatches", dashboardService.getTopCatches());
+        model.addAttribute("recentCatches", dashboardServiceImpl.getRecentCatches());
+        model.addAttribute("topCatches", dashboardServiceImpl.getTopCatches());
 
         // Location Related
-        model.addAttribute("popularLocations", dashboardService.getPopularLocations());
+        model.addAttribute("popularLocations", dashboardServiceImpl.getPopularLocations());
 
         // Activity Summary
-        model.addAttribute("activitySummary", dashboardService.getActivitySummary());
+        model.addAttribute("activitySummary", dashboardServiceImpl.getActivitySummary());
 
         // Engagement Metrics
-        model.addAttribute("engagementMetrics", dashboardService.getEngagementMetrics());
+        model.addAttribute("engagementMetrics", dashboardServiceImpl.getEngagementMetrics());
 
         return "dashboard";
     }
@@ -65,31 +64,31 @@ public class AdminDashboardController {
     @GetMapping("/report")
     public String getReport(Model model) {
         // Basic Statistics
-        model.addAttribute("stats", dashboardService.getDashboardStats());
+        model.addAttribute("stats", dashboardServiceImpl.getDashboardStats());
 
         // User Related
-        model.addAttribute("recentUsers", dashboardService.getRecentUsers());
-        model.addAttribute("mostActiveUsers", dashboardService.getMostActiveUsers());
+        model.addAttribute("recentUsers", dashboardServiceImpl.getRecentUsers());
+        model.addAttribute("mostActiveUsers", dashboardServiceImpl.getMostActiveUsers());
 
         // Post Related
-        model.addAttribute("recentPosts", dashboardService.getRecentPosts());
-        model.addAttribute("topLikedPosts", dashboardService.getTopLikedPosts());
+        model.addAttribute("recentPosts", dashboardServiceImpl.getRecentPosts());
+        model.addAttribute("topLikedPosts", dashboardServiceImpl.getTopLikedPosts());
 
         // Catch Record Related
-        model.addAttribute("recentCatches", dashboardService.getRecentCatches());
-        model.addAttribute("topCatches", dashboardService.getTopCatches());
+        model.addAttribute("recentCatches", dashboardServiceImpl.getRecentCatches());
+        model.addAttribute("topCatches", dashboardServiceImpl.getTopCatches());
 
         // Location Related
-        model.addAttribute("popularLocations", dashboardService.getPopularLocations());
+        model.addAttribute("popularLocations", dashboardServiceImpl.getPopularLocations());
 
         // Activity Summary
-        model.addAttribute("activitySummary", dashboardService.getActivitySummary());
+        model.addAttribute("activitySummary", dashboardServiceImpl.getActivitySummary());
 
         // Engagement Metrics
-        model.addAttribute("engagementMetrics", dashboardService.getEngagementMetrics());
+        model.addAttribute("engagementMetrics", dashboardServiceImpl.getEngagementMetrics());
 
         // Today's Most Caught Fish
-        model.addAttribute("todayMostCaughtFish", dashboardService.getTodayMostCaughtFish());
+        model.addAttribute("todayMostCaughtFish", dashboardServiceImpl.getTodayMostCaughtFish());
 
         return "report";
     }
@@ -98,13 +97,13 @@ public class AdminDashboardController {
     @GetMapping("/api/dashboard-data")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getDashboardData() {
-        Map<String, Object> timelineData = dashboardService.getTimelineData();
-        Map<String, Object> catchStats = dashboardService.getCatchStatistics();
+        Map<String, Object> timelineData = dashboardServiceImpl.getTimelineData();
+        Map<String, Object> catchStats = dashboardServiceImpl.getCatchStatistics();
         
         Map<String, Object> response = new HashMap<>();
         response.put("postActivity", timelineData.get("posts"));
         response.put("catchActivity", timelineData.get("catches"));
-        response.put("todayMostCaughtFish", dashboardService.getTodayMostCaughtFish());
+        response.put("todayMostCaughtFish", dashboardServiceImpl.getTodayMostCaughtFish());
         response.put("catchStats", catchStats);
         
         return ResponseEntity.ok(response);
@@ -114,9 +113,9 @@ public class AdminDashboardController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getDashboardStats() {
         Map<String, Object> dashboardData = Map.of(
-            "basicStats", dashboardService.getDashboardStats(),
-            "activitySummary", dashboardService.getActivitySummary(),
-            "engagementMetrics", dashboardService.getEngagementMetrics()
+            "basicStats", dashboardServiceImpl.getDashboardStats(),
+            "activitySummary", dashboardServiceImpl.getActivitySummary(),
+            "engagementMetrics", dashboardServiceImpl.getEngagementMetrics()
         );
         return ResponseEntity.ok(dashboardData);
     }
@@ -134,7 +133,7 @@ public class AdminDashboardController {
         }
         
         System.out.println("Fetching top catches for month: " + month + ", year: " + year);
-        List<Map<String, Object>> result = dashboardService.getTopCatchesByMonth(month, year);
+        List<Map<String, Object>> result = dashboardServiceImpl.getTopCatchesByMonth(month, year);
         System.out.println("Found " + (result != null ? result.size() : 0) + " records");
         if (result != null && !result.isEmpty()) {
             System.out.println("First record: " + result.get(0));
