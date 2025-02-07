@@ -20,5 +20,13 @@ public class AdminServiceImpl implements AdminService {
 		return a;
 	}
 	
-
+	@Override
+	public Admin getAdminById(int id) {
+		return adminRepo.findById(id).orElse(null);
+	}
+	
+	@Override
+	public Admin updateAdmin(Admin admin) {
+		return adminRepo.save(admin);
+	}
 }

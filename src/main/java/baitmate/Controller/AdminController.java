@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import baitmate.model.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,11 +20,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import baitmate.Repository.CatchRecordRepository;
 import baitmate.Service.AdminService;
@@ -33,6 +39,7 @@ import baitmate.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@SessionAttributes("username")
 public class AdminController {	
 	
 	@Autowired
@@ -78,8 +85,9 @@ public class AdminController {
 	}
 	
 	@GetMapping("/admin/logout")
-	public String logout(HttpSession sessionObj, Model model) {
+	public String logout(HttpSession sessionObj, Model model, SessionStatus sessionStatus) {
 		sessionObj.invalidate();
+		sessionStatus.setComplete();
 		return "redirect:/login";
 	}
 	
@@ -173,6 +181,49 @@ public class AdminController {
 
 		return "PastPost";
 	}
+	
+	@GetMapping("/register")
+    public String showRegisterForm(Model model) {
+        model.addAttribute("admin", new Admin());
+        return "register";
+    }
+    
+    @PostMapping("/register")
+    public String registerAdmin(
+            @Valid @ModelAttribute("admin") Admin admin,
+            BindingResult bindingResult,
+            @RequestParam String confirmPassword,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+        
+        // Check if username already exists
+        Admin existingAdmin = adminServiceImpl.searchUserByUserName(admin.getUsername());
+        if (existingAdmin != null) {
+            model.addAttribute("errorMessage", "Username already exists");
+            return "register";
+        }
+        
+        // Validate password confirmation
+        if (!admin.getPassword().equals(confirmPassword)) {
+            model.addAttribute("errorMessage", "Passwords do not match");
+            return "register";
+        }
+        
+        // Handle validation errors
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+        
+        try {
+            // Save the new admin
+            adminServiceImpl.updateAdmin(admin);
+            redirectAttributes.addFlashAttribute("successMessage", "Admin account created successfully! You can now login.");
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Failed to create account: " + e.getMessage());
+            return "register";
+        }
+    }
 	
 	@GetMapping("/api/dashboard-data")
     @ResponseBody
