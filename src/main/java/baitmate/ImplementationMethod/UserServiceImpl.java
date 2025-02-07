@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
             user.setGender(registerRequest.getGender());
             user.setAddress(registerRequest.getAddress());
             user.setJoinDate(LocalDate.now());
-            user.setUserStatus("ACTIVE");
+            user.setUserStatus("active");
 
             return userRepo.save(user);
         }
