@@ -15,7 +15,8 @@ public class CatchRecord {
     private long id;
 
     private String time;
-    @Lob @Column(columnDefinition = "OID")
+    @Lob
+    @Column(columnDefinition = "OID")
     private byte[] image;
     private double length;
     private double weight;

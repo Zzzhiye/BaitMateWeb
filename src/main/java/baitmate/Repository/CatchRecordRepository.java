@@ -17,7 +17,10 @@ public interface CatchRecordRepository extends JpaRepository<CatchRecord, Long> 
     
     @Query(value = "SELECT COUNT(c.id) FROM catch_record c WHERE c.time BETWEEN :startDate AND :endDate", nativeQuery = true)
     long countByTimeBetween(@Param("startDate") String startDate, @Param("endDate") String endDate);
-    
+
+    @Query("SELECT c FROM CatchRecord c ORDER BY c.length DESC")
+    List<CatchRecord> findTopCatchesByLength(Pageable pageable);
+
     @Query("SELECT COALESCE(COUNT(c) * 1.0 / COUNT(DISTINCT c.user), 0) FROM CatchRecord c")
     long calculateAverageCatchesPerUser();
     
