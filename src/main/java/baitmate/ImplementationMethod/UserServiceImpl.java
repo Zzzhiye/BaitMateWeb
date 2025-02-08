@@ -6,6 +6,8 @@ import baitmate.Service.EmailService;
 import baitmate.Service.UserService;
 import baitmate.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService {
         @Autowired
         EmailService emailService;
 
+        @Autowired
+        PasswordEncoder passwordEncoder;
+
         private Map<String, String> otpStorage = new HashMap<>();
 
         public Optional<User> findByUsername(String username) {
@@ -33,7 +38,7 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepo.findByUsername(username);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                if (user.getPassword().equals(password)) {
+                if (passwordEncoder.matches(password, user.getPassword())) {
                     if ("active".equalsIgnoreCase(user.getUserStatus())) {
                         return user;
                     } else {
@@ -54,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
             User user = new User();
             user.setUsername(registerRequest.getUsername());
-            user.setPassword(registerRequest.getPassword());
+            user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
             user.setPhoneNumber(registerRequest.getPhoneNumber());
             user.setEmail(registerRequest.getEmail());
             user.setAge(registerRequest.getAge());
