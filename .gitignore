@@ -14,7 +14,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ✅ 允许提交 `test/` 目录
+!test/
+!test/**
