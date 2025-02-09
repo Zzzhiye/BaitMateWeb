@@ -130,8 +130,17 @@ public class AdminController {
         }
     }
 	
-	@GetMapping("/admin/post/verifyPost/{id}")
-	public String userPost(@PathVariable int id, Model model) {
+	@PostMapping("/admin/post/verifyPost2")
+	public String userPost(@RequestParam int id, Model model, RedirectAttributes redirct) {
+		System.out.println("aaa");
+
+		redirct.addFlashAttribute("id", id);
+		return "redirect:/admin/post/verifyPage";
+	}
+	
+	@GetMapping("/admin/post/verifyPage")
+	public String userPost(Model model, @ModelAttribute("id") int id) {
+		System.out.println("bbb");
 		Post post = postServiceImpl.findById((long) id);
 		model.addAttribute("post", post);
 		List<Image> imageIds = imageServiceimpl.getImageByPostId(post.getId());
@@ -167,8 +176,8 @@ public class AdminController {
 		
 	}
 	
-	@GetMapping("/admin/post/user/userPost/{id}")
-	public String userPastpost(@PathVariable int id, Model model) {
+	@PostMapping("/admin/post/user/userPost")
+	public String userPastpost(@RequestParam int id, Model model) {
 		User u= userServiceImpl.searchByUserId(id);
 	
 		List<Post> pastPostList=u.getPosts();
