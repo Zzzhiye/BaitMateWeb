@@ -56,4 +56,28 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            "GROUP BY EXTRACT(HOUR FROM post_time) " +
            "ORDER BY hour", nativeQuery = true)
     List<Object[]> findHourlyPostCountForToday();
+
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user " +
+            "LEFT JOIN FETCH p.images " +
+            "WHERE (:status IS NULL OR p.postStatus = :status) " +
+            "AND (:location IS NULL OR p.location LIKE %:location%) " +
+            "AND (:startDate IS NULL OR p.postTime >= :startDate) " +
+            "AND (:endDate IS NULL OR p.postTime <= :endDate) " +
+            "ORDER BY p.postTime DESC")
+    Page<Post> findAllWithFilters(
+            @Param("status") String status,
+            @Param("location") String location,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable
+    );
+
+    @Query("SELECT p FROM Post p " +
+            "LEFT JOIN FETCH p.user " +
+            "LEFT JOIN FETCH p.images " +
+            "ORDER BY p.postTime DESC")
+    List<Post> findAllWithDetails();
+
+    @Query("SELECT p FROM Post p WHERE p.id IN :postIds")
+    List<Post> findAllByPostIds(@Param("postIds") List<Long> postIds);
 }

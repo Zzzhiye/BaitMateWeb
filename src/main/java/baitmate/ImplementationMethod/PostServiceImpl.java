@@ -263,4 +263,26 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
         return post;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Post> getAllPostsWithFilters(
+            String status,
+            String location,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Pageable pageable) {
+
+        return postRepository.findAllWithFilters(status, location, startDate, endDate, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Post> getAllPostsWithDetails() {
+        return postRepository.findAllWithDetails();
+    }
+
+    public List<Post> getPostsByIds(List<Long> postIds) {
+        return postRepository.findAllByPostIds(postIds);
+    }
 }

@@ -11,10 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 
 @Service
@@ -116,4 +113,9 @@ public class UserServiceImpl implements UserService {
 		User u=userRepo.save(user);
 		return u;
 	}
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepo.findAll();
+    }
 }

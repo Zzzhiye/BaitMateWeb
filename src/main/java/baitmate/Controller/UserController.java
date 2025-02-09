@@ -130,4 +130,20 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+
+    @GetMapping("/api/users")
+    @ResponseBody
+    public ResponseEntity<?> getUsersApi() {
+        try {
+            List<User> users = userService.getAllUsers();
+            if (users.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error retrieving users: " + e.getMessage());
+        }
+    }
 }

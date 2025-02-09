@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    
     @Query("SELECT u FROM User u WHERE u.id = :userId")
     User searchByUserId(@Param("userId") long userId);
 
@@ -30,5 +29,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     long countByJoinDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     boolean existsByUsername(String username);
-
 }

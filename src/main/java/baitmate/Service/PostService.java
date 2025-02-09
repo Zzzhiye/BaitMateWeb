@@ -3,6 +3,7 @@ package baitmate.Service;
 import baitmate.DTO.PostDto;
 import baitmate.model.Post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -25,4 +26,12 @@ public interface PostService {
     Page<Post> findAll(Pageable pageable);
     Post findById(Long id);
     Map<Integer, Long> getTodayPostActivity();
+
+    Page<Post> getAllPostsWithFilters(String status, String location,
+                                      LocalDateTime startDate, LocalDateTime endDate,
+                                      Pageable pageable);
+    List<Post> getAllPostsWithDetails();
+
+    List<Post> getPostsByIds(List<Long> postIds);
+
 }

@@ -3,6 +3,7 @@ package baitmate.Service;
 import baitmate.DTO.RegisterRequest;
 import baitmate.model.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService  {
@@ -16,4 +17,5 @@ public interface UserService  {
 
     User searchByUserId(long userId);
     User save(User user);
+    List<User> getAllUsers();
 }
