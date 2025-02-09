@@ -93,6 +93,13 @@ public class AdminDashboardController {
         return "report";
     }
 
+    
+    @GetMapping("/systemPerformance")
+    public String getSystemPerformance(Model model) {
+    	
+    	return "grafana";
+    }
+    
     // API endpoint for AJAX updates
     @GetMapping("/api/dashboard-data")
     @ResponseBody
