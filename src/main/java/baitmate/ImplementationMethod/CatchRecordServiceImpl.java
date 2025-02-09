@@ -49,7 +49,7 @@ public class CatchRecordServiceImpl implements CatchRecordService {
     }
 
     @Override
-    public long calculateAverageCatchesPerUser() {
+    public Double calculateAverageCatchesPerUser() {
         return catchRecordRepository.calculateAverageCatchesPerUser();
     }
 

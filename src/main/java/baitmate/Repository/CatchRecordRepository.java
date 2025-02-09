@@ -21,8 +21,16 @@ public interface CatchRecordRepository extends JpaRepository<CatchRecord, Long> 
     @Query("SELECT c FROM CatchRecord c ORDER BY c.length DESC")
     List<CatchRecord> findTopCatchesByLength(Pageable pageable);
 
-    @Query("SELECT COALESCE(COUNT(c) * 1.0 / COUNT(DISTINCT c.user), 0) FROM CatchRecord c")
-    long calculateAverageCatchesPerUser();
+    @Query("""
+    SELECT COALESCE(
+        CASE 
+            WHEN COUNT(DISTINCT c.user) = 0 THEN 0.0
+            ELSE CAST(COUNT(c) AS double) / CAST(COUNT(DISTINCT c.user) AS double)
+        END
+    , 0.0)
+    FROM CatchRecord c
+""")
+    Double calculateAverageCatchesPerUser();
     
     @Query(value = "SELECT f.fish_name as fishName, COUNT(*) as count, fl.location_name as location " +
            "FROM catch_record c " +

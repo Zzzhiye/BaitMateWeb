@@ -44,8 +44,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardServiceImpl.class);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-
+    
     // Basic Statistics
     public Map<String, Long> getDashboardStats() {
         Map<String, Long> stats = new HashMap<>();
@@ -153,7 +152,11 @@ public class DashboardServiceImpl implements DashboardService {
         Map<String, Long> metrics = new HashMap<>();
         metrics.put("totalLikes", postRepository.sumLikeCount());
         metrics.put("totalComments", postRepository.countComments());
-        metrics.put("averageCatchesPerUser", catchRecordRepository.calculateAverageCatchesPerUser());
+
+        // Double တန်ဖိုးကို Long အဖြစ် ပြောင်းပြီးမှ Map ထဲ ထည့်ပါမယ်
+        Double avgCatches = catchRecordRepository.calculateAverageCatchesPerUser();
+        metrics.put("averageCatchesPerUser", avgCatches != null ? Math.round(avgCatches) : 0L);
+
         return metrics;
     }
 
