@@ -131,17 +131,15 @@ public class AdminController {
     }
 	
 	@PostMapping("/admin/post/verifyPost2")
-	public String userPost(@RequestParam int id, Model model, RedirectAttributes redirct) {
+	public String userPost(@RequestParam Long id, Model model, RedirectAttributes redirct) {
 		System.out.println("aaa");
-
-		redirct.addFlashAttribute("id", id);
-		return "redirect:/admin/post/verifyPage";
+		return "redirect:/admin/post/verifyPage?id=" + id;
 	}
 	
 	@GetMapping("/admin/post/verifyPage")
-	public String userPost(Model model, @ModelAttribute("id") int id) {
+	public String userPost(Model model, @RequestParam(required = true) Long id) {
 		System.out.println("bbb");
-		Post post = postServiceImpl.findById((long) id);
+		Post post = postServiceImpl.findById(id);
 		model.addAttribute("post", post);
 		List<Image> imageIds = imageServiceimpl.getImageByPostId(post.getId());
 		model.addAttribute("imageIds", imageIds);
