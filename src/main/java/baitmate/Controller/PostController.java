@@ -23,6 +23,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,6 +125,16 @@ public class PostController {
         } catch (RuntimeException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/getPostsByDateRange")
+    public ResponseEntity<?> getPostsByDateRange(@RequestParam LocalDate startDate, @RequestParam LocalDate endDate) {
+        try {
+            List<Post> posts = postService.findByPostTimeBetween(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+            return ResponseEntity.ok(posts);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
 

@@ -1,8 +1,6 @@
 package baitmate.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "post", schema = "baitmate")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,7 +36,7 @@ public interface PostService {
                                       LocalDateTime startDate, LocalDateTime endDate,
                                       Pageable pageable);
     List<Post> getAllPostsWithDetails();
-
+    List<Post> findByPostTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<Post> getPostsByIds(List<Long> postIds);
 
 }

@@ -52,6 +52,13 @@ public class PostReportController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) boolean includePosts) throws IOException {
+
+        System.out.println("postIds: " + postIds);
+        System.out.println("allPosts: " + allPosts);
+        System.out.println("startDate: " + startDate);
+        System.out.println("endDate: " + endDate);
+        System.out.println("includePosts: " + includePosts);
+
         ByteArrayInputStream bis = postReportService.generateExcelReport(postIds, allPosts, startDate, endDate, includePosts);
         byte[] reportBytes = bis.readAllBytes();
         ByteArrayResource resource = new ByteArrayResource(reportBytes) {

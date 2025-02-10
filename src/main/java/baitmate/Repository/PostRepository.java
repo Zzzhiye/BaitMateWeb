@@ -80,4 +80,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.id IN :postIds")
     List<Post> findAllByPostIds(@Param("postIds") List<Long> postIds);
+
 }

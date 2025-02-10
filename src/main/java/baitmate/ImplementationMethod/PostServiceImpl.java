@@ -332,4 +332,10 @@ public class PostServiceImpl implements PostService {
     public List<Post> getPostsByIds(List<Long> postIds) {
         return postRepository.findAllByPostIds(postIds);
     }
+
+    @Override
+    @Transactional
+    public List<Post> findByPostTimeBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return postRepository.findByPostTimeBetween(startDate, endDate);
+    }
 }
