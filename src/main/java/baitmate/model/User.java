@@ -96,4 +96,13 @@ public class User {
     )
     @JsonManagedReference
     private List<Post> likedPosts;
+
+    @ManyToMany
+    @JoinTable(
+            name= "user_following",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "folowing_id")
+    )
+    @JsonManagedReference
+    private List<User> following;
 }

@@ -18,4 +18,8 @@ public interface UserService  {
     User searchByUserId(long userId);
     User save(User user);
     List<User> getAllUsers();
+    List<User> findFollowing(long userId);
+    List<User> findFollowers(long userId);
+    void followUser(long userId, long targetId);
+    void unfollowUser(long userId, long targetId);
 }

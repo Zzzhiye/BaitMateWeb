@@ -5,6 +5,7 @@ import baitmate.Repository.UserRepository;
 import baitmate.Service.EmailService;
 import baitmate.Service.UserService;
 import baitmate.model.User;
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,8 +27,10 @@ public class UserServiceImpl implements UserService {
         PasswordEncoder passwordEncoder;
 
         private Map<String, String> otpStorage = new HashMap<>();
+    @Autowired
+    private UserRepository userRepository;
 
-        public Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
             return userRepo.findByUsername(username);
         }
 
@@ -118,4 +121,27 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
+
+    public List<User> findFollowing(long userId) {
+            return userRepo.findFollowing(userId);
+    }
+
+    public List<User> findFollowers(long userId) {
+            return userRepo.findFollowers(userId);
+    }
+
+    public void followUser(long userId, long targetId) {
+            User user = userRepo.searchByUserId(userId);
+            User targetUser = userRepo.searchByUserId(targetId);
+            user.getFollowing().add(targetUser);
+            userRepo.save(user);
+    }
+
+    public void unfollowUser(long userId, long targetId) {
+        User user = userRepo.searchByUserId(userId);
+        User targetUser = userRepo.searchByUserId(targetId);
+        user.getFollowing().remove(targetUser);
+        userRepo.save(user);
+    }
 }
+

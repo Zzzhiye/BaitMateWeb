@@ -131,6 +131,45 @@ public class UserController {
         }
     }
 
+    @PostMapping("/user/{userId}/follow")
+    public ResponseEntity<?> followUser(@PathVariable long userId, @RequestParam long targetUserId) {
+        try {
+            userService.followUser(userId, targetUserId);
+            return ResponseEntity.ok(userId + " successfully followed " + targetUserId);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/user/{userId}/unfollow")
+    public ResponseEntity<?> unfollowUser(@PathVariable long userId, @RequestParam long targetUserId) {
+        try {
+            userService.unfollowUser(userId, targetUserId);
+            return ResponseEntity.ok(userId + " successfully unfollowed " + targetUserId);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}/followers")
+    public ResponseEntity<?> getFollowers(@PathVariable long userId) {
+        try {
+            List<User> followers = userService.findFollowers(userId);
+            return ResponseEntity.ok(followers);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}/following")
+    public ResponseEntity<?> getFollowing(@PathVariable long userId) {
+        try {
+            List<User> following = userService.findFollowing(userId);
+            return ResponseEntity.ok(following);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 
     @GetMapping("/api/users")
     @ResponseBody
