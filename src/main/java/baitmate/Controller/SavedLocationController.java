@@ -6,6 +6,7 @@ import baitmate.Service.UserService;
 import baitmate.model.FishingLocation;
 import baitmate.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,16 +23,26 @@ public class SavedLocationController {
     @Autowired
     private UserRepository userRepository;
 
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeSavedLocation(@RequestParam Long userId, @RequestParam Long locationId) {
+        User user = userService.searchByUserId(userId);
+        FishingLocation location = fishingLocationService.getFishingSpotById(locationId).orElse(null);
+        if (user == null || location == null) {
+            return ResponseEntity.badRequest().body("User or Location Not Found");
+        }
+        user.getSavedLocations().remove(location);
+        userRepository.save(user);
+        return ResponseEntity.ok("Location removed successfully.");
+    }
+
     @PostMapping("/save")
     public ResponseEntity<?> saveFishingLocation(@RequestParam Long userId, @RequestParam Long locationId) {
         User user = userService.searchByUserId(userId);
         FishingLocation location = fishingLocationService.getFishingSpotById(locationId).orElse(null);
-        System.out.println(location);
         if (user == null || location == null) {
             System.out.println("not found");
             return ResponseEntity.badRequest().body("User or Location not found.");
         }
-
         user.getSavedLocations().add(location);
         userRepository.save(user);
         return ResponseEntity.ok("Location saved successfully.");
