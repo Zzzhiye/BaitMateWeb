@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User searchByUserId(long userId) {
 		// TODO Auto-generated method stub
-		User u= userRepo.searchByUserId(userId);
+		User u= userRepo.findById(userId);
 		return u ;
 	}
 

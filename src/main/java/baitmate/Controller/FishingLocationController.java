@@ -15,8 +15,7 @@ import java.util.List;
 public class FishingLocationController {
     @Autowired
     FishingLocationService fishingLocationInt;
-    @Autowired
-    private FishingLocationImpl fishingLocationImpl;
+
 
     @GetMapping
     public List<FishingLocation> getLocations() {
@@ -25,7 +24,7 @@ public class FishingLocationController {
 
     @GetMapping("/{id}")
     public FishingLocation getFishingSpotById(@PathVariable Long id) {
-        return fishingLocationImpl.getFishingSpotById(id)
+        return fishingLocationInt.getFishingSpotById(id)
                 .orElse(null);
     }
 
@@ -34,24 +33,24 @@ public class FishingLocationController {
         if (query == null || query.trim().isEmpty()) {
             return Collections.emptyList(); // 返回空列表，防止空查询导致异常
         }
-        return fishingLocationImpl.searchFishingSpots(query);
+        return fishingLocationInt.searchFishingSpots(query);
     }
 
     @GetMapping("/nearby")
     public List<FishingLocation> getNearbyFishingSpots(@RequestParam double latitude,
                                                    @RequestParam double longitude) {
-        return fishingLocationImpl.findNearbyFishingSpots(latitude, longitude);
+        return fishingLocationInt.findNearbyFishingSpots(latitude, longitude);
     }
 
     @GetMapping("/suggestions")
     public List<String> getSearchSuggestions(@RequestParam String query) {
-        return fishingLocationImpl.getSearchSuggestions(query);
+        return fishingLocationInt.getSearchSuggestions(query);
     }
 
     @PostMapping
     public ResponseEntity<?> saveFishingSpot(@RequestBody FishingLocation fishingSpot) {
         try {
-            fishingLocationImpl.saveFishingSpot(fishingSpot);
+            fishingLocationInt.saveFishingSpot(fishingSpot);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -62,7 +61,7 @@ public class FishingLocationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFishingSpotById(@PathVariable Long id) {
         try {
-            fishingLocationImpl.deleteFishingSpotById(id);
+            fishingLocationInt.deleteFishingSpotById(id);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
