@@ -499,58 +499,58 @@
         </div>
     </div>
 
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Post Reports</h5>
-                    </div>
+    <!-- Post Reports -->
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Post Reports</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <form id="dateRangeForm" onsubmit="fetchPostsByDateRange(event)" class="mb-4">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" required>
 
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <form id="dateRangeForm" onsubmit="fetchPostsByDateRange(event)" class="mb-4">
-                                <label for="startDate">Start Date:</label>
-                                <input type="date" id="startDate" name="startDate" required>
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" name="endDate" required>
 
-                                <label for="endDate">End Date:</label>
-                                <input type="date" id="endDate" name="endDate" required>
-
-                                <button type="submit" class="btn btn-primary">Fetch Posts</button>
-                            </form>
-                            <button onclick="generateReport('word')" class="btn btn-primary me-2">
-                                <i class="bi bi-file-earmark-word"></i> Word Report
-                            </button>
-                            <button onclick="generateReport('excel')" class="btn btn-success">
-                                <i class="bi bi-file-earmark-excel"></i> Excel Report
-                            </button>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>
-                                        <input type="checkbox" id="selectAll" class="form-check-input"
-                                               onclick="toggleSelectAll()">
-                                    </th>
-                                    <th>Title</th>
-                                    <th>Content</th>
-                                    <th>Location</th>
-                                    <th>Status</th>
-                                    <th>Post Time</th>
-                                    <th>Likes</th>
-                                    <th>Saves</th>
-                                    <th>Author</th>
-                                </tr>
-                                </thead>
-                                <tbody id="postsTableBody">
-                                <!-- Posts will be dynamically inserted here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary">Fetch Posts</button>
+                    </form>
+                    <button onclick="generateReport('word')" class="btn btn-primary me-2">
+                        <i class="bi bi-file-earmark-word"></i> Word Report
+                    </button>
+                    <button onclick="generateReport('excel')" class="btn btn-success">
+                        <i class="bi bi-file-earmark-excel"></i> Excel Report
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="form-check-input"
+                                       onclick="toggleSelectAll()">
+                            </th>
+                            <th>Title</th>
+                            <th>Content</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Post Time</th>
+                            <th>Likes</th>
+                            <th>Saves</th>
+                            <th>Author</th>
+                        </tr>
+                        </thead>
+                        <tbody id="postsTableBody">
+                        <!-- Posts will be dynamically inserted here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div id="loadingOverlay" class="loading-overlay d-none">
+    <div id="loadingOverlay" class="loading-overlay d-none">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -689,37 +689,37 @@
     </script>
 
 
-            <script th:inline="javascript"> //Post Reports Management
-                let selectedPosts = [];
+    <script th:inline="javascript"> //Post Reports Management
+    let selectedPosts = [];
 
-            async function fetchPostsByDateRange(event) {
-                event.preventDefault(); // Prevent form submission
-                const startDate = document.getElementById('startDate').value;
-                const endDate = document.getElementById('endDate').value;
+    async function fetchPostsByDateRange(event) {
+        event.preventDefault(); // Prevent form submission
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
 
-                if (!startDate || !endDate) {
-                    alert('Please select both start and end dates.');
-                    return;
-                }
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates.');
+            return;
+        }
 
-                showLoading();
-                try {
-                    const response = await fetch(`/api/posts/getPostsByDateRange?startDate=${startDate}&endDate=${endDate}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch posts within the date range');
-                    }
+        showLoading();
+        try {
+            const response = await fetch(`/api/posts/getPostsByDateRange?startDate=${startDate}&endDate=${endDate}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch posts within the date range');
+            }
 
-                    const data = await response.json();
+            const data = await response.json();
 
-                    // Update the table with fetched posts
-                    const tableBody = document.getElementById('postsTableBody');
-                    tableBody.innerHTML = ''; // Clear existing content
+            // Update the table with fetched posts
+            const tableBody = document.getElementById('postsTableBody');
+            tableBody.innerHTML = ''; // Clear existing content
 
-                    const posts = data.posts || data; // Adjust based on API response
-                    posts.forEach(post => {
-                        const row = document.createElement('tr');
-                        row.className = 'border-b hover:bg-gray-50';
-                        row.innerHTML = `
+            const posts = data.posts || data; // Adjust based on API response
+            posts.forEach(post => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
                 <td class="p-2">
                     <input type="checkbox"
                            value="${post.id}"
@@ -735,166 +735,162 @@
                 <td class="p-2">${post.savedCount || 0}</td>
                 <td class="p-2">${post.user ? escapeHtml(post.user.username) : ''}</td>
             `;
-                        tableBody.appendChild(row);
-                    });
-                } catch (error) {
-                    console.error('Error fetching posts:', error);
-                    alert('Failed to load posts. Please try again.');
-                } finally {
-                    hideLoading();
-                }
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+            alert('Failed to load posts. Please try again.');
+        } finally {
+            hideLoading();
+        }
+    }
+    async function fetchPosts() {
+        showLoading();
+        try {
+            const response = await fetch('/api/posts/getAllPosts');
+            if (!response.ok) {
+                throw new Error('Failed to fetch posts');
             }
+            const data = await response.json();
 
-            async function fetchPosts() {
-                    showLoading();
-                    try {
-                        const response = await fetch('/api/posts/getAllPosts');
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch posts');
-                        }
-                        const data = await response.json();
+            // Get the table body
+            const tableBody = document.getElementById('postsTableBody');
+            tableBody.innerHTML = ''; // Clear existing content
 
-                        // Get the table body
-                        const tableBody = document.getElementById('postsTableBody');
-                        tableBody.innerHTML = ''; // Clear existing content
+            // Get posts from the response (handle both array and paginated response)
+            const posts = data.posts || data;
 
-                        // Get posts from the response (handle both array and paginated response)
-                        const posts = data.posts || data;
+            // Add each post to the table
+            posts.forEach(post => {
+                const row = document.createElement('tr');
+                row.className = 'border-b hover:bg-gray-50';
+                row.innerHTML = `
+                  <td class="p-2">
+                      <input type="checkbox"
+                             value="${post.id}"
+                             class="form-check-input post-checkbox"
+                             onchange="updateSelectedPosts()">
+                  </td>
+                  <td class="p-2">${escapeHtml(post.postTitle || '')}</td>
+                  <td class="p-2 post-content">${escapeHtml(post.postContent || '')}</td>
+                  <td class="p-2">${escapeHtml(post.location || '')}</td>
+                  <td class="p-2">${escapeHtml(post.postStatus || '')}</td>
+                  <td class="p-2">${formatDate(post.postTime)}</td>
+                  <td class="p-2">${post.likeCount || 0}</td>
+                  <td class="p-2">${post.savedCount || 0}</td>
+                  <td class="p-2">${post.user ? escapeHtml(post.user.username) : ''}</td>
+              `;
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+            alert('Failed to load posts. Please try again.');
+        } finally {
+            hideLoading();
+        }
+    }
 
-                        // Add each post to the table
-                        posts.forEach(post => {
-                            const row = document.createElement('tr');
-                            row.className = 'border-b hover:bg-gray-50';
-                            row.innerHTML = `
-                    <td class="p-2">
-                        <input type="checkbox"
-                               value="${post.id}"
-                               class="form-check-input post-checkbox"
-                               onchange="updateSelectedPosts()">
-                    </td>
-                    <td class="p-2">${escapeHtml(post.postTitle || '')}</td>
-                    <td class="p-2 post-content">${escapeHtml(post.postContent || '')}</td>
-                    <td class="p-2">${escapeHtml(post.location || '')}</td>
-                    <td class="p-2">${escapeHtml(post.postStatus || '')}</td>
-                    <td class="p-2">${formatDate(post.postTime)}</td>
-                    <td class="p-2">${post.likeCount || 0}</td>
-                    <td class="p-2">${post.savedCount || 0}</td>
-                    <td class="p-2">${post.user ? escapeHtml(post.user.username) : ''}</td>
-                `;
-                            tableBody.appendChild(row);
-                        });
-                    } catch (error) {
-                        console.error('Error fetching posts:', error);
-                        alert('Failed to load posts. Please try again.');
-                    } finally {
-                        hideLoading();
-                    }
+    function escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleString();
+    }
+
+    function toggleSelectAll() {
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const postCheckboxes = document.querySelectorAll('.post-checkbox');
+        postCheckboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        updateSelectedPosts();
+    }
+    function updateSelectedPosts() {
+        selectedPosts = Array.from(document.querySelectorAll('.post-checkbox:checked'))
+            .map(checkbox => checkbox.value);
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const postCheckboxes = document.querySelectorAll('.post-checkbox');
+        selectAllCheckbox.checked = selectedPosts.length === postCheckboxes.length;
+        selectAllCheckbox.indeterminate = selectedPosts.length > 0 && selectedPosts.length < postCheckboxes.length;
+        //console.log('Selected Posts:', selectedPosts);
+    }
+
+    function showLoading() {
+        document.getElementById('loadingOverlay').classList.remove('d-none');
+    }
+
+    function hideLoading() {
+        document.getElementById('loadingOverlay').classList.add('d-none');
+    }
+
+    function generateReport(type) {
+        if (selectedPosts.length === 0) {
+            if (!confirm('No posts selected. Generate report for all posts?')) {
+                return;
+            }
+        }
+        showLoading();
+
+        // Build the correct query parameters
+        const params = new URLSearchParams();
+
+        if (selectedPosts.length > 0) {
+            // If posts are selected, add each post ID as a separate postIds parameter
+            selectedPosts.forEach(postId => {
+                params.append('postIds', postId);  // Changed from userIds to postIds
+            });
+            params.set('allPosts', 'false');      // Changed from allUsers to allPosts
+        } else {
+            // If no posts selected, generate report for all
+            params.set('allPosts', 'true');       // Changed from allUsers to allPosts
+        }
+
+        params.set('includePosts', 'true');
+
+        const url = `/api/reports/posts/${type}?${params.toString()}`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Report generation failed');
                 }
-
-                function escapeHtml(unsafe) {
-                    if (!unsafe) return '';
-                    return unsafe
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#039;");
-                }
-
-                function formatDate(dateString) {
-                    if (!dateString) return '';
-                    const date = new Date(dateString);
-                    return date.toLocaleString();
-                }
-
-                function toggleSelectAll() {
-                    const selectAllCheckbox = document.getElementById('selectAll');
-                    const postCheckboxes = document.querySelectorAll('.post-checkbox');
-                    postCheckboxes.forEach(checkbox => {
-                        checkbox.checked = selectAllCheckbox.checked;
-                    });
-                    updateSelectedPosts();
-                }
-
-                function updateSelectedPosts() {
-                    selectedPosts = Array.from(document.querySelectorAll('.post-checkbox:checked'))
-                        .map(checkbox => checkbox.value);
-                    const selectAllCheckbox = document.getElementById('selectAll');
-                    const postCheckboxes = document.querySelectorAll('.post-checkbox');
-                    selectAllCheckbox.checked = selectedPosts.length === postCheckboxes.length;
-                    selectAllCheckbox.indeterminate = selectedPosts.length > 0 && selectedPosts.length < postCheckboxes.length;
-                    //console.log('Selected Posts:', selectedPosts);
-                }
-
-                function showLoading() {
-                    document.getElementById('loadingOverlay').classList.remove('d-none');
-                }
-
-                function hideLoading() {
-                    document.getElementById('loadingOverlay').classList.add('d-none');
-                }
-
-            function generateReport(type) {
-                if (selectedPosts.length === 0) {
-                    if (!confirm('No posts selected. Generate report for all posts?')) {
-                        return;
-                    }
-                }
-
-                showLoading();
-
-                // Build the correct query parameters
-                const params = new URLSearchParams();
-
-                if (selectedPosts.length > 0) {
-                    // If posts are selected, add each post ID as a separate postIds parameter
-                    selectedPosts.forEach(postId => {
-                        params.append('postIds', postId);  // Changed from userIds to postIds
-                    });
-                    params.set('allPosts', 'false');      // Changed from allUsers to allPosts
-                } else {
-                    // If no posts selected, generate report for all
-                    params.set('allPosts', 'true');       // Changed from allUsers to allPosts
-                }
-
-                params.set('includePosts', 'true');
-
-                const url = `/api/reports/posts/${type}?${params.toString()}`;
-
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Report generation failed');
-                        }
-                        return response.blob();
-                    })
-                    .then(blob => {
-                        const fileName = type === 'word' ? 'PostReport.docx' : 'PostReport.xlsx';
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
+                return response.blob();
+            })
+            .then(blob => {
+                const fileName = type === 'word' ? 'PostReport.docx' : 'PostReport.xlsx';
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
                         document.body.removeChild(a);
-                    })
-                    .catch(error => {
-                        console.error('Error generating report:', error);
-                        alert('Failed to generate report. Please try again.');
-                    })
-                    .finally(() => {
-                        hideLoading();
-                    });
-            }
+            })
+            .catch(error => {
+                console.error('Error generating report:', error);
+                alert('Failed to generate report. Please try again.');
+            })
+            .finally(() => {
+                hideLoading();
+            });
+    }
 
-
-                // Initialize when the page loads
-                document.addEventListener('DOMContentLoaded', function() {
+    // Initialize when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
                     fetchPosts(); // Fetch posts when page loads
                     updateSelectedPosts();
                 });
-            </script>
+    </script>
 </div>
 
 <!-- Scripts -->
