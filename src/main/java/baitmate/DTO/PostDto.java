@@ -25,9 +25,7 @@ public class PostDto {
     private List<CommentDto> comments;
     private List<ImageDto> images;
 
-    // 如果想返回 savedByUsers 数量，而不需要每个用户信息
-    private int savedByCount;
-
     private boolean likedByCurrentUser;
+    private boolean savedByCurrentUser;
 }
 

@@ -1,5 +1,7 @@
 package baitmate.Controller;
 
+import baitmate.DTO.CreateCommentDto;
+import baitmate.DTO.CreatedPostDto;
 import baitmate.DTO.PostDto;
 import baitmate.Service.PostService;
 import baitmate.converter.PostConverter;
@@ -31,10 +33,9 @@ public class PostController {
     @Autowired
     private PostService postService;
     @Autowired
-    private DataSource dataSource;
-
-    @Autowired
     private PostConverter postConverter;
+    @Autowired
+    private DataSource dataSource;
 
     @GetMapping
     public List<PostDto> getAllPosts() {
@@ -50,11 +51,23 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{Id}/by-user")
+    public ResponseEntity<PostDto> getPostById(
+            @PathVariable Long postId,
+            @RequestParam(required = false) Long userId) {
 
-    @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
-        PostDto created = postService.createPost(postDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        Post post = postService.findById(postId);
+
+        PostDto dto = postConverter.toDto(post, userId);  // 这里会判断 likedByCurrentUser
+
+        return ResponseEntity.ok(dto);
+    }
+
+
+    @PostMapping("/create")
+    public ResponseEntity<Long> createPost(@RequestBody CreatedPostDto postDto) {
+        Long postId = postService.createPost(postDto);
+        return ResponseEntity.ok(postId);
     }
 
     // 删除 post
@@ -170,6 +183,12 @@ public class PostController {
                     .body("Error retrieving posts: " + e.getMessage());
         }
     }
+    @PostMapping("/comment")
+    public ResponseEntity<Long> createComment(@RequestBody CreateCommentDto commentDto) {
+        Long commentId = postService.createComment(commentDto);
+        return ResponseEntity.ok(commentId);
+    }
+
 }
 
 

@@ -20,4 +20,10 @@ public class Image {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public Image() {}
+    public Image(Long imageOid, Post post) {
+        this.image = imageOid;
+        this.post = post;
+    }
 }

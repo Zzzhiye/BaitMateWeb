@@ -1,12 +1,13 @@
 package baitmate.ImplementationMethod;
 
+import baitmate.DTO.CreateCommentDto;
+import baitmate.DTO.CreatedPostDto;
 import baitmate.DTO.PostDto;
-import baitmate.Repository.FishingLocationRepository;
-import baitmate.Repository.PostRepository;
-import baitmate.Repository.UserRepository;
+import baitmate.Repository.*;
 import baitmate.Service.PostService;
 import baitmate.converter.PostConverter;
 import baitmate.converter.UserConverter;
+import baitmate.model.Comment;
 import baitmate.model.Image;
 import baitmate.model.Post;
 import baitmate.model.User;
@@ -16,14 +17,22 @@ import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +45,10 @@ public class PostServiceImpl implements PostService {
     private UserRepository userRepository;
     @Autowired
     private FishingLocationRepository fishingLocationRepository;
+    @Autowired
+    private ImageRepository imageRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private PostConverter postConverter;
@@ -45,6 +58,9 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         Collectors Collectors = null;
@@ -53,65 +69,54 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
-    public PostDto createPost(PostDto postDto) {
-        // 1. dto -> entity
-        Post post = postConverter.toEntity(postDto);
-
-        // 2. 若前端传了 user 信息
-        if (postDto.getUser() != null && postDto.getUser().getId() != null) {
-            User user = userRepository.findById(postDto.getUser().getId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            post.setUser(user);
-        }
-        // 2.1 你也可设置 postTime = LocalDateTime.now() 等
-        post.setPostTime(LocalDateTime.now());
-        post.setLikeCount(0);
-        post.setSavedCount(0);
-
+    @Transactional
+    public Long createPost(CreatedPostDto postDto) {
+        Post post = new Post();
         post.setPostTitle(postDto.getPostTitle());
         post.setPostContent(postDto.getPostContent());
+        post.setLocation(postDto.getLocation());
 
-        // c. 如果前端上传了 fishingLocationId
-//        if (postDto.getFishingLocationId() != null) {
-//            FishingLocation location = fishingLocationRepository
-//                    .findById(postDto.getFishingLocationId())
-//                    .orElseThrow(() -> new RuntimeException("Location not found"));
-//            post.setFishingLocation(location);
-//        }
+        User user = userRepository.findById(postDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        post.setUser(user);
 
-        // 3. 处理 images
-        List<Image> imageEntities = postConverter.toImageEntityList(postDto.getImages(), post);
-        post.setImages(imageEntities);
+        post.setPostTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        post.setLikeCount(0);
+        post.setSavedCount(0);
+        post.setPostStatus("pending");
 
-        // 4. save
         Post saved = postRepository.save(post);
 
-        // 5. entity -> dto
-        return postConverter.toDto(saved);
+        List<Image> images = postDto.getImageBase64List().stream()
+                .map(base64String -> {
+                    byte[] imageBytes = Base64.getDecoder().decode(base64String);
+                    Long oid = saveImageToDatabase(imageBytes);
+                    return new Image(oid, post);
+                })
+                .collect(Collectors.toList());
+
+        post.setImages(images);
+        imageRepository.saveAll(images);
+
+        return post.getId();
     }
 
     public PostDto updatePost(Long postId, PostDto postDto) {
-        // 1. 找到原post
+
         Post existing = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 2. 更新字段
         existing.setPostTitle(postDto.getPostTitle());
         existing.setPostContent(postDto.getPostContent());
-        // ... 其他字段
 
-        // 3. 更新 images
-        //    先把旧的 images 清空或删除，再 set 新的？
-        //    看业务需求，这里示例直接清空再重新设置
+
         existing.getImages().clear();
 
         List<Image> newImages = postConverter.toImageEntityList(postDto.getImages(), existing);
         existing.getImages().addAll(newImages);
 
-        // 4. save
         Post updated = postRepository.save(existing);
 
-        // 5. 返回
         return postConverter.toDto(updated);
     }
 
@@ -216,6 +221,35 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    @Transactional
+    public Long createComment(CreateCommentDto commentDto){
+
+        Comment comment = new Comment();
+        comment.setComment(commentDto.getComment());
+
+        User user = userRepository.findById(commentDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        comment.setUser(user);
+
+        Post post = postRepository.findById(commentDto.getPostId())
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        comment.setPost(post);
+
+        comment.setLikeCount(0);
+        comment.setTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+
+        Comment saved = commentRepository.save(comment);
+
+        return comment.getId();
+
+    }
+
+	@Override
+	public Page<Post> searchPostByFilter(String status, Pageable pageable) {
+		// TODO Auto-generated method stub
+		Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
+		return postList;
+	}
     @Override
     public Map<Integer, Long> getTodayPostActivity() {
         // Get today's start and end time
@@ -237,13 +271,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> searchPostByFilter(String status, Pageable pageable) {
-        // TODO Auto-generated method stub
-        Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
-        return postList;
-    }
-
-    @Override
     public Post save(Post post) {
         // TODO Auto-generated method stub
         Post p=postRepository.save(post);
@@ -257,11 +284,31 @@ public class PostServiceImpl implements PostService {
         return postList;
     }
 
-    @Override
-    public Post findById(Long id) {
-        // TODO Auto-generated method stub
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
-        return post;
+	@Override
+	public Post findById(Long id) {
+		// TODO Auto-generated method stub
+		Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+		return post;
+	}
+
+    public Long saveImageToDatabase(byte[] imageBytes) {
+        return jdbcTemplate.execute((Connection connection) -> {
+            // 获取 Large Object Manager
+            LargeObjectManager lobj = connection.unwrap(org.postgresql.PGConnection.class).getLargeObjectAPI();
+
+            // 创建 Large Object，并返回 OID
+            long oid = lobj.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
+
+            // 打开 Large Object
+            LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
+
+            // 写入数据
+            obj.write(imageBytes);
+            obj.close();
+
+            System.out.println("Successfully inserted image, OID: " + oid);
+            return oid;
+        });
     }
 
     @Override

@@ -37,6 +37,7 @@ public class PostConverter {
         dto.setLikeCount(post.getLikeCount());
         dto.setSavedCount(post.getSavedCount());
         dto.setAccuracyScore(post.getAccuracyScore());
+        dto.setLocation(post.getLocation());
 
         // user
         dto.setUser(userConverter.toDto(post.getUser()));
@@ -62,13 +63,6 @@ public class PostConverter {
                     .map(this::imageToDto)
                     .collect(Collectors.toList());
             dto.setImages(imageDtos);
-        }
-
-        // savedByUsers
-        if (post.getSavedByUsers() != null) {
-            dto.setSavedByCount(post.getSavedByUsers().size());
-        } else {
-            dto.setSavedByCount(0);
         }
         return dto;
     }
@@ -84,15 +78,10 @@ public class PostConverter {
         dto.setLikeCount(post.getLikeCount());
         dto.setSavedCount(post.getSavedCount());
         dto.setAccuracyScore(post.getAccuracyScore());
+        dto.setLocation(post.getLocation());
 
         // user
         dto.setUser(userConverter.toDto(post.getUser()));
-
-        // 若 post 有 fishingLocation
-//        if (post.getFishingLocation() != null) {
-//            dto.setFishingLocationId(post.getFishingLocation().getId());
-//            dto.setFishingLocationName(post.getFishingLocation().getLocationName());
-//        }
 
         // comments
         if (post.getComments() != null) {
@@ -111,25 +100,19 @@ public class PostConverter {
             dto.setImages(imageDtos);
         }
 
-        // savedByUsers
-        if (post.getSavedByUsers() != null) {
-            dto.setSavedByCount(post.getSavedByUsers().size());
+        if (currentUserId != null) {
+            userRepository.findById(currentUserId).ifPresentOrElse(user -> {
+                dto.setLikedByCurrentUser(post.getLikedByUsers().contains(user));
+                dto.setSavedByCurrentUser(post.getSavedByUsers().contains(user));
+            }, () -> {
+                dto.setLikedByCurrentUser(false);
+                dto.setSavedByCurrentUser(false);
+            });
         } else {
-            dto.setSavedByCount(0);
+            dto.setLikedByCurrentUser(false);
+            dto.setSavedByCurrentUser(false);
         }
 
-        if (currentUserId != null) {
-            // 拿到 user, 看看 post.likedByUsers 是否包含
-            User user = userRepository.findById(currentUserId).orElse(null);
-            if (user != null && post.getLikedByUsers().contains(user)) {
-                dto.setLikedByCurrentUser(true);
-            } else {
-                dto.setLikedByCurrentUser(false);
-            }
-        } else {
-            // 若没有传 userId，则默认 false
-            dto.setLikedByCurrentUser(false);
-        }
 
         return dto;
     }
@@ -145,6 +128,7 @@ public class PostConverter {
         post.setLikeCount(dto.getLikeCount());
         post.setSavedCount(dto.getSavedCount());
         post.setAccuracyScore(dto.getAccuracyScore());
+        post.setLocation(dto.getLocation());
         // user 需要再查数据库或根据 dto.getUser().getId() setUser
         post.setUser(userConverter.toEntity(dto.getUser()));
         // comments, images 一般新增Post时不一定包含，需要看业务需求

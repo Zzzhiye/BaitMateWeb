@@ -1,5 +1,8 @@
 package baitmate.Service;
 
+import baitmate.DTO.CommentDto;
+import baitmate.DTO.CreateCommentDto;
+import baitmate.DTO.CreatedPostDto;
 import baitmate.DTO.PostDto;
 import baitmate.model.Post;
 
@@ -13,7 +16,8 @@ import org.springframework.data.domain.Pageable;
 public interface PostService {
 
     List<PostDto> getAllPosts();
-    PostDto createPost(PostDto postDto);
+    Long createPost(CreatedPostDto postDto);
+    Long createComment(CreateCommentDto commentDto);
     PostDto updatePost(Long postId, PostDto postDto);
     void deletePost(Long postId, Long userId);
     PostDto getPostById(Long id);
