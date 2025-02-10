@@ -83,7 +83,7 @@ public class PostServiceImpl implements PostService {
         post.setPostTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         post.setLikeCount(0);
         post.setSavedCount(0);
-        post.setPostStatus("pending");
+        post.setPostStatus(postDto.getStatus());
 
         Post saved = postRepository.save(post);
 

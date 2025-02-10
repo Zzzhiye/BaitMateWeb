@@ -200,7 +200,6 @@ public class PostController {
         Long commentId = postService.createComment(commentDto);
         return ResponseEntity.ok(commentId);
     }
-
 }
 
 
