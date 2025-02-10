@@ -1,6 +1,6 @@
 package baitmate.Controller;
 
-import baitmate.ImplementationMethod.PostReportService;
+import baitmate.Service.PostReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
