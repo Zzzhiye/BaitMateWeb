@@ -130,7 +130,7 @@ public class PostReportServiceImpl implements PostReportService {
 
         XWPFTableRow headerRow = table.getRow(0);
         String[] headers = {"Post ID", "Title", "Status", "Location", "Post Time",
-                "Likes", "Saves", "Accuracy Score", "Comments"};
+                "Likes", "Saves", "Accuracy Score", "Comments","Author"};
 
         for (int i = 0; i < headers.length; i++) {
             XWPFTableCell cell = i == 0 ? headerRow.getCell(0) : headerRow.addNewTableCell();
@@ -149,6 +149,7 @@ public class PostReportServiceImpl implements PostReportService {
             row.getCell(6).setText(String.valueOf(post.getSavedCount()));
             row.getCell(7).setText(String.format("%.2f", post.getAccuracyScore()));
             row.getCell(8).setText(String.valueOf(post.getComments().size()));
+            row.getCell(9).setText(post.getUser().getUsername());
         }
     }
 
@@ -237,7 +238,7 @@ public class PostReportServiceImpl implements PostReportService {
 
         Row headerRow = sheet.createRow(0);
         String[] headers = {"Post ID", "Title", "Status", "Location", "Post Time",
-                "Likes", "Saves", "Accuracy Score", "Comments Count", "Images Count"};
+                "Likes", "Saves", "Accuracy Score", "Comments Count", "Images Count","Author"};
 
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
@@ -258,6 +259,7 @@ public class PostReportServiceImpl implements PostReportService {
             row.createCell(7).setCellValue(post.getAccuracyScore());
             row.createCell(8).setCellValue(post.getComments().size());
             row.createCell(9).setCellValue(post.getImages().size());
+            row.createCell(10).setCellValue(post.getUser().getUsername());
         }
     }
 
