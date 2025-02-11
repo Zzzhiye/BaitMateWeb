@@ -39,7 +39,6 @@ import baitmate.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@SessionAttributes("username")
 public class AdminController {
 
 	@Autowired
