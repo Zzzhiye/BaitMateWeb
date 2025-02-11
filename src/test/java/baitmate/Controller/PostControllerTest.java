@@ -36,7 +36,6 @@ class PostControllerTest {
 
     @BeforeEach
     void setUp() {
-        // 初始化 MockMvc
         mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
 
         // 初始化 Mock 数据
