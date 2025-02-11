@@ -1,0 +1,37 @@
+version: '3.8'  # 使用 3.8 以支持 `condition: service_healthy`
+services:
+  web:
+    build: ./BaitMateWeb
+    ports:
+      - "8080:8080"
+    depends_on:
+      - python-api
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://baitmate.c7somy80e77m.ap-southeast-1.rds.amazonaws.com:5432/postgres?currentSchema=baitmate
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SERVER_SERVLET_SESSION_TIMEOUT=30m
+      - SPRING_SESSION_STORE_TYPE=jdbc
+    networks:
+      - baitmate-network
+
+  python-api:
+    build: ./BaitMatePython
+    ports:
+      - "5000:5000"
+    networks:
+      - baitmate-network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+      - python-api
+    networks:
+      - baitmate-network
+
+networks:
+  baitmate-network:
+    driver: bridge
