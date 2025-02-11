@@ -13,22 +13,22 @@ jobs:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🐞 Pull OWASP ZAP Docker Image
-        run: docker pull owasp/zap-stable
+      - name: 🐞 拉取正确镜像
+        run: |
+          docker pull owasp/zap-stable  # 注意镜像名称已移除 "2docker"
+          docker tag owasp/zap-stable zap-image  # 添加镜像别名
 
-      - name: 🕷️ Run OWASP ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.5.0
+      - name: 🕷️ 执行ZAP扫描
+        uses: zaproxy/action-full-scan@v1.0.0  # 升级到最新版Action
         with:
           target: "http://47.129.5.86:8080"
-          cmd_options: "-I -j"  # 忽略警告并生成JSON报告
-          fail_action: false
+          cmd_options: "-I -T 60"  # 增加超时设置
           rules_file_name: ".zap/rules.tsv"
 
-      - name: 📤 Upload ZAP Report
+      - name: 📤 上传报告
         uses: actions/upload-artifact@v4
         with:
-          name: ZAP-Scan-Report
+          name: ZAP-Security-Report
           path: |
             zap_scan.log
             zap-report.html
-            zap-report.json
