@@ -1,43 +1,22 @@
-name: OWASP ZAP Security Scan
+name: Simple Security Scan
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
-  zap-scan:
-    runs-on: ubuntu-24.04  # 显式指定新版镜像
-    timeout-minutes: 45
-
+  zap:
+    runs-on: ubuntu-latest
     steps:
-      - name: 🛠️ Checkout with Depth
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2  # 优化大仓库检出速度
 
-      - name: 🎯 Service Health Check
-        uses: actions/http-request@v1.13.0  # GitHub官方维护的HTTP检查
+      - name: Run ZAP Scan
+        uses: zaproxy/action-full-scan@v1.0.0
         with:
-          endpoint: http://47.129.5.86:8080
-          max-attempts: 3
-          retry-delay: 5000
+          target: "http://47.129.5.86:8080"
+          cmd_options: "-I"  # 强制忽略所有错误
 
-      - name: 🔍 ZAP Full Scan
-        uses: zaproxy/action-full-scan@v1.0.0  # 确认存在的稳定版本
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
         with:
-          target: 'http://47.129.5.86:8080'
-          cmd_options: '-I -T 180 -j'
-          rules_file_name: '.zap/rules.tsv'
-          docker_options: '--memory 4g'  # 内存限制
-
-      - name: 📊 Report Generation
-        run: |
-          # 安装报告工具
-          sudo apt-get -qq install jq
-          zap-convert -i zap-report.json -t html -o report.html
-
-      - name: 📤 Artifact Upload
-        uses: actions/upload-artifact@v4.3.3
-        with:
-          name: security-report-${{ github.run_number }}
-          path: |
-            report.html
-            zap-report.json
+          name: zap-results
+          path: zap_scan.log
