@@ -239,12 +239,12 @@ public class PostServiceImpl implements PostService {
 
     }
 
-	@Override
-	public Page<Post> searchPostByFilter(String status, Pageable pageable) {
-		// TODO Auto-generated method stub
-		Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
-		return postList;
-	}
+    @Override
+    public Page<Post> searchPostByFilter(String status, Pageable pageable) {
+        // TODO Auto-generated method stub
+        Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
+        return postList;
+    }
     @Override
     public Map<Integer, Long> getTodayPostActivity() {
         // Get today's start and end time
@@ -279,12 +279,12 @@ public class PostServiceImpl implements PostService {
         return postList;
     }
 
-	@Override
-	public Post findById(Long id) {
-		// TODO Auto-generated method stub
-		Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
-		return post;
-	}
+    @Override
+    public Post findById(Long id) {
+        // TODO Auto-generated method stub
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+        return post;
+    }
 
     public Long saveImageToDatabase(byte[] imageBytes) {
         return jdbcTemplate.execute((Connection connection) -> {

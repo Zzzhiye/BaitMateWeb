@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Announcement Form</title>
+    <!-- Bootstrap 和 Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<style>
+    .button-group {
+        margin: 20px 0;
+    }
+
+    .button.blue {
+        background-color: #2c3e50;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .button.blue:hover {
+        background-color: #34495e;
+    }
+
+    #fileInput {
+        display: none;
+    }
+
+    .loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .table-sm {
+        font-size: 0.9rem;
+    }
+</style>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark mb-4" style="background-color: #2c3e50;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"><i class="fas fa-fish me-2"></i>BaitMate Admin</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <!-- 删除重复的Dashboard链接 -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dashboard"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/home"><i class="fas fa-home me-1"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/users"><i class="fas fa-users me-1"></i>Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/reports"><i class="fas fa-file-alt me-1"></i>Reports</a>
+                </li>
+            </ul>
+            <button class="btn btn-outline-light" onclick="location.href='/logout'">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- 主要内容 -->
+<div class="container">
+    <!-- Use a form with enctype="multipart/form-data" -->
+    <form id="announcementForm" enctype="multipart/form-data">  <!-- CRITICAL: Add enctype -->
+        <div class="form-group">
+            <label for="announcementType">Type of announcement</label>
+            <select id="announcementType" class="form-control" name="announcementType"> <!-- Added name attribute -->
+                <option value="send to all users">send to all users</option>
+                <option value="send to single user">send to single user</option>
+            </select>
+        </div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>From</th>
+                <th id="recipientHeader">To</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <input type="text" id="senderInput" value="System Admin" readonly class="form-control" name="sender">  <!-- Added name attribute -->
+                </td>
+                <td id="recipientContainer">
+                    <input type="text" id="recipientInput" placeholder="Enter user's username" class="form-control" name="recipient"> <!-- Added name attribute -->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Subject</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <input type="text" id="subjectInput" placeholder="Enter announcement subject" class="form-control" name="subject"> <!-- Added name attribute -->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="mt-3">
+                <label for="announcementText">Message Content</label>
+                <textarea id="announcementText" placeholder="Enter your announcement here" class="form-control" rows="6" name="text"></textarea> <!-- Added name attribute, changed ID to match DTO -->
+            </div>
+        </div>
+
+        <div class="button-group d-flex align-items-center">
+            <label for="fileInput" class="button blue mb-0">
+                <i class="fas fa-paperclip"></i> Attachment
+            </label>
+            <input type="file" id="fileInput" name="attachments" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+            <button type="button" class="button blue" id="btnSaveDraft">  <!-- Added type="button" -->
+                <i class="fas fa-save"></i> Save Draft
+            </button>
+            <button  type="button" class="button blue" id="btnSend">  <!-- Added type="button" -->
+                <i class="fas fa-paper-plane"></i> Send
+            </button>
+        </div>
+
+        <div id="fileNamesList" class="mt-3">
+
+        </div>
+    </form> <!-- Close the form tag -->
+</div>
+
+<!-- 添加通知列表区域 -->
+<div class="container mt-4">
+    <h3>Notifications</h3>
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-outline-primary" onclick="loadNotifications()">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+    <div id="notificationsList"></div>
+</div>
+
+<!-- 添加必要的JavaScript依赖 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 变量声明
+    const announcementForm = document.getElementById('announcementForm'); // Get the form element
+    const fileInput = document.getElementById('fileInput');
+    const btnSend = document.getElementById('btnSend');
+    const btnSaveDraft = document.getElementById('btnSaveDraft');
+    const senderInput = document.getElementById('senderInput');
+    const recipientInput = document.getElementById('recipientInput');
+    const subjectInput = document.getElementById('subjectInput');
+    const announcementText = document.getElementById('announcementText');
+    const announcementType = document.getElementById('announcementType');
+    const recipientContainer = document.getElementById('recipientContainer');
+    const recipientHeader = document.getElementById('recipientHeader');
+    const fileNamesList = document.getElementById('fileNamesList');
+
+    // 初始化选中文件数组
+    let selectedFiles = [];
+
+    // 添加文件大小检查
+    function isFileSizeValid(file) {
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        return file.size <= maxSize;
+    }
+
+    fileInput.addEventListener('change', (event) => {
+        Array.from(fileInput.files).forEach(file => {
+            if (!isFileSizeValid(file)) {
+                alert(`File ${file.name} is too large. Maximum size is 10MB`);
+                return;
+            }
+            if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                selectedFiles.push(file);
+            }
+        });
+        refreshFileList();
+        fileInput.value = ""; // Clear the file input
+    });
+
+    // 改进文件列表显示
+    function refreshFileList() {
+        fileNamesList.innerHTML = "";
+        if (selectedFiles.length === 0) {
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.className = 'table table-sm';
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Size</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+        `;
+        const tbody = document.createElement('tbody');
+
+        selectedFiles.forEach((file, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${file.name}</td>
+                <td>${(file.size / 1024).toFixed(2)} KB</td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-file" data-index="${index}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        fileNamesList.appendChild(table);
+
+        // 添加删除事件监听
+        document.querySelectorAll('.delete-file').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const index = parseInt(e.currentTarget.getAttribute('data-index'));
+                selectedFiles.splice(index, 1);
+                refreshFileList();
+            });
+        });
+    }
+
+    // 根据公告类型显示/隐藏收件人
+    announcementType.addEventListener('change', () => {
+        if (announcementType.value === "send to all users") {
+            recipientContainer.style.display = "none";
+            recipientHeader.style.display = "none";
+        } else {
+            recipientContainer.style.display = "";
+            recipientHeader.style.display = "";
+        }
+    });
+
+    // 初始化时触发一次
+    announcementType.dispatchEvent(new Event('change'));
+
+    btnSend.addEventListener('click', async () => { // Add async
+        // Prevent form submission with preventDefault
+
+        try {
+            // 表单验证
+            if (announcementType.value === "send to single user" && !recipientInput.value.trim()) {
+                alert('Please enter recipient');
+                return;
+            }
+            if (!subjectInput.value.trim()) {
+                alert('Please enter subject');
+                return;
+            }
+            if (!announcementText.value.trim()) {
+                alert('Please enter announcement text');
+                return;
+            }
+
+            // 显示loading状态
+            btnSend.disabled = true;
+            btnSend.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            const formData = new FormData(announcementForm); // Use the form element
+            // No need to append other fields, they are included because of 'name' attributes.
+
+            // Add files separately, FormData appends them correctly
+            for (let file of selectedFiles) {
+                formData.append('attachments', file); // Correctly append each file
+            }
+
+
+            const response = await fetch('/admin/send', { // Correct endpoint
+                method: 'POST',
+                body: formData // No need for Content-Type header with FormData
+            });
+
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Failed to send announcement');
+            }
+
+            const result = await response.text();
+            console.log('Success:', result);
+            alert('Announcement sent successfully!');
+
+            // 清空表单
+            resetForm();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to send announcement: ' + error.message);
+        } finally {
+            // 恢复按钮状态
+            btnSend.disabled = false;
+            btnSend.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+        }
+    });
+
+    // 添加重置表单函数
+    function resetForm() {
+        announcementForm.reset(); // This will reset all form fields
+        selectedFiles = []; // Clear selected files
+        refreshFileList(); // Update the file list display
+        announcementType.dispatchEvent(new Event('change')); // Re-trigger the recipient display logic
+    };
+
+    // 添加通知相关的函数
+    function loadNotifications() {
+        fetch('/admin/notifications?username=' + encodeURIComponent('currentUsername'))
+            .then(response => response.json())
+            .then(notifications => {
+                const notificationsList = document.getElementById('notificationsList');
+                notificationsList.innerHTML = '';
+
+                const table = document.createElement('table');
+                table.className = 'table';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Content</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                `;
+
+                notifications.forEach(notification => {
+                    const row = table.querySelector('tbody').insertRow();
+                    row.innerHTML = `
+                        <td>${notification.title}</td>
+                        <td>${notification.content}</td>
+                        <td>${new Date(notification.createTime).toLocaleString()}</td>
+                        <td>${notification.read ? 'Read' : '<span class="badge bg-primary">New</span>'}</td>
+                        <td>
+                            ${!notification.read ?
+                        `<button class="btn btn-sm btn-outline-success" onclick="markAsRead(${notification.id})">
+                                    Mark as Read
+                                </button>` :
+                        ''
+                    }
+                        </td>
+                    `;
+                });
+
+                notificationsList.appendChild(table);
+            })
+            .catch(error => console.error('Error loading notifications:', error));
+    }
+
+    function markAsRead(notificationId) {
+        fetch(`/admin/notifications/read/${notificationId}`, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (response.ok) {
+                    loadNotifications(); // 重新加载通知列表
+                } else {
+                    throw new Error('Failed to mark notification as read');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 页面加载时加载通知
+    document.addEventListener('DOMContentLoaded', () => {
+        loadNotifications();
+    });
+</script>
+</body>
+</html>
