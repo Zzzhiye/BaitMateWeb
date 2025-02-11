@@ -51,53 +51,62 @@ public class AdminPasswordController {
     @PostMapping("/forgot-password")
     @ResponseBody
     public ResponseEntity<?> adminForgotPassword(@RequestBody ForgotPasswordRequest request, HttpSession session) {
-        logger.info("Received forgot password request for admin: {}", request.getUsername());
-
-        // Input validation
-        if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("<p style='color:red;'>Username cannot be empty.</p>");
-        }
-        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("<p style='color:red;'>Email cannot be empty.</p>");
-        }
-        // Check if email format as @gmail.com
-        if (!request.getEmail().toLowerCase().endsWith("@gmail.com")) {
-            return ResponseEntity.badRequest().body("<p style='color:red;'>Email must be a Gmail address.</p>");
-        }
-
-        // Retrieve admin by username
-        Admin admin = adminService.searchUserByUserName(request.getUsername());
-        if (admin == null) {
-            logger.warn("Admin not found: {}", request.getUsername());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("<p style='color:red;'>Admin not found</p>");
-        }
-
-        // Email validation: Check if entered email matches the admin's actual email
-        if (!admin.getEmail().equalsIgnoreCase(request.getEmail())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("<p style='color:red;'>Username and email do not match.</p>");
-        }
-
-        // Generate OTP
-        String adminOTP = String.format("%06d", new Random().nextInt(999999));
-        logger.info("Generated Admin OTP: {}", adminOTP);
-
-        // Store OTP and email in the session
-        session.setAttribute("otp", adminOTP);
-        session.setAttribute("email", admin.getEmail()); // Store the *correct* email
+        logger.info("Received forgot password request for username: {} and email: {}",
+                request.getUsername(), request.getEmail());
 
         try {
+            // Input validation
+            if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+                logger.warn("Empty username received");
+                return ResponseEntity.badRequest().body("<p style='color:red;'>Username cannot be empty.</p>");
+            }
+
+
+            // Check if email format is @gmail.com
+            if (request.getEmail() == null ||
+                    !request.getEmail().trim().toLowerCase().matches("^[a-zA-Z0-9._%+-]+@gmail\\.com$")) {
+                logger.warn("Invalid email format: {}", request.getEmail());
+                return ResponseEntity.badRequest().body("<p style='color:red;'>Email must be a valid Gmail address.</p>");
+            }
+
+            // Retrieve admin by username first
+            Admin admin = adminService.searchUserByUserName(request.getUsername());
+            if (admin == null) {
+                logger.warn("Admin not found: {}", request.getUsername());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("<p style='color:red;'>Admin username not found.</p>");
+            }
+
+            // Verify email matches
+            if (!admin.getEmail().equalsIgnoreCase(request.getEmail().trim())) {
+                logger.warn("Email mismatch for admin: {}", request.getUsername());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("<p style='color:red;'>The email address does not match our records.</p>");
+            }
+
+            // Generate and store OTP
+            String adminOTP = String.format("%06d", new Random().nextInt(999999));
+            session.setAttribute("otp", adminOTP);
+            session.setAttribute("email", admin.getEmail());
+
+            logger.info("Generated OTP for admin: {}", request.getUsername());
+
             // Send OTP email
-            emailService.sendSimpleMessage(admin.getEmail(), // Send to the *correct* email
+            emailService.sendSimpleMessage(
+                    admin.getEmail(),
                     "Admin Password Reset OTP",
-                    "Your OTP for password reset is: " + adminOTP);
-            return ResponseEntity.ok("<p style='color:green;'>OTP sent successfully to " + admin.getEmail() + "</p>");
+                    "Your OTP for password reset is: " + adminOTP
+            );
+
+            logger.info("OTP sent successfully to: {}", admin.getEmail());
+            return ResponseEntity.ok("<p style='color:green;'>OTP sent successfully to your email.</p>");
+
         } catch (Exception ex) {
-            logger.error("Failed to send OTP email", ex);
+            logger.error("Error in forgot password process", ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("<p style='color:red;'>Failed to send OTP email: " + ex.getMessage() + "</p>");
+                    .body("<p style='color:red;'>An error occurred. Please try again later.</p>");
         }
     }
-
 
     @PostMapping("/validate-otp")
     @ResponseBody
