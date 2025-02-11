@@ -8,7 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,6 +27,9 @@ class AdminServiceTest {
     private AdminServiceImpl adminService;
 
     private Admin testAdmin;
+    
+    @Mock
+	private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -30,16 +37,17 @@ class AdminServiceTest {
         testAdmin.setId(1);
         testAdmin.setName("Admin User");
         testAdmin.setUsername("admin123");
-        testAdmin.setEmail("admin@example.com");
+        testAdmin.setEmail("admin@gmail.com");
         testAdmin.setAddress("123 Admin Street");
         testAdmin.setPassword("Secure@123");
+        Mockito.lenient().when(passwordEncoder.encode(any())).thenReturn("EncodeSecure@123");
     }
 
     /** ✅ 测试 searchUserByUserName: 找到用户 */
     @Test
     void testSearchUserByUserName_Found() {
 
-
+    	when(adminRepository.searchUserByUserName(any())).thenReturn(testAdmin);
         Admin admin = adminService.searchUserByUserName("admin123");
 
         assertNotNull(admin);

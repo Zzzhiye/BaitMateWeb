@@ -1,8 +1,9 @@
 package baitmate.Service;
 
 import baitmate.DTO.RegisterRequest;
-import baitmate.Repository.UserRepository;
 import baitmate.ImplementationMethod.UserServiceImpl;
+import baitmate.Repository.UserRepository;
+import baitmate.model.Admin;
 import baitmate.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserRepository userRepo;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -45,7 +47,7 @@ class UserServiceTest {
         testUser.setUserStatus("active");
 
         // ✅ 允许未使用的 stub，防止 UnnecessaryStubbingException
-        Mockito.lenient().when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(testUser));
+        Mockito.lenient().when(userRepo.findByUsername("testUser")).thenReturn(Optional.of(testUser));
         Mockito.lenient().when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
     }
 
@@ -66,11 +68,11 @@ class UserServiceTest {
         request.setPassword("newPass123");
         request.setEmail("new@example.com");
 
-        when(userRepository.existsByUsername("newUser")).thenReturn(false);
+        when(userRepo.existsByUsername("newUser")).thenReturn(false);
         when(passwordEncoder.encode("newPass123")).thenReturn("encodedPass");
 
         // ✅ 只 mock 必要的 save
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+        when(userRepo.save(any(User.class))).thenAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setId(2L); // 模拟数据库存储后的 ID
             return user;

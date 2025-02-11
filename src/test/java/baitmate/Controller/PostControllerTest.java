@@ -67,14 +67,6 @@ class PostControllerTest {
         assertEquals("Test Title", response.getBody().getPostTitle());
     }
 
-    /** ✅ 测试创建帖子 */
-    @Test
-    void createPost() {
-        when(postService.createPost(any(baitmate.DTO.CreatedPostDto.class)));
-
-
-    }
-
     /** ✅ 测试删除帖子（成功） */
     @Test
     void deletePost_Success() {

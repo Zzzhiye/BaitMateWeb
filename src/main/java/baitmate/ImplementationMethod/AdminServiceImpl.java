@@ -36,11 +36,6 @@ public class AdminServiceImpl implements AdminService {
 	public void updateAdmin(Admin admin) {
 		logger.info("Updating/Creating admin: {}", admin.getUsername());
 
-		// Validate email format if present
-		if (admin.getEmail() != null && !validateEmailFormat(admin.getEmail())) {
-			throw new IllegalArgumentException("Invalid email format");
-		}
-
 		// Encode password before saving (only if it's a new password or being changed)
 		if(admin.getId() == 0 || !admin.getPassword().startsWith("$2a$")) { //Simple check to determine new password
 			admin.setPassword(passwordEncoder.encode(admin.getPassword()));
@@ -51,11 +46,6 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public Admin getAdminById(Integer  id) {
 		return adminRepository.findById(id).orElse(null);
-	}
-
-	@Override
-	public boolean validateEmailFormat(String email) {
-		return email != null && email.toLowerCase().endsWith("@gmail.com");
 	}
 
 	@Override
