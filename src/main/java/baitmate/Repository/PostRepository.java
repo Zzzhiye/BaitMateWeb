@@ -1,5 +1,6 @@
 package baitmate.Repository;
 
+import baitmate.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -83,5 +84,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
     List<Post> findByUserUsername(@Param("username") String username);
+
+    List<Post> findAllByUser(User user);
 
 }

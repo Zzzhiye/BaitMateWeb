@@ -64,6 +64,18 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostDto> getPostByUser(Long userId) {
+        User user = userRepository.searchByUserId(userId);
+        if (user !=null) {
+            System.out.println("Retrieving posts by "+ userId);
+            List<Post> posts = postRepository.findAllByUser(user);
+            Collectors Collectors = null;
+            return posts.stream()
+                    .map(postConverter::toDto)
+                    .collect(Collectors.toList());
+        } else return null;
+    }
+
     @Transactional
     public Long createPost(CreatedPostDto postDto) {
         Post post = new Post();
