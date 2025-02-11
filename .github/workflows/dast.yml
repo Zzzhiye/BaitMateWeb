@@ -5,56 +5,36 @@ on: [push, pull_request]
 jobs:
   zap-scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 45  # 防止长时间阻塞
+    timeout-minutes: 60  # 防止CI阻塞
 
     steps:
-      - name: 🛎️ 检出代码
-        uses: actions/checkout@v3  # 升级到最新checkout版本
+      - name: 🛠️ Checkout with Submodules
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 确保包含.zap目录
+          submodules: recursive  # 确保包含.zap配置目录
+          fetch-depth: 0
 
-      - name: 🐳 准备ZAP环境
-        run: |
-          # 清理可能存在的旧镜像
-          docker rm -f zap-scanner || true
-          docker rmi owasp/zap2docker-* || true
-          
-          # 拉取新官方镜像
-          docker pull owasp/zap-stable || docker pull owasp/zap-weekly
-          docker tag owasp/zap-stable ghcr.io/zaproxy-action/zap-stable
-
-      - name: 🎯 服务可达性检查
-        run: |
-          if ! curl -Isf --retry 3 --retry-delay 5 http://47.129.5.86:8080; then
-              echo "::error::目标服务不可达"
-              exit 1
-          fi
-
-      - name: 🕷️ 执行全面扫描
-        uses: zaproxy/action-full-scan@v1.0.0
+      - name: 🎯 Health Check
+        uses: wei/curl@v1.7
         with:
-          target: "http://47.129.5.86:8080"
-          docker_image: "owasp/zap-stable"  # 显式指定镜像
-          cmd_options: "-I -T 120 -j"      # 参数说明：
-            # -I 忽略警告
-            # -T 120秒超时
-          # -j 生成JSON报告
-          rules_file_name: ".zap/rules.tsv"
-          alert_overrides: ".zap/alerts.conf"  # 告警级别覆盖文件
+          args: -X HEAD --retry 3 --retry-delay 10 http://47.129.5.86:8080
 
-      - name: 📊 生成可视化报告
-        run: |
-          # 转换JSON报告为多格式
-          zap-convert -i zap-report.json -t html -o report.html
-          zap-convert -i zap-report.json -t md -o report.md
-          echo "报告生成完成 → $(ls -lh report.*)"
+      - name: 🔍 Full Security Scan
+        uses: zaproxy/action-full-scan@v1.6.0  # Marketplace官方认证
+        with:
+          target: 'http://47.129.5.86:8080'
+          format: 'html'  # 支持html/json/md三种格式
+          rules: 'media/conf/zap/rules.tsv'  # 自定义规则路径
+          cmd_options: '-I -T 180'  # 高级参数：
+          # -I: 忽略警告
+          # -T: 超时时间(秒)
+          # -J: 生成趋势图(需启用后续存储)
 
-      - name: 📤 上传扫描结果
+      - name: 📈 Store Results
         uses: actions/upload-artifact@v4
         with:
-          name: security-report-$(date +%s)
+          name: zap-results-${{ github.run_id }}
           path: |
-            report.html
-            report.md
-            zap-report.json
             zap_scan.log
+            zap-report.*
+            trending.png  # 安全趋势图
