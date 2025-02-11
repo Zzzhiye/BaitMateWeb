@@ -1,6 +1,5 @@
 package baitmate.Service;
 
-import baitmate.DTO.CommentDto;
 import baitmate.DTO.CreateCommentDto;
 import baitmate.DTO.CreatedPostDto;
 import baitmate.DTO.PostDto;
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -38,5 +36,7 @@ public interface PostService {
     List<Post> getAllPostsWithDetails();
     List<Post> findByPostTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<Post> getPostsByIds(List<Long> postIds);
+
+    List<PostDto> findByUsername(String username);
 
 }

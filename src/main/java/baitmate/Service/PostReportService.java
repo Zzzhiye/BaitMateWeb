@@ -49,5 +49,4 @@ public interface PostReportService {
     void addSummaryRow(Sheet sheet, int rowNum, String label, Number value, CellStyle style);
 
     void autoSizeAllSheets(Workbook workbook);
-
 }
