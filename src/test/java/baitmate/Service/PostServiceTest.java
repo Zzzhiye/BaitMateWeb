@@ -1,4 +1,3 @@
 package baitmate.Service;
 
-public class PostServiceTest {
-}
+public class PostServiceTest {}

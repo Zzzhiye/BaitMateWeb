@@ -224,24 +224,24 @@
             .page-container {
                 padding: 1rem;
             }
-            
+
             .page-header {
                 flex-direction: column;
                 gap: 1rem;
                 text-align: center;
                 padding: 1rem;
             }
-            
+
             .post-card {
                 padding: 1.5rem;
             }
-            
+
             .post-header {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
             }
-            
+
             .username, .post-time {
                 width: 100%;
                 justify-content: center;
@@ -261,48 +261,48 @@
 </head>
 
 <body>
-    <div th:replace="~{fragments :: header}"></div>
-    
-    <div class="page-container">
-        <div class="page-header">
-            <h1 class="page-title">
-                <i class="fas fa-history"></i>
-                Post History
-            </h1>
-            <button class="back-button" onclick="window.history.back()">
-                <i class="fas fa-arrow-left"></i>
-                Back to Posts
-            </button>
-        </div>
+<div th:replace="~{fragments :: header}"></div>
 
-        <div class="posts-container">
-            <div th:each="post : ${postList}" class="post-card">
-                <div class="post-header">
-                    <div class="user-info">
-                        <div class="username">
-                            <i class="fas fa-user-circle"></i>
-                            <span th:text="${post.user.username}"></span>
-                        </div>
-                    </div>
-                    <div class="post-time">
-                        <i class="far fa-calendar-alt"></i>
-                        <span th:text="${post.postTime}"></span>
+<div class="page-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-history"></i>
+            Post History
+        </h1>
+        <button class="back-button" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i>
+            Back to Posts
+        </button>
+    </div>
+
+    <div class="posts-container">
+        <div th:each="post : ${postList}" class="post-card">
+            <div class="post-header">
+                <div class="user-info">
+                    <div class="username">
+                        <i class="fas fa-user-circle"></i>
+                        <span th:text="${post.user.username}"></span>
                     </div>
                 </div>
-
-                <div class="post-images" th:if="${not #lists.isEmpty(post.images)}">
-                    <div th:each="imageOid : ${post.images}" class="image-container">
-                        <img th:src="@{/admin/post/image/{id}(id=${imageOid.id})}" 
-                             class="post-image"
-                             th:alt="'Post image by ' + ${post.user.username}">
-                    </div>
+                <div class="post-time">
+                    <i class="far fa-calendar-alt"></i>
+                    <span th:text="${post.postTime}"></span>
                 </div>
+            </div>
 
-                <div class="post-content">
-                    <span th:text="${post.postContent}"></span>
+            <div class="post-images" th:if="${not #lists.isEmpty(post.images)}">
+                <div th:each="imageOid : ${post.images}" class="image-container">
+                    <img th:src="@{/admin/post/image/{id}(id=${imageOid.id})}"
+                         class="post-image"
+                         th:alt="'Post image by ' + ${post.user.username}">
                 </div>
+            </div>
+
+            <div class="post-content">
+                <span th:text="${post.postContent}"></span>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

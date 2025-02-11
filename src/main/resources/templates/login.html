@@ -126,9 +126,15 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
         }
     </style>
 </head>
@@ -144,12 +150,14 @@
 
         <form th:action="@{/validate/login}" th:object="${admin}" method="post">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Username" required>
+                <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Username"
+                       required>
                 <label for="username"><i class="fas fa-user me-2"></i>Username</label>
             </div>
 
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Password" required>
+                <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Password"
+                       required>
                 <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
             </div>
 

@@ -92,10 +92,12 @@
             <tbody>
             <tr>
                 <td>
-                    <input type="text" id="senderInput" value="System Admin" readonly class="form-control" name="sender">  <!-- Added name attribute -->
+                    <input type="text" id="senderInput" value="System Admin" readonly class="form-control"
+                           name="sender">  <!-- Added name attribute -->
                 </td>
                 <td id="recipientContainer">
-                    <input type="text" id="recipientInput" placeholder="Enter user's username" class="form-control" name="recipient"> <!-- Added name attribute -->
+                    <input type="text" id="recipientInput" placeholder="Enter user's username" class="form-control"
+                           name="recipient"> <!-- Added name attribute -->
                 </td>
             </tr>
             </tbody>
@@ -111,7 +113,8 @@
                 <tbody>
                 <tr>
                     <td>
-                        <input type="text" id="subjectInput" placeholder="Enter announcement subject" class="form-control" name="subject"> <!-- Added name attribute -->
+                        <input type="text" id="subjectInput" placeholder="Enter announcement subject"
+                               class="form-control" name="subject"> <!-- Added name attribute -->
                     </td>
                 </tr>
                 </tbody>
@@ -119,7 +122,8 @@
 
             <div class="mt-3">
                 <label for="announcementText">Message Content</label>
-                <textarea id="announcementText" placeholder="Enter your announcement here" class="form-control" rows="6" name="text"></textarea> <!-- Added name attribute, changed ID to match DTO -->
+                <textarea id="announcementText" placeholder="Enter your announcement here" class="form-control" rows="6"
+                          name="text"></textarea> <!-- Added name attribute, changed ID to match DTO -->
             </div>
         </div>
 
@@ -131,7 +135,7 @@
             <button type="button" class="button blue" id="btnSaveDraft">  <!-- Added type="button" -->
                 <i class="fas fa-save"></i> Save Draft
             </button>
-            <button  type="button" class="button blue" id="btnSend">  <!-- Added type="button" -->
+            <button type="button" class="button blue" id="btnSend">  <!-- Added type="button" -->
                 <i class="fas fa-paper-plane"></i> Send
             </button>
         </div>
@@ -318,7 +322,7 @@
         selectedFiles = []; // Clear selected files
         refreshFileList(); // Update the file list display
         announcementType.dispatchEvent(new Event('change')); // Re-trigger the recipient display logic
-    };
+    }
 
     // 添加通知相关的函数
     function loadNotifications() {

@@ -1,13 +1,11 @@
 package baitmate.Service;
 
+import baitmate.model.Image;
 import java.util.List;
 
-import baitmate.model.Image;
-
 public interface ImageService {
-	
-	byte[] getImageByImageId(Long imageId);
-	
-	List<Image> getImageByPostId(Long postId);
 
+  byte[] getImageByImageId(Long imageId);
+
+  List<Image> getImageByPostId(Long postId);
 }

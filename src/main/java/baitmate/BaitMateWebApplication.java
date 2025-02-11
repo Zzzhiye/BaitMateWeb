@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class BaitMateWebApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BaitMateWebApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(BaitMateWebApplication.class, args);
+  }
 }

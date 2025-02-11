@@ -1,77 +1,96 @@
 package baitmate.Repository;
 
+import baitmate.model.CatchRecord;
 import baitmate.model.User;
+import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import baitmate.model.CatchRecord;
-import java.util.List;
 
 @Repository
 public interface CatchRecordRepository extends JpaRepository<CatchRecord, Long> {
 
-    List<CatchRecord>findAllByUser(User user);
-    
-    @Query("SELECT c FROM CatchRecord c ORDER BY c.weight DESC")
-    List<CatchRecord> findTopCatchesByWeight(Pageable pageable);
-    
-    @Query(value = "SELECT COUNT(c.id) FROM catch_record c WHERE c.time BETWEEN :startDate AND :endDate", nativeQuery = true)
-    long countByTimeBetween(@Param("startDate") String startDate, @Param("endDate") String endDate);
+  List<CatchRecord> findAllByUser(User user);
 
-    @Query("SELECT c FROM CatchRecord c ORDER BY c.length DESC")
-    List<CatchRecord> findTopCatchesByLength(Pageable pageable);
+  @Query("SELECT c FROM CatchRecord c ORDER BY c.weight DESC")
+  List<CatchRecord> findTopCatchesByWeight(Pageable pageable);
 
-    @Query("""
-    SELECT COALESCE(
-        CASE 
-            WHEN COUNT(DISTINCT c.user) = 0 THEN 0.0
-            ELSE CAST(COUNT(c) AS double) / CAST(COUNT(DISTINCT c.user) AS double)
-        END
-    , 0.0)
-    FROM CatchRecord c
-""")
-    Double calculateAverageCatchesPerUser();
-    
-    @Query(value = "SELECT f.fish_name as fishName, COUNT(*) as count, fl.location_name as location " +
-           "FROM catch_record c " +
-           "JOIN fish f ON c.fish_id = f.id " +
-           "JOIN fishing_location fl ON c.location_id = fl.location_id " +
-           "WHERE DATE(CAST(c.time AS TIMESTAMP)) = DATE(NOW()) " +
-           "GROUP BY f.fish_name, fl.location_name " +
-           "ORDER BY count DESC", nativeQuery = true)
-    List<Object[]> findTodayMostCaughtFishWithLocation(@Param("today") String today);
-    
-    @Query(value = "SELECT c.* FROM catch_record c WHERE CAST(time AS TIMESTAMP) BETWEEN CAST(:start AS TIMESTAMP) AND CAST(:end AS TIMESTAMP)", nativeQuery = true)
-    List<CatchRecord> findByTimeBetween(@Param("start") String start, @Param("end") String end);
-    
-    @Query(value = "SELECT EXTRACT(HOUR FROM CAST(time AS TIMESTAMP)) as hour, COUNT(*) as count " +
-           "FROM catch_record " +
-           "WHERE DATE(CAST(time AS TIMESTAMP)) = DATE(NOW()) " +
-           "GROUP BY EXTRACT(HOUR FROM CAST(time AS TIMESTAMP)) " +
-           "ORDER BY hour", nativeQuery = true)
-    List<Object[]> findHourlyCatchCountForToday();
-    
-    @Query(value = "SELECT fl.location_name as name, COUNT(*) as count " +
-           "FROM catch_record c " +
-           "JOIN fishing_location fl ON c.location_id = fl.location_id " +
-           "WHERE DATE(CAST(c.time AS TIMESTAMP)) = DATE(NOW()) " +
-           "GROUP BY fl.location_name " +
-           "ORDER BY count DESC", nativeQuery = true)
-    List<Object[]> findTodayCatchesByLocation();
+  @Query(
+      value = "SELECT COUNT(c.id) FROM catch_record c WHERE c.time BETWEEN :startDate AND :endDate",
+      nativeQuery = true)
+  long countByTimeBetween(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-    @Query(value = "SELECT f.fish_name as name, COUNT(*) as count " +
-           "FROM catch_record c " +
-           "JOIN fish f ON c.fish_id = f.id " +
-           "WHERE DATE(CAST(c.time AS TIMESTAMP)) = DATE(NOW()) " +
-           "GROUP BY f.fish_name " +
-           "ORDER BY count DESC", nativeQuery = true)
-    List<Object[]> findTodayCatchesBySpecies();
-    
-    @Query(value = """
-            SELECT 
+  @Query("SELECT c FROM CatchRecord c ORDER BY c.length DESC")
+  List<CatchRecord> findTopCatchesByLength(Pageable pageable);
+
+  @Query(
+      """
+                SELECT COALESCE(
+                    CASE
+                        WHEN COUNT(DISTINCT c.user) = 0 THEN 0.0
+                        ELSE CAST(COUNT(c) AS double) / CAST(COUNT(DISTINCT c.user) AS double)
+                    END
+                , 0.0)
+                FROM CatchRecord c
+            """)
+  Double calculateAverageCatchesPerUser();
+
+  @Query(
+      value =
+          "SELECT f.fish_name as fishName, COUNT(*) as count, fl.location_name as location "
+              + "FROM catch_record c "
+              + "JOIN fish f ON c.fish_id = f.id "
+              + "JOIN fishing_location fl ON c.location_id = fl.location_id "
+              + "WHERE DATE(CAST(c.time AS TIMESTAMP)) = DATE(NOW()) "
+              + "GROUP BY f.fish_name, fl.location_name "
+              + "ORDER BY count DESC",
+      nativeQuery = true)
+  List<Object[]> findTodayMostCaughtFishWithLocation(@Param("today") String today);
+
+  @Query(
+      value =
+          "SELECT c.* FROM catch_record c WHERE CAST(time AS TIMESTAMP) BETWEEN CAST(:start AS TIMESTAMP) AND CAST(:end AS TIMESTAMP)",
+      nativeQuery = true)
+  List<CatchRecord> findByTimeBetween(@Param("start") String start, @Param("end") String end);
+
+  @Query(
+      value =
+          "SELECT EXTRACT(HOUR FROM CAST(time AS TIMESTAMP)) as hour, COUNT(*) as count "
+              + "FROM catch_record "
+              + "WHERE DATE(CAST(time AS TIMESTAMP)) = DATE(NOW()) "
+              + "GROUP BY EXTRACT(HOUR FROM CAST(time AS TIMESTAMP)) "
+              + "ORDER BY hour",
+      nativeQuery = true)
+  List<Object[]> findHourlyCatchCountForToday();
+
+  @Query(
+      value =
+          "SELECT fl.location_name as name, COUNT(*) as count "
+              + "FROM catch_record c "
+              + "JOIN fishing_location fl ON c.location_id = fl.location_id "
+              + "WHERE DATE(CAST(c.time AS TIMESTAMP)) = DATE(NOW()) "
+              + "GROUP BY fl.location_name "
+              + "ORDER BY count DESC",
+      nativeQuery = true)
+  List<Object[]> findTodayCatchesByLocation();
+
+  @Query(
+      value =
+          "SELECT f.fish_name as name, COUNT(*) as count "
+              + "FROM catch_record c "
+              + "JOIN fish f ON c.fish_id = f.id "
+              + "WHERE DATE(CAST(c.time AS TIMESTAMP)) = DATE(NOW()) "
+              + "GROUP BY f.fish_name "
+              + "ORDER BY count DESC",
+      nativeQuery = true)
+  List<Object[]> findTodayCatchesBySpecies();
+
+  @Query(
+      value =
+          """
+            SELECT
                 u.username as username,
                 f.fish_name as fish_type,
                 cr.weight,
@@ -84,6 +103,7 @@ public interface CatchRecordRepository extends JpaRepository<CatchRecord, Long> 
             WHERE EXTRACT(MONTH FROM CAST(cr.time AS timestamp)) = :month
             AND EXTRACT(YEAR FROM CAST(cr.time AS timestamp)) = :year
             ORDER BY cr.weight DESC
-            """, nativeQuery = true)
-    List<Object[]> findTopCatchesByMonth(@Param("month") int month, @Param("year") int year);
+            """,
+      nativeQuery = true)
+  List<Object[]> findTopCatchesByMonth(@Param("month") int month, @Param("year") int year);
 }

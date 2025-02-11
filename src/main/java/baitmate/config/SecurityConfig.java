@@ -14,27 +14,26 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Allow all requests without authentication
-                );
-        return http.build();
-    }
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity
+        .authorizeHttpRequests(
+            auth -> auth.anyRequest().permitAll() // Allow all requests without authentication
+            );
+    return http.build();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizer() {
-        return factory -> {
-            Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-            connector.setPort(8080); // HTTP port
-            factory.addAdditionalTomcatConnectors(connector);
-        };
-    }
+  @Bean
+  public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizer() {
+    return factory -> {
+      Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
+      connector.setPort(8080); // HTTP port
+      factory.addAdditionalTomcatConnectors(connector);
+    };
+  }
 }

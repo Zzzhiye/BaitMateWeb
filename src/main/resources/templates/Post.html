@@ -199,15 +199,15 @@
             .post-container {
                 padding: 0.5rem;
             }
-            
+
             .post-content {
                 padding: 1rem;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .action-button {
                 width: 100%;
             }
@@ -249,80 +249,80 @@
 </head>
 
 <body>
-    <div th:replace="~{fragments :: header}"></div>
-    
-    <div class="post-container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="post-content">
-                    <div class="post-header">
-                        <div class="user-info">
-                            <form th:action="@{/admin/post/user/userPost}" method="post">
-                                <input type="hidden" name="id" th:value="${post.user.id}" />
-                                <button type="submit" class="user-button">
-                                    <i class="fas fa-user"></i>
-                                    <span th:text="${post.user.username}"></span>
-                                </button>
-                            </form>
-                        </div>
-                        <div class="post-time">
-                            <i class="far fa-clock"></i>
-                            <span th:text="${post.postTime}"></span>
-                        </div>
+<div th:replace="~{fragments :: header}"></div>
+
+<div class="post-container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="post-content">
+                <div class="post-header">
+                    <div class="user-info">
+                        <form th:action="@{/admin/post/user/userPost}" method="post">
+                            <input type="hidden" name="id" th:value="${post.user.id}"/>
+                            <button type="submit" class="user-button">
+                                <i class="fas fa-user"></i>
+                                <span th:text="${post.user.username}"></span>
+                            </button>
+                        </form>
                     </div>
-                    
-                    <div class="post-images" th:if="${not #lists.isEmpty(imageIds)}">
-                        <div th:each="imageOid : ${imageIds}">
-                            <img th:src="@{/admin/post/image/}+${imageOid.id}" class="post-image" 
-                                 th:alt="'Post image by ' + ${post.user.username}">
-                        </div>
-                    </div>
-                    
-                    <div class="post-text">
-                        <i class="fas fa-quote-left" style="color: var(--accent-color); margin-right: 0.5rem;"></i>
-                        <span th:text="${post.postContent}"></span>
-                        <i class="fas fa-quote-right" style="color: var(--accent-color); margin-left: 0.5rem;"></i>
+                    <div class="post-time">
+                        <i class="far fa-clock"></i>
+                        <span th:text="${post.postTime}"></span>
                     </div>
                 </div>
+
+                <div class="post-images" th:if="${not #lists.isEmpty(imageIds)}">
+                    <div th:each="imageOid : ${imageIds}">
+                        <img th:src="@{/admin/post/image/}+${imageOid.id}" class="post-image"
+                             th:alt="'Post image by ' + ${post.user.username}">
+                    </div>
+                </div>
+
+                <div class="post-text">
+                    <i class="fas fa-quote-left" style="color: var(--accent-color); margin-right: 0.5rem;"></i>
+                    <span th:text="${post.postContent}"></span>
+                    <i class="fas fa-quote-right" style="color: var(--accent-color); margin-left: 0.5rem;"></i>
+                </div>
             </div>
-            
-            <div class="col-md-4">
-                <div class="stats-panel">
-                    <h5 class="mb-4" style="color: var(--primary-color);">
-                        <i class="fas fa-chart-bar"></i>
-                        Post Statistics
-                    </h5>
-                    <table class="stats-table">
-                        <tr>
-                            <td>Rejected times</td>
-                            <td>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stats-panel">
+                <h5 class="mb-4" style="color: var(--primary-color);">
+                    <i class="fas fa-chart-bar"></i>
+                    Post Statistics
+                </h5>
+                <table class="stats-table">
+                    <tr>
+                        <td>Rejected times</td>
+                        <td>
                                 <span class="badge bg-secondary" th:text="${postRej}+'/'+${postTotal}"
                                       style="font-size: 0.9rem; padding: 0.5rem 1rem;"></span>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
-        
-        <div class="action-buttons">
-            <button id="Back" type="button" class="action-button btn-back" onclick="window.history.back()">
-                <i class="fas fa-arrow-left"></i>
-                Back
-            </button>
-            <button id="Approve" type="button" class="action-button btn-approve" th:onclick="setStatus1('approved')">
-                <i class="fas fa-check"></i>
-                Approve
-            </button>
-            <button id="Ban" type="button" class="action-button btn-ban" th:onclick="setStatus1('banned')">
-                <i class="fas fa-ban"></i>
-                Ban
-            </button>
-            <button id="Block" type="button" class="action-button btn-block" th:onclick="setStatus2('inactive')">
-                <i class="fas fa-user-slash"></i>
-                Block User
-            </button>
-        </div>
     </div>
+
+    <div class="action-buttons">
+        <button id="Back" type="button" class="action-button btn-back" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i>
+            Back
+        </button>
+        <button id="Approve" type="button" class="action-button btn-approve" th:onclick="setStatus1('approved')">
+            <i class="fas fa-check"></i>
+            Approve
+        </button>
+        <button id="Ban" type="button" class="action-button btn-ban" th:onclick="setStatus1('banned')">
+            <i class="fas fa-ban"></i>
+            Ban
+        </button>
+        <button id="Block" type="button" class="action-button btn-block" th:onclick="setStatus2('inactive')">
+            <i class="fas fa-user-slash"></i>
+            Block User
+        </button>
+    </div>
+</div>
 </body>
 </html>
