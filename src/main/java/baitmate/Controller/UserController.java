@@ -171,6 +171,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserDetails(@PathVariable long userId) {
+        try {
+            User user = userService.searchByUserId(userId);
+            return ResponseEntity.ok(user);
+        } catch (NullPointerException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
     @GetMapping("/api/users")
     @ResponseBody
     public ResponseEntity<?> getUsersApi() {
@@ -185,4 +195,6 @@ public class UserController {
                     .body("Error retrieving users: " + e.getMessage());
         }
     }
+
+
 }

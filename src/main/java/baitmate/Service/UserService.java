@@ -14,7 +14,6 @@ public interface UserService  {
     void updatePassword(String email, String newPassword);
     Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
-
     User searchByUserId(long userId);
     User save(User user);
     List<User> getAllUsers();

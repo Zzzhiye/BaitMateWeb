@@ -6,10 +6,7 @@ import baitmate.Repository.FishRepository;
 import baitmate.Repository.FishingLocationRepository;
 import baitmate.Repository.UserRepository;
 import baitmate.Service.CatchRecordService;
-import baitmate.model.CatchRecord;
-import baitmate.model.Fish;
-import baitmate.model.FishingLocation;
-import baitmate.model.User;
+import baitmate.model.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CatchRecordServiceImpl implements CatchRecordService {
@@ -36,6 +34,15 @@ public class CatchRecordServiceImpl implements CatchRecordService {
     @Override
     public List<CatchRecord> findTopCatchesByWeight(Pageable pageable) {
         return catchRecordRepository.findTopCatchesByWeight(pageable);
+    }
+
+    @Override
+    public List<CatchRecord>findByUserId(Long userId) {
+        User user = userRepository.searchByUserId(userId);
+        if (user!=null) {
+            System.out.println("Retrieving posts by "+ userId);
+            return catchRecordRepository.findAllByUser(user);
+        } else return null;
     }
 
     @Override

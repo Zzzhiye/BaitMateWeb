@@ -1,5 +1,6 @@
 package baitmate.Repository;
 
+import baitmate.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Repository
 public interface CatchRecordRepository extends JpaRepository<CatchRecord, Long> {
+
+    List<CatchRecord>findAllByUser(User user);
     
     @Query("SELECT c FROM CatchRecord c ORDER BY c.weight DESC")
     List<CatchRecord> findTopCatchesByWeight(Pageable pageable);
