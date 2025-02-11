@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/fish")
+@RequestMapping("/api/fish")
 public class FishController {
 
     @Autowired

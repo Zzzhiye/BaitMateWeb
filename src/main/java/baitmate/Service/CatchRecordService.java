@@ -14,6 +14,6 @@ public interface CatchRecordService {
         List<CatchRecord> findTopCatchesByLength(Pageable pageable);    long countByTimeBetween(@Param("startDate") String startDate, @Param("endDate") String endDate);
         Double calculateAverageCatchesPerUser();
         List<Object[]> findTodayMostCaughtFishWithLocation(@Param("today") String today);
-
+        List<CatchRecord>findByUserId(Long userId);
         public void addCatchRecord(CatchRecordDTO catchRecord);
 }
