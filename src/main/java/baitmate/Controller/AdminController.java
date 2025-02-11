@@ -31,7 +31,6 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@SessionAttributes("username")
 public class AdminController {
 
   @Autowired AdminService adminServiceImpl;
