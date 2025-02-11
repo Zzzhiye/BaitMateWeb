@@ -1,5 +1,6 @@
 package baitmate.Repository;
 
+import baitmate.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -80,5 +81,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.id IN :postIds")
     List<Post> findAllByPostIds(@Param("postIds") List<Long> postIds);
+
+    List<Post> findAllByUser(User user);
 
 }

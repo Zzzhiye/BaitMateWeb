@@ -38,5 +38,6 @@ public interface PostService {
     List<Post> getAllPostsWithDetails();
     List<Post> findByPostTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<Post> getPostsByIds(List<Long> postIds);
+    List<PostDto> getPostByUser(Long userId);
 
 }

@@ -65,6 +65,15 @@ public class PostController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getPostsByUserId(@PathVariable Long userId){
+        try {
+            List<PostDto> userPosts = postService.getPostByUser(userId);
+            return ResponseEntity.ok(userPosts);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Long> createPost(@RequestBody CreatedPostDto postDto) {
