@@ -8,27 +8,50 @@ on:
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 45  # 增加全局超时限制
 
     steps:
-      - name: 📥 Checkout Repository
+      - name: 📥 检出代码
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 确保.zap目录被完整拉取
 
-      - name: 🐞 拉取正确镜像
+      - name: 🐳 清理旧镜像
         run: |
-          docker pull owasp/zap-stable  # 注意镜像名称已移除 "2docker"
-          docker tag owasp/zap-stable zap-image  # 添加镜像别名
+          docker rm -f zap-runner || true
+          docker rmi owasp/zap2docker-stable || true
+          docker rmi owasp/zap2docker-weekly || true
 
-      - name: 🕷️ 执行ZAP扫描
-        uses: zaproxy/action-full-scan@v1.0.0  # 升级到最新版Action
+      - name: 🔄 拉取正确镜像
+        run: |
+          docker pull owasp/zap-stable
+          docker tag owasp/zap-stable ghcr.io/zaproxy-action/zap-stable  # 匹配Action预期镜像名
+
+      - name: 🕵️ 预检目标服务
+        run: |
+          curl --retry 3 --retry-delay 5 -IsSf http://47.129.5.86:8080 > /dev/null
+          echo "✅ 目标服务可达"
+
+      - name: 🚀 执行深度扫描
+        uses: zaproxy/action-full-scan@v1.0.0
+        env:
+          ZAP_PATH: /zap/wrk/
         with:
           target: "http://47.129.5.86:8080"
-          cmd_options: "-I -T 60"  # 增加超时设置
+          cmd_options: "-I -T 120 -j"  # 120秒超时+JSON报告
           rules_file_name: ".zap/rules.tsv"
+          context_file: ".zap/context.context"  # 可选上下文配置
 
-      - name: 📤 上传报告
+      - name: 📊 聚合报告
+        run: |
+          zap-convert -i zap-report.json -t html -o zap-report.html
+          zap-convert -i zap-report.json -t md -o zap-report.md
+
+      - name: 📤 上传结果
         uses: actions/upload-artifact@v4
         with:
-          name: ZAP-Security-Report
+          name: ZAP-Security-Report-$(date +%s)
           path: |
             zap_scan.log
-            zap-report.html
+            zap-report.*
+            .zap/
