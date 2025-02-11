@@ -27,8 +27,8 @@ jobs:
       - name: 📝 Save ZAP Report
         run: mv zap_scan.log $GITHUB_WORKSPACE/zap-report.log
 
-      - name: 📤 Upload ZAP Report
-        uses: actions/upload-artifact@v3
+      - name: 📤 Upload ZAP Report (Updated to v4)
+        uses: actions/upload-artifact@v4
         with:
           name: ZAP-Scan-Report
           path: zap-report.log
