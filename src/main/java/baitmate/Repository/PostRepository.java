@@ -82,6 +82,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.id IN :postIds")
     List<Post> findAllByPostIds(@Param("postIds") List<Long> postIds);
 
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
+    List<Post> findByUserUsername(@Param("username") String username);
+
     List<Post> findAllByUser(User user);
 
 }

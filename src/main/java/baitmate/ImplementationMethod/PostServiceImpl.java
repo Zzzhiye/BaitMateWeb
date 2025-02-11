@@ -18,16 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
-import java.io.ByteArrayInputStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -349,5 +344,13 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public List<Post> findByPostTimeBetween(LocalDateTime startDate, LocalDateTime endDate) {
         return postRepository.findByPostTimeBetween(startDate, endDate);
+    }
+
+    @Override
+    public List<PostDto> findByUsername(String username) {
+        List<Post> posts = postRepository.findByUserUsername(username);
+        return posts.stream()
+                .map(postConverter::toDto)  // Post object ကို PostDto အဖြစ် convert လုပ်
+                .collect(Collectors.toList());
     }
 }

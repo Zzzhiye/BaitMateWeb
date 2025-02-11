@@ -6,9 +6,7 @@ import baitmate.DTO.PostDto;
 import baitmate.Service.PostService;
 import baitmate.converter.PostConverter;
 import baitmate.model.Post;
-import org.postgresql.PGConnection;
-import org.postgresql.largeobject.LargeObject;
-import org.postgresql.largeobject.LargeObjectManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,13 +16,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -209,6 +204,17 @@ public class PostController {
         Long commentId = postService.createComment(commentDto);
         return ResponseEntity.ok(commentId);
     }
+
+    @GetMapping("/getPostsByUsername")
+    public ResponseEntity<List<PostDto>> getPostsByUsername(@RequestParam String username) {
+        try {
+            List<PostDto> posts = postService.findByUsername(username);
+            return ResponseEntity.ok(posts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
 
 
