@@ -1,0 +1,37 @@
+name: Deploy to AWS EC2
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'oracle'
+          java-version: '21'
+
+      - name: Build Project
+        run: mvn clean install
+        
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t Zzzhiye/BaitMateWeb .
+      - name: Publish image to docker hub
+        run: docker push Zzzhiye/BaitMateWeb:latest
+                
+  deploy:
+    needs: build
+    runs-on: [self-hosted]
+    steps:
+      - name: Pull Image from docker hub
+        run: docker pull Zzzhiye/BaitMateWeb:latest
+      - name: Delete old container
+        run: docker rm -f baitmate-container
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 --name baitmate-container Zzzhiye/BaitMateWeb
