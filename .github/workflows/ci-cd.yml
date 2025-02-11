@@ -21,17 +21,17 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - name: Build docker image
-        run: docker build -t Zzzhiye/baitmateweb .
+        run: docker build -t zzzhiye/baitmateweb .
       - name: Publish image to docker hub
-        run: docker push Zzzhiye/baitmateweb:latest
+        run: docker push zzzhiye/baitmateweb:latest
                 
   deploy:
     needs: build
     runs-on: [self-hosted]
     steps:
       - name: Pull Image from docker hub
-        run: docker pull Zzzhiye/baitmateweb:latest
+        run: docker pull zzzhiye/baitmateweb:latest
       - name: Delete old container
         run: docker rm -f baitmate-container
       - name: Run docker container
-        run: docker run -d -p 8080:8080 --name baitmate-container Zzzhiye/baitmateweb
+        run: docker run -d -p 8080:8080 --name baitmate-container zzzhiye/baitmateweb
