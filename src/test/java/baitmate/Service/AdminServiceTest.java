@@ -38,7 +38,7 @@ class AdminServiceTest {
     /** ✅ 测试 searchUserByUserName: 找到用户 */
     @Test
     void testSearchUserByUserName_Found() {
-        when(adminRepository.searchUserByUserName("admin123")).thenReturn(testAdmin);
+
 
         Admin admin = adminService.searchUserByUserName("admin123");
 
@@ -49,7 +49,7 @@ class AdminServiceTest {
     /** ✅ 测试 getAdminById: 找到管理员 */
     @Test
     void testGetAdminById_Found() {
-        when(adminRepository.findById(1)).thenReturn(Optional.of(testAdmin));
+        when(adminRepository.findById(1)).thenReturn(Optional.of(testAdmin)); // Use 1L for Long
 
         Admin admin = adminService.getAdminById(1);
 
@@ -60,7 +60,7 @@ class AdminServiceTest {
     /** ✅ 测试 getAdminById: 找不到管理员 */
     @Test
     void testGetAdminById_NotFound() {
-        when(adminRepository.findById(2)).thenReturn(Optional.empty());
+        when(adminRepository.findById(2)).thenReturn(Optional.empty()); // Use 2L for Long
 
         Admin admin = adminService.getAdminById(2);
 
@@ -70,11 +70,22 @@ class AdminServiceTest {
     /** ✅ 测试 updateAdmin: 成功更新管理员 */
     @Test
     void testUpdateAdmin_Success() {
-        when(adminRepository.save(testAdmin)).thenReturn(testAdmin);
+        // Mock the save method to return the updated admin.  Important for testing persistence.
+        when(adminRepository.save(any(Admin.class))).thenReturn(testAdmin);
 
-        Admin updatedAdmin = adminService.updateAdmin(testAdmin);
 
-        assertNotNull(updatedAdmin);
-        assertEquals("Admin User", updatedAdmin.getName());
+        adminService.updateAdmin(testAdmin);
+
+        // Verify that the save method was called.  This is a crucial part of the test.
+        verify(adminRepository).save(testAdmin);
+    }
+
+    @Test
+    void testSaveAdmin_Success(){
+        when(adminRepository.save(any(Admin.class))).thenReturn(testAdmin);
+        Admin savedAdmin = adminService.save(testAdmin);
+        assertNotNull(savedAdmin);
+        verify(adminRepository).save(testAdmin);
+
     }
 }

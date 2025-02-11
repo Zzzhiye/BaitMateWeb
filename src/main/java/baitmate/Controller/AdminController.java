@@ -40,30 +40,30 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 @SessionAttributes("username")
-public class AdminController {	
-	
+public class AdminController {
+
 	@Autowired
 	AdminService adminServiceImpl;
-	
+
 	@Autowired
 	PostService postServiceImpl;
-	
+
 	@Autowired
 	UserService userServiceImpl;
-	
+
 	@Autowired
 	ImageService imageServiceimpl;
-	
+
 	@Autowired
 	CatchRecordRepository catchRecordRepository;
-	
-	
+
+
 	@GetMapping("/login")
 	public String loginPage(Model model) {
 		model.addAttribute("admin", new Admin());
 		return "login";
 	}
-	
+
 	@PostMapping("/validate/login")
 	public String login(Admin admin, HttpSession sessionObj,Model model) {
 		Admin dataU = adminServiceImpl.searchUserByUserName(admin.getUsername());
@@ -83,59 +83,59 @@ public class AdminController {
 			}
 		}
 	}
-	
+
 	@GetMapping("/admin/logout")
 	public String logout(HttpSession sessionObj, Model model, SessionStatus sessionStatus) {
 		sessionObj.invalidate();
 		sessionStatus.setComplete();
 		return "redirect:/login";
 	}
-	
+
 	@GetMapping("/admin/home")
 	public String home(HttpSession sessionObj, Model model) {
-        return "homePage";
-    }
-	
-	
+		return "homePage";
+	}
+
+
 	@GetMapping("/admin/post")
 	public String post(@RequestParam(defaultValue = "1") int id, @RequestParam(required=false) String status, Model model) {
 		Page<Post> postList;
 		if(status==null || status.equals("")) {
 			Pageable pageable=PageRequest.of(id-1, 10,Sort.by("postStatus").descending());
 			postList=postServiceImpl.findAll(pageable);
-			
+
 		}else {
 			Pageable pageable=PageRequest.of(id-1, 10,Sort.by("postTime").descending());
 			postList=postServiceImpl.searchPostByFilter(status, pageable);
 		}
-		
+
 		model.addAttribute("totalPages", postList.getTotalPages());
 		model.addAttribute("postList", postList);
 		model.addAttribute("currentPage", id);
 		model.addAttribute("selectedStatus", status);
 		return "PostVerification";
 	}
-	
+
 	@GetMapping("/admin/post/image/{imageId}")
-    public ResponseEntity<byte[]> getImage(@PathVariable("imageId") Long imageId) {
-        try {
-            byte[] imageData = imageServiceimpl.getImageByImageId(imageId);
+	public ResponseEntity<byte[]> getImage(@PathVariable("imageId") Long imageId) {
+		try {
+			byte[] imageData = imageServiceimpl.getImageByImageId(imageId);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "image/jpeg"); // Change MIME type as necessary
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", "image/jpeg"); // Change MIME type as necessary
 
-            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-	
+			return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+
 	@PostMapping("/admin/post/verifyPost2")
 	public String userPost(@RequestParam Long id, Model model, RedirectAttributes redirct) {
 		System.out.println("aaa");
 		return "redirect:/admin/post/verifyPage?id=" + id;
 	}
-	
+
 	@GetMapping("/admin/post/verifyPage")
 	public String userPost(Model model, @RequestParam(required = true) Long id) {
 		System.out.println("bbb");
@@ -146,10 +146,10 @@ public class AdminController {
 		List<Post> allPosts = post.getUser().getPosts();
 		model.addAttribute("postTotal", allPosts.size());
 		model.addAttribute("postRej", allPosts.stream().filter(p -> "banned".equalsIgnoreCase(p.getPostStatus())).count());
-		
+
 		return "Post";
 	}
-	
+
 	@GetMapping("/admin/post/user/userPost/{status}/{id}")
 	public String postStatus(@PathVariable int id, @PathVariable String status) {
 		//update post status
@@ -159,9 +159,9 @@ public class AdminController {
 			postServiceImpl.save(post);
 		}
 		return "redirect:/admin/post";
-		
+
 	}
-	
+
 	@GetMapping("/admin/post/user/userAccount/{status}/{id}")
 	public String userStatus(@PathVariable int id, @PathVariable String status) {
 		//update user status
@@ -171,104 +171,104 @@ public class AdminController {
 			userServiceImpl.save(user);
 		}
 		return "redirect:/admin/post";
-		
+
 	}
-	
+
 	@PostMapping("/admin/post/user/userPost")
 	public String userPastpost(@RequestParam int id, Model model) {
 		User u= userServiceImpl.searchByUserId(id);
-	
+
 		List<Post> pastPostList=u.getPosts();
-		
+
 		for (Post p : pastPostList) {
 			p.setImages(imageServiceimpl.getImageByPostId(p.getId()));
 		}
-		
+
 		model.addAttribute("postList", pastPostList);
 
 		return "PastPost";
 	}
-	
+
 	@GetMapping("/register")
-    public String showRegisterForm(Model model) {
-        model.addAttribute("admin", new Admin());
-        return "register";
-    }
-    
-    @PostMapping("/register")
-    public String registerAdmin(
-            @Valid @ModelAttribute("admin") Admin admin,
-            BindingResult bindingResult,
-            @RequestParam String confirmPassword,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-        
-        // Check if username already exists
-        Admin existingAdmin = adminServiceImpl.searchUserByUserName(admin.getUsername());
-        if (existingAdmin != null) {
-            model.addAttribute("errorMessage", "Username already exists");
-            return "register";
-        }
-        
-        // Validate password confirmation
-        if (!admin.getPassword().equals(confirmPassword)) {
-            model.addAttribute("errorMessage", "Passwords do not match");
-            return "register";
-        }
-        
-        // Handle validation errors
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
-        
-        try {
-            // Save the new admin
-            adminServiceImpl.updateAdmin(admin);
-            redirectAttributes.addFlashAttribute("successMessage", "Admin account created successfully! You can now login.");
-            return "redirect:/login";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Failed to create account: " + e.getMessage());
-            return "register";
-        }
-    }
-	
+	public String showRegisterForm(Model model) {
+		model.addAttribute("admin", new Admin());
+		return "register";
+	}
+
+	@PostMapping("/register")
+	public String registerAdmin(
+			@Valid @ModelAttribute("admin") Admin admin,
+			BindingResult bindingResult,
+			@RequestParam String confirmPassword,
+			RedirectAttributes redirectAttributes,
+			Model model) {
+
+		// Check if username already exists
+		Admin existingAdmin = adminServiceImpl.searchUserByUserName(admin.getUsername());
+		if (existingAdmin != null) {
+			model.addAttribute("errorMessage", "Username already exists");
+			return "register";
+		}
+
+		// Validate password confirmation
+		if (!admin.getPassword().equals(confirmPassword)) {
+			model.addAttribute("errorMessage", "Passwords do not match");
+			return "register";
+		}
+
+		// Handle validation errors
+		if (bindingResult.hasErrors()) {
+			return "register";
+		}
+
+		try {
+			// Save the new admin
+			adminServiceImpl.updateAdmin(admin);
+			redirectAttributes.addFlashAttribute("successMessage", "Admin account created successfully! You can now login.");
+			return "redirect:/login";
+		} catch (Exception e) {
+			model.addAttribute("errorMessage", "Failed to create account: " + e.getMessage());
+			return "register";
+		}
+	}
+
 	@GetMapping("/api/dashboard-data")
-    @ResponseBody
-    public Map<String, Object> getDashboardData() {
-        Map<String, Object> data = new HashMap<>();
-        
-        // Get today's post activity (hourly)
-        Map<Integer, Long> postActivity = postServiceImpl.getTodayPostActivity();
-        
-        // Get today's catch records (hourly)
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startOfDay = now.with(LocalTime.MIN);
-        LocalDateTime endOfDay = now.with(LocalTime.MAX);
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String startTime = startOfDay.format(formatter);
-        String endTime = endOfDay.format(formatter);
-        
-        List<CatchRecord> todayCatches = catchRecordRepository.findByTimeBetween(startTime, endTime);
-        Map<Integer, Long> catchActivity = new HashMap<>();
-        for (CatchRecord c : todayCatches) {
-            LocalDateTime recordTime = LocalDateTime.parse(c.getTime(), formatter);
-            int hour = recordTime.getHour();
-            catchActivity.merge(hour, 1L, Long::sum);
-        }
-        
-        // Convert to format needed by Chart.js
-        List<Long> postData = new ArrayList<>(24);
-        List<Long> catchData = new ArrayList<>(24);
-        
-        for (int i = 0; i < 24; i++) {
-            postData.add(postActivity.getOrDefault(i, 0L));
-            catchData.add(catchActivity.getOrDefault(i, 0L));
-        }
-        
-        data.put("postActivity", postData);
-        data.put("catchActivity", catchData);
-        
-        return data;
-    }
+	@ResponseBody
+	public Map<String, Object> getDashboardData() {
+		Map<String, Object> data = new HashMap<>();
+
+		// Get today's post activity (hourly)
+		Map<Integer, Long> postActivity = postServiceImpl.getTodayPostActivity();
+
+		// Get today's catch records (hourly)
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime startOfDay = now.with(LocalTime.MIN);
+		LocalDateTime endOfDay = now.with(LocalTime.MAX);
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String startTime = startOfDay.format(formatter);
+		String endTime = endOfDay.format(formatter);
+
+		List<CatchRecord> todayCatches = catchRecordRepository.findByTimeBetween(startTime, endTime);
+		Map<Integer, Long> catchActivity = new HashMap<>();
+		for (CatchRecord c : todayCatches) {
+			LocalDateTime recordTime = LocalDateTime.parse(c.getTime(), formatter);
+			int hour = recordTime.getHour();
+			catchActivity.merge(hour, 1L, Long::sum);
+		}
+
+		// Convert to format needed by Chart.js
+		List<Long> postData = new ArrayList<>(24);
+		List<Long> catchData = new ArrayList<>(24);
+
+		for (int i = 0; i < 24; i++) {
+			postData.add(postActivity.getOrDefault(i, 0L));
+			catchData.add(catchActivity.getOrDefault(i, 0L));
+		}
+
+		data.put("postActivity", postData);
+		data.put("catchActivity", catchData);
+
+		return data;
+	}
 }
