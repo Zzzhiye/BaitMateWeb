@@ -83,8 +83,8 @@ public class AdminController {
 
   @GetMapping("/admin/post")
   public String post(
-      @RequestParam(defaultValue = "1") int id,
-      @RequestParam(required = false) String status,
+      @RequestParam(name="id",defaultValue = "1") int id,
+      @RequestParam(name="status",required = false) String status,
       Model model) {
     Page<Post> postList;
     if (status == null || status.equals("")) {
