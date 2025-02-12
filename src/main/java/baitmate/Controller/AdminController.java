@@ -157,6 +157,14 @@ public class AdminController {
     if (user.getUserStatus().equals("active")) {
       user.setUserStatus(status);
       userServiceImpl.save(user);
+      
+      List<Post> posts = user.getPosts();
+      posts.stream().forEach(p -> {
+    	  if (p.getPostStatus().equals("pending") || p.getPostStatus().equals("petition")) {
+    	      p.setPostStatus("banned");
+    	      postServiceImpl.save(p);
+    	    }
+      });
     }
     return "redirect:/admin/post";
   }
