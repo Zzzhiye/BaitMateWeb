@@ -100,7 +100,7 @@ public class AdminController {
     model.addAttribute("postList", postList);
     model.addAttribute("currentPage", id);
     model.addAttribute("selectedStatus", status);
-    return "PostVerification";
+    return "postverification";
   }
 
   @GetMapping("/admin/post/image/{imageId}")
@@ -136,7 +136,7 @@ public class AdminController {
         "postRej",
         allPosts.stream().filter(p -> "banned".equalsIgnoreCase(p.getPostStatus())).count());
 
-    return "Post";
+    return "post";
   }
 
   @GetMapping("/admin/post/user/userPost/{status}/{id}")
@@ -173,7 +173,7 @@ public class AdminController {
 
     model.addAttribute("postList", pastPostList);
 
-    return "PastPost";
+    return "pastpost";
   }
 
   @GetMapping("/register")
