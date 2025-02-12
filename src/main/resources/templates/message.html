@@ -103,9 +103,6 @@
                 <i class="fas fa-paperclip"></i> Attachment
             </label>
             <input type="file" id="fileInput" name="attachments" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
-            <button type="button" class="button blue" id="btnSaveDraft">  <!-- Added type="button" -->
-                <i class="fas fa-save"></i> Save Draft
-            </button>
             <button type="button" class="button blue" id="btnSend">  <!-- Added type="button" -->
                 <i class="fas fa-paper-plane"></i> Send
             </button>
@@ -135,7 +132,6 @@
     const announcementForm = document.getElementById('announcementForm'); // Get the form element
     const fileInput = document.getElementById('fileInput');
     const btnSend = document.getElementById('btnSend');
-    const btnSaveDraft = document.getElementById('btnSaveDraft');
     const senderInput = document.getElementById('senderInput');
     const recipientInput = document.getElementById('recipientInput');
     const subjectInput = document.getElementById('subjectInput');
