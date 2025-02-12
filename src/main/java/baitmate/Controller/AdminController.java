@@ -119,7 +119,6 @@ public class AdminController {
 
   @PostMapping("/admin/post/verifyPost2")
   public String userPost(@RequestParam Long id, Model model, RedirectAttributes redirct) {
-    System.out.println("aaa");
     return "redirect:/admin/post/verifyPage?id=" + id;
   }
 
