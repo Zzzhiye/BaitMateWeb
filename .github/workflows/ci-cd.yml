@@ -34,5 +34,5 @@ jobs:
       - name: Delete old container
         run: docker rm -f baitmate-container
       - name: Run docker container
-        run: docker run -d -p 8080:8080 --restart=always --name baitmate-container zzzhiye/baitmateweb:latest
+        run: docker run -d -p 8080:8080 --restart=always -v /remote/path/uploads:/app/uploads --name baitmate-container zzzhiye/baitmateweb:latest
 
