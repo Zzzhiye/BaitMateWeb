@@ -45,16 +45,9 @@ public class ProfileController {
 
     // Get current admin from session
     String username = (String) session.getAttribute("username");
-    if (username == null) {
-      return "redirect:/login";
-    }
 
     // Verify current admin
     Admin currentAdmin = adminService.searchUserByUserName(username);
-    if (currentAdmin == null) {
-      redirectAttributes.addFlashAttribute("errorMessage", "Admin not found");
-      return "redirect:/admin/profile";
-    }
 
     // Handle validation errors
     if (bindingResult.hasErrors()) {
