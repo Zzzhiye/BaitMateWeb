@@ -1,0 +1,44 @@
+name: "owasp-scan"
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build Java project (Spring Boot)
+        run: mvn clean package -DskipTests
+
+      - name: Start Spring Boot Application
+        run: |
+          java -jar target/*.jar &
+          sleep 10  # Wait for the app to start
+
+      - name: Change script permission
+        run: chmod +x scripts/zap-script.sh
+
+      - name: Run OWASP ZAP Scan
+        run: scripts/zap-script.sh
+
+      - name: Archive ZAP scan report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-report
+          path: |
+            ./zap_baseline_report.html

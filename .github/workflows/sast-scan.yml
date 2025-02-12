@@ -1,0 +1,41 @@
+name: "sast-scan"
+
+on:
+  push:
+    branches: [githubcicd]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build Java project
+        run: mvn clean install -DskipTests  # or ./gradlew build
+
+      - name: Install OWASP Dependency Check
+        run: |
+          wget https://github.com/jeremylong/DependencyCheck/releases/download/v7.2.0/dependency-check-7.2.0-release.zip
+          unzip dependency-check-7.2.0-release.zip
+
+      - name: Run OWASP Dependency Check for Java
+        run: |
+          dependency-check/bin/dependency-check.sh \
+          --project "SpringBootApp" \
+          --scan pom.xml \
+          --format "HTML" \
+          --out "ODC-report.html"
+
+      - name: Archive OWASP Dependency Check report
+        uses: actions/upload-artifact@v3
+        with:
+          name: sast-report
+          path: ODC-report.html
