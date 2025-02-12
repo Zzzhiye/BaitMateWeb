@@ -19,7 +19,6 @@ public class UserConverter {
     dto.setAddress(user.getAddress());
     dto.setJoinDate(user.getJoinDate());
     dto.setUserStatus(user.getUserStatus());
-    dto.setProfileImage(user.getProfileImage());
     // password 不往外传
     return dto;
   }
@@ -36,8 +35,7 @@ public class UserConverter {
     user.setAddress(dto.getAddress());
     user.setJoinDate(dto.getJoinDate());
     user.setUserStatus(dto.getUserStatus());
-    user.setProfileImage(dto.getProfileImage());
-    // password 视情况而定
+      // password 视情况而定
     return user;
   }
 }
