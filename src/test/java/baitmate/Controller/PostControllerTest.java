@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import baitmate.DTO.PostDto;
+import baitmate.DTO.CreateCommentDto;
 import baitmate.Service.PostService;
 import java.util.Arrays;
 import java.util.List;

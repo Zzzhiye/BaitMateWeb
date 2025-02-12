@@ -4,195 +4,205 @@ import baitmate.DTO.*;
 import baitmate.Service.TokenService;
 import baitmate.Service.UserService;
 import baitmate.model.User;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Key;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
-  @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @Autowired private TokenService tokenService;
+    @Autowired
+    private TokenService tokenService;
 
-  @PostMapping("/login")
-  public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-    try {
-      User user = userService.validateUser(loginRequest.getUsername(), loginRequest.getPassword());
-      String token = tokenService.generateToken(user);
-      LoginResponse loginResponse = new LoginResponse(user.getId(), token);
-      System.out.println(loginResponse);
-      return ResponseEntity.ok(loginResponse);
-    } catch (IllegalArgumentException ex) {
-      LoginResponse errorResponse = new LoginResponse(ex.getMessage());
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .contentType(MediaType.APPLICATION_JSON)
-          .body(errorResponse);
-    }
-  }
-
-  @PostMapping("/logout")
-  public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
-    System.out.println("Received Token: " + token); // Debugging
-
-    if (token == null || token.isEmpty()) {
-      return ResponseEntity.badRequest().body("Token is missing");
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userService.validateUser(loginRequest.getUsername(),loginRequest.getPassword());
+            String token = tokenService.generateToken(user);
+            LoginResponse loginResponse = new LoginResponse(user.getId(), token);
+            System.out.println(loginResponse);
+            return ResponseEntity.ok(loginResponse);
+        } catch (IllegalArgumentException ex) {
+            LoginResponse errorResponse = new LoginResponse(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
+        }
     }
 
-    boolean deactivated = tokenService.deactivateToken(token);
-    if (deactivated) {
-      return ResponseEntity.ok("Logged out successfully");
-    } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND)
-          .body("Token not found or already invalidated");
-    }
-  }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
+        System.out.println("Received Token: " + token); // Debugging
 
-  @PostMapping("/forgot-password")
-  public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
-    Optional<User> userOptional = userService.findByUsername(request.getUsername());
-    if (userOptional.isEmpty()) {
-      System.out.println("User with username " + request.getUsername() + " not found.");
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-    }
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.badRequest().body("Token is missing");
+        }
 
-    User user = userOptional.get();
-    // System.out.println("Checking if email " + request.getEmail() + " matches the user's email.");
-
-    if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
-      // System.out.println("Email does not match for username: " + request.getUsername() +".
-      // Provided: " + request.getEmail() + ". Stored: " + user.getEmail());
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email does not match");
+        boolean deactivated = tokenService.deactivateToken(token);
+        if (deactivated) {
+            return ResponseEntity.ok("Logged out successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token not found or already invalidated");
+        }
     }
 
-    try {
-      String otp = userService.generateAndSendOTP(request.getEmail());
-      System.out.println("Generating and sending OTP to email: " + request.getEmail());
-      return ResponseEntity.ok("OTP sent successfully to " + request.getEmail());
-    } catch (IllegalArgumentException ex) {
-      System.out.println(
-          "Failed to send OTP for email: " + request.getEmail() + ". Error: " + ex.getMessage());
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-  }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        Optional<User> userOptional = userService.findByUsername(request.getUsername());
+        if (userOptional.isEmpty()) {
+            System.out.println("User with username " + request.getUsername() + " not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
-  @PostMapping("/reset-password")
-  public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
-    if (userService.verifyOTP(request.getEmail(), request.getOtp())) {
-      userService.updatePassword(request.getEmail(), request.getNewPassword());
-      return ResponseEntity.ok("Password reset successfully");
-    } else {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
-    }
-  }
+        User user = userOptional.get();
+        //System.out.println("Checking if email " + request.getEmail() + " matches the user's email.");
 
-  @GetMapping("/validate-token")
-  public ResponseEntity<?> validateToken(@RequestParam String token) {
-    boolean isValid = tokenService.validateToken(token);
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
+            //System.out.println("Email does not match for username: " + request.getUsername() +". Provided: " + request.getEmail() + ". Stored: " + user.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email does not match");
+        }
 
-    if (isValid) {
-      return ResponseEntity.ok(Collections.singletonMap("message", "Token is valid"));
-    } else {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-          .body(Collections.singletonMap("message", "Invalid or expired token"));
+        try {
+            String otp = userService.generateAndSendOTP(request.getEmail());
+            System.out.println("Generating and sending OTP to email: " + request.getEmail());
+            return ResponseEntity.ok("OTP sent successfully to " + request.getEmail());
+        } catch (IllegalArgumentException ex) {
+            System.out.println("Failed to send OTP for email: " + request.getEmail() + ". Error: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
-  }
 
-  @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-    if (userService.existsByUsername(registerRequest.getUsername())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        if (userService.verifyOTP(request.getEmail(), request.getOtp())) {
+            userService.updatePassword(request.getEmail(), request.getNewPassword());
+            return ResponseEntity.ok("Password reset successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
+        }
     }
-    try {
-      System.out.println(registerRequest.getUsername());
 
-      User newUser = userService.registerUser(registerRequest);
-      return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    } catch (ConstraintViolationException ex) {
-      // Extract and return the validation messages
-      List<String> errors =
-          ex.getConstraintViolations().stream()
-              .map(ConstraintViolation::getMessage)
-              .collect(Collectors.toList());
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-          .contentType(MediaType.APPLICATION_JSON)
-          .body(errors);
-    } catch (IllegalArgumentException ex) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-  }
+    @GetMapping("/validate-token")
+    public ResponseEntity<?> validateToken(@RequestParam String token) {
+        boolean isValid = tokenService.validateToken(token);
 
-  @PostMapping("/user/{userId}/follow")
-  public ResponseEntity<?> followUser(@PathVariable long userId, @RequestParam long targetUserId) {
-    try {
-      userService.followUser(userId, targetUserId);
-      return ResponseEntity.ok(userId + " successfully followed " + targetUserId);
-    } catch (IllegalArgumentException ex) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        if (isValid) {
+            return ResponseEntity.ok(Collections.singletonMap("message", "Token is valid"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("message", "Invalid or expired token"));
+        }
     }
-  }
 
-  @PostMapping("/user/{userId}/unfollow")
-  public ResponseEntity<?> unfollowUser(
-      @PathVariable long userId, @RequestParam long targetUserId) {
-    try {
-      userService.unfollowUser(userId, targetUserId);
-      return ResponseEntity.ok(userId + " successfully unfollowed " + targetUserId);
-    } catch (IllegalArgumentException ex) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-  }
 
-  @GetMapping("/user/{userId}/followers")
-  public ResponseEntity<?> getFollowers(@PathVariable long userId) {
-    try {
-      List<User> followers = userService.findFollowers(userId);
-      return ResponseEntity.ok(followers);
-    } catch (IllegalArgumentException ex) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-  }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        if(userService.existsByUsername(registerRequest.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
+        }
+        try {
+            System.out.println(registerRequest.getUsername());
 
-  @GetMapping("/user/{userId}/following")
-  public ResponseEntity<?> getFollowing(@PathVariable long userId) {
-    try {
-      List<User> following = userService.findFollowing(userId);
-      return ResponseEntity.ok(following);
-    } catch (IllegalArgumentException ex) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+            User newUser = userService.registerUser(registerRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        } catch (ConstraintViolationException ex) {
+            // Extract and return the validation messages
+            List<String> errors = ex.getConstraintViolations()
+                    .stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(errors);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
-  }
 
-  @GetMapping("/user/{userId}")
-  public ResponseEntity<?> getUserDetails(@PathVariable long userId) {
-    try {
-      User user = userService.searchByUserId(userId);
-      return ResponseEntity.ok(user);
-    } catch (NullPointerException ex) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    @PostMapping("/user/{userId}/follow")
+    public ResponseEntity<?> followUser(@PathVariable long userId, @RequestParam long targetUserId) {
+        try {
+            userService.followUser(userId, targetUserId);
+            return ResponseEntity.ok(userId + " successfully followed " + targetUserId);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
-  }
 
-  @GetMapping("/api/users")
-  @ResponseBody
-  public ResponseEntity<?> getUsersApi() {
-    try {
-      List<User> users = userService.getAllUsers();
-      if (users.isEmpty()) {
-        return ResponseEntity.noContent().build();
-      }
-      return ResponseEntity.ok(users);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error retrieving users: " + e.getMessage());
+    @PostMapping("/user/{userId}/unfollow")
+    public ResponseEntity<?> unfollowUser(@PathVariable long userId, @RequestParam long targetUserId) {
+        try {
+            userService.unfollowUser(userId, targetUserId);
+            return ResponseEntity.ok(userId + " successfully unfollowed " + targetUserId);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
     }
-  }
+
+    @GetMapping("/user/{userId}/followers")
+    public ResponseEntity<?> getFollowers(@PathVariable long userId) {
+        try {
+            List<User> followers = userService.findFollowers(userId);
+            return ResponseEntity.ok(followers);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}/following")
+    public ResponseEntity<?> getFollowing(@PathVariable long userId) {
+        try {
+            List<User> following = userService.findFollowing(userId);
+            return ResponseEntity.ok(following);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserDetails(@PathVariable long userId) {
+        try {
+            User user = userService.searchByUserId(userId);
+            return ResponseEntity.ok(user);
+        } catch (NullPointerException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @GetMapping("/api/users")
+    @ResponseBody
+    public ResponseEntity<?> getUsersApi() {
+        try {
+            List<User> users = userService.getAllUsers();
+            if (users.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error retrieving users: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        try {
+            UserDto dto = userService.getUserById(id);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
