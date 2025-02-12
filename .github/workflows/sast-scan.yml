@@ -2,7 +2,7 @@ name: "sast-scan"
 
 on:
   push:
-    branches: [githubcicd]
+    branches: [master]
 
 jobs:
   test:
@@ -35,7 +35,7 @@ jobs:
           --out "ODC-report.html"
 
       - name: Archive OWASP Dependency Check report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sast-report
           path: ODC-report.html
