@@ -8,11 +8,11 @@ public class AdminViewController {
 
   @GetMapping("/AdminForgotPassword")
   public String showForgotPasswordPage() {
-    return "AdminForgotPassword";
+    return "adminForgotPassword";
   }
 
   @GetMapping("/AdminResetPassword")
   public String showResetPasswordPage() {
-    return "AdminResetPassword"; // Corrected: No .html extension
+    return "adminResetPassword"; // Corrected: No .html extension
   }
 }

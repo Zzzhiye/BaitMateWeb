@@ -20,7 +20,7 @@ public class MessageController {
 
   @GetMapping("/Message") // Maps to /api/announcement/message
   public String getMessagePage() {
-    return "Message"; // Looks for templates/Message.html
+    return "message"; // Looks for templates/Message.html
   }
 
   @PostMapping("/send")

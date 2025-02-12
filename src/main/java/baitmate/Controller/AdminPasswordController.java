@@ -25,16 +25,6 @@ public class AdminPasswordController {
 
   @Autowired private EmailService emailService;
 
-  @GetMapping("/AdminForgotPassword")
-  public String showForgotPasswordPage() {
-    return "AdminForgotPassword";
-  }
-
-  @GetMapping("/AdminResetPassword")
-  public String showResetPasswordPage() {
-    return "AdminResetPassword";
-  }
-
   @GetMapping("/login")
   public String showLoginPage() {
     return "login";
