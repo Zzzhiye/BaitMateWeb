@@ -18,6 +18,7 @@ public class CatchRecord {
 
   @Lob
   @Column(columnDefinition = "OID")
+  @JsonIgnore
   private byte[] image;
 
   private double length;
@@ -38,5 +39,6 @@ public class CatchRecord {
 
   @ManyToOne
   @JoinColumn(name = "location_id")
+  @JsonBackReference
   private FishingLocation fishingLocation;
 }

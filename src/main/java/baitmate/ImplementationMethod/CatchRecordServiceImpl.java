@@ -1,6 +1,7 @@
 package baitmate.ImplementationMethod;
 
 import baitmate.DTO.CatchRecordDTO;
+import baitmate.DTO.ProfileCatchDTO;
 import baitmate.Repository.CatchRecordRepository;
 import baitmate.Repository.FishRepository;
 import baitmate.Repository.FishingLocationRepository;
@@ -11,7 +12,11 @@ import baitmate.model.Fish;
 import baitmate.model.FishingLocation;
 import baitmate.model.User;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -34,11 +39,29 @@ public class CatchRecordServiceImpl implements CatchRecordService {
   }
 
   @Override
-  public List<CatchRecord> findByUserId(Long userId) {
+  @Transactional
+  public Optional<CatchRecord> findById(Long catchId) {
+    return catchRecordRepository.findById(catchId);
+  }
+
+  @Transactional
+  public List<ProfileCatchDTO> findByUserId(Long userId) {
     User user = userRepository.searchByUserId(userId);
     if (user != null) {
       System.out.println("Retrieving posts by " + userId);
-      return catchRecordRepository.findAllByUser(user);
+      List<CatchRecord> records = catchRecordRepository.findAllByUser(user);
+      List<ProfileCatchDTO> dtos = new ArrayList<>();
+      for (CatchRecord record : records) {
+        ProfileCatchDTO dto = new ProfileCatchDTO();
+        dto.setId(record.getId());
+        dto.setFishName(record.getFish().getFishName());
+        dto.setLocationName(record.getFishingLocation().getLocationName());
+        dto.setTime(record.getTime());
+        dto.setWeight(record.getWeight());
+        dto.setLength(record.getLength());
+        dtos.add(dto);
+      }
+      return dtos;
     } else return null;
   }
 

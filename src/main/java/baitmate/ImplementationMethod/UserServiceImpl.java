@@ -10,6 +10,7 @@ import baitmate.converter.UserConverter;
 import baitmate.model.Post;
 import baitmate.model.User;
 import io.micrometer.observation.annotation.Observed;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,10 +38,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public Optional<User> findByUsername(String username) {
         return userRepo.findByUsername(username);
     }
 
+    @Transactional
     public User validateUser(String username, String password) {
         Optional<User> userOptional = userRepo.findByUsername(username);
         if (userOptional.isPresent()) {
@@ -58,6 +61,7 @@ public class UserServiceImpl implements UserService {
         throw new IllegalArgumentException("Username does not exist.");
     }
 
+    @Transactional
     public User registerUser(RegisterRequest registerRequest) {
         Optional<User> existingUser = userRepo.findByUsername(registerRequest.getUsername());
         if (existingUser.isPresent()) {
@@ -111,6 +115,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User searchByUserId(long userId) {
         // TODO Auto-generated method stub
         User u = userRepo.searchByUserId(userId);
@@ -118,6 +123,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+
     public User save(User user) {
         // TODO Auto-generated method stub
         User u = userRepo.save(user);
@@ -125,6 +131,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
@@ -135,13 +142,16 @@ public class UserServiceImpl implements UserService {
         return userConverter.toDto(user);
     }
 
+    @Transactional
     public List<User> findFollowing(long userId) {
         return userRepo.findFollowing(userId);
     }
 
+    @Transactional
     public List<User> findFollowers(long userId) {
         return userRepo.findFollowers(userId);
     }
+
 
     public void followUser(long userId, long targetId) {
         User user = userRepo.searchByUserId(userId);
