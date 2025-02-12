@@ -30,12 +30,6 @@ public class AdminServiceImpl implements AdminService {
   @Override
   public void updateAdmin(Admin admin) {
     logger.info("Updating/Creating admin: {}", admin.getUsername());
-
-    // Encode password before saving (only if it's a new password or being changed)
-    if (admin.getId() == 0
-        || !admin.getPassword().startsWith("$2a$")) { // Simple check to determine new password
-      admin.setPassword(passwordEncoder.encode(admin.getPassword()));
-    }
     adminRepository.save(admin);
   }
 
