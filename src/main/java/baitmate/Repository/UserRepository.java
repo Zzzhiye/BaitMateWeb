@@ -29,10 +29,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
   boolean existsByUsername(String username);
 
   // Query to get the users this user is following
-  @Query("SELECT u FROM User u JOIN u.following f WHERE f.id = :userId")
+  @Query("SELECT f FROM User u JOIN u.following f WHERE u.id = :userId")
   List<User> findFollowing(@Param("userId") long userId);
 
   // Query to get the users who follow this user
-  @Query("SELECT u FROM User u JOIN u.following f WHERE u.id = :userId")
+  @Query("SELECT u FROM User u JOIN u.following f WHERE f.id = :userId")
   List<User> findFollowers(@Param("userId") long userId);
 }

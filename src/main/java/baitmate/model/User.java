@@ -55,10 +55,6 @@ public class User {
   @Column(name = "address")
   private String address;
 
-  @Lob
-  @Column(name = "profile_image")
-  private byte[] profileImage;
-
   @Column(name = "join_date")
   private LocalDate joinDate;
 
@@ -105,7 +101,7 @@ public class User {
   @JoinTable(
       name = "user_following",
       joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "folowing_id"))
+      inverseJoinColumns = @JoinColumn(name = "following_id"))
   @JsonManagedReference
   private List<User> following;
 }
