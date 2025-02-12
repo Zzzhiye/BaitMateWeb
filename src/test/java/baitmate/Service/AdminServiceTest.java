@@ -33,7 +33,7 @@ class AdminServiceTest {
     testAdmin.setId(1);
     testAdmin.setName("Admin User");
     testAdmin.setUsername("admin123");
-    testAdmin.setEmail("admin@gmail.com");
+    testAdmin.setEmail("admin@yahoo.com.sg");
     testAdmin.setAddress("123 Admin Street");
     testAdmin.setPassword("Secure@123");
     Mockito.lenient().when(passwordEncoder.encode(any())).thenReturn("EncodeSecure@123");

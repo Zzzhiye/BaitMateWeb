@@ -44,11 +44,6 @@ public class AdminPasswordController {
     if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
       return ResponseEntity.badRequest().body("<p style='color:red;'>Email cannot be empty.</p>");
     }
-    // Check if email format as @gmail.com
-    if (!request.getEmail().toLowerCase().endsWith("@gmail.com")) {
-      return ResponseEntity.badRequest()
-          .body("<p style='color:red;'>Email must be a Gmail address.</p>");
-    }
 
     // Retrieve admin by username
     Admin admin = adminService.searchUserByUserName(request.getUsername());
