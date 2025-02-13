@@ -156,6 +156,9 @@ public class UserServiceImpl implements UserService {
     public void followUser(long userId, long targetId) {
         User user = userRepo.searchByUserId(userId);
         User targetUser = userRepo.searchByUserId(targetId);
+        if (user.getFollowing().contains(targetUser)) {
+            throw new IllegalArgumentException("User is already following the target user.");
+        }
         user.getFollowing().add(targetUser);
         userRepo.save(user);
     }
@@ -163,6 +166,9 @@ public class UserServiceImpl implements UserService {
     public void unfollowUser(long userId, long targetId) {
         User user = userRepo.searchByUserId(userId);
         User targetUser = userRepo.searchByUserId(targetId);
+        if (!user.getFollowing().contains(targetUser)) {
+            throw new IllegalArgumentException("User is not following the target user.");
+        }
         user.getFollowing().remove(targetUser);
         userRepo.save(user);
     }
