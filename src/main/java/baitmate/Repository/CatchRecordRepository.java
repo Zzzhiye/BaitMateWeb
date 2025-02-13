@@ -1,5 +1,6 @@
 package baitmate.Repository;
 
+import baitmate.DTO.ProfileCatchDTO;
 import baitmate.model.CatchRecord;
 import baitmate.model.User;
 import java.util.List;
@@ -12,7 +13,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CatchRecordRepository extends JpaRepository<CatchRecord, Long> {
 
-  List<CatchRecord> findAllByUser(User user);
+  @Query("SELECT new baitmate.DTO.ProfileCatchDTO(cr.id, f.FishName, l.locationName, cr.time, cr.weight, cr.length) " +
+          "FROM CatchRecord cr " +
+          "JOIN cr.fish f " +
+          "JOIN cr.fishingLocation l " +
+          "WHERE cr.user = :user")
+  List<ProfileCatchDTO> findProfileCatchDTOByUser(@Param("user") User user);
 
   @Query("SELECT c FROM CatchRecord c ORDER BY c.weight DESC")
   List<CatchRecord> findTopCatchesByWeight(Pageable pageable);

@@ -44,24 +44,15 @@ public class CatchRecordServiceImpl implements CatchRecordService {
     return catchRecordRepository.findById(catchId);
   }
 
+  @Override
   @Transactional
   public List<ProfileCatchDTO> findByUserId(Long userId) {
     User user = userRepository.searchByUserId(userId);
     if (user != null) {
-      System.out.println("Retrieving posts by " + userId);
-      List<CatchRecord> records = catchRecordRepository.findAllByUser(user);
-      List<ProfileCatchDTO> dtos = new ArrayList<>();
-      for (CatchRecord record : records) {
-        ProfileCatchDTO dto = new ProfileCatchDTO();
-        dto.setId(record.getId());
-        dto.setFishName(record.getFish().getFishName());
-        dto.setLocationName(record.getFishingLocation().getLocationName());
-        dto.setTime(record.getTime());
-        dto.setWeight(record.getWeight());
-        dto.setLength(record.getLength());
-        dtos.add(dto);
-      }
-      return dtos;
+      System.out.println("Retrieving catch records by " + userId);
+      List<ProfileCatchDTO> profileCatchDTOS = catchRecordRepository.findProfileCatchDTOByUser(user);
+      return profileCatchDTOS;
+
     } else return null;
   }
 
