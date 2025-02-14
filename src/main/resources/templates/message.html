@@ -114,7 +114,6 @@
     </form> <!-- Close the form tag -->
 </div>
 
-<!-- 添加通知列表区域 -->
 <div class="container mt-4">
     <h3>Notifications</h3>
     <div class="d-flex justify-content-end mb-3">
@@ -125,10 +124,10 @@
     <div id="notificationsList"></div>
 </div>
 
-<!-- 添加必要的JavaScript依赖 -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // 变量声明
+
     const announcementForm = document.getElementById('announcementForm'); // Get the form element
     const fileInput = document.getElementById('fileInput');
     const btnSend = document.getElementById('btnSend');
@@ -141,10 +140,10 @@
     const recipientHeader = document.getElementById('recipientHeader');
     const fileNamesList = document.getElementById('fileNamesList');
 
-    // 初始化选中文件数组
+
     let selectedFiles = [];
 
-    // 添加文件大小检查
+
     function isFileSizeValid(file) {
         const maxSize = 10 * 1024 * 1024; // 10MB
         return file.size <= maxSize;
@@ -164,7 +163,7 @@
         fileInput.value = ""; // Clear the file input
     });
 
-    // 改进文件列表显示
+
     function refreshFileList() {
         fileNamesList.innerHTML = "";
         if (selectedFiles.length === 0) {
@@ -201,7 +200,7 @@
         table.appendChild(tbody);
         fileNamesList.appendChild(table);
 
-        // 添加删除事件监听
+
         document.querySelectorAll('.delete-file').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.currentTarget.getAttribute('data-index'));
@@ -211,7 +210,7 @@
         });
     }
 
-    // 根据公告类型显示/隐藏收件人
+
     announcementType.addEventListener('change', () => {
         if (announcementType.value === "send to all users") {
             recipientContainer.style.display = "none";
@@ -222,14 +221,14 @@
         }
     });
 
-    // 初始化时触发一次
+
     announcementType.dispatchEvent(new Event('change'));
 
     btnSend.addEventListener('click', async () => { // Add async
         // Prevent form submission with preventDefault
 
         try {
-            // 表单验证
+
             if (announcementType.value === "send to single user" && !recipientInput.value.trim()) {
                 alert('Please enter recipient');
                 return;
@@ -243,7 +242,7 @@
                 return;
             }
 
-            // 显示loading状态
+
             btnSend.disabled = true;
             btnSend.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
@@ -258,7 +257,7 @@
 
             const response = await fetch('/admin/send', { // Correct endpoint
                 method: 'POST',
-                body: formData // No need for Content-Type header with FormData
+                body: formData
             });
 
 
@@ -271,19 +270,19 @@
             console.log('Success:', result);
             alert('Announcement sent successfully!');
 
-            // 清空表单
+
             resetForm();
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to send announcement: ' + error.message);
         } finally {
-            // 恢复按钮状态
+
             btnSend.disabled = false;
             btnSend.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
         }
     });
 
-    // 添加重置表单函数
+
     function resetForm() {
         announcementForm.reset(); // This will reset all form fields
         selectedFiles = []; // Clear selected files
@@ -291,7 +290,7 @@
         announcementType.dispatchEvent(new Event('change')); // Re-trigger the recipient display logic
     }
 
-    // 添加通知相关的函数
+
     function loadNotifications() {
         fetch('/admin/notifications?username=' + encodeURIComponent('currentUsername'))
             .then(response => response.json())
@@ -344,7 +343,7 @@
         })
             .then(response => {
                 if (response.ok) {
-                    loadNotifications(); // 重新加载通知列表
+                    loadNotifications();
                 } else {
                     throw new Error('Failed to mark notification as read');
                 }
@@ -352,7 +351,7 @@
             .catch(error => console.error('Error:', error));
     }
 
-    // 页面加载时加载通知
+
     document.addEventListener('DOMContentLoaded', () => {
         loadNotifications();
     });

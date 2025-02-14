@@ -76,13 +76,13 @@ public class EmailServiceImpl implements EmailService {
       helper.setFrom(fromEmail); // Use the injected fromEmail
       helper.setTo(to);
       helper.setSubject(subject);
-      // 如果text含有HTML标签，请将第二个参数设置为true
+
       helper.setText(text, true); // Enable HTML content
 
       if (attachments != null) {
         for (MultipartFile file : attachments) {
           if (file != null && !file.isEmpty()) {
-            // 新增日志：记录附件信息
+
             logger.info(
                 "Attaching file: {} (size: {} bytes) for recipient: {}",
                 file.getOriginalFilename(),

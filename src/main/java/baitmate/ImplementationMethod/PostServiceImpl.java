@@ -16,10 +16,7 @@ import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import org.postgresql.PGConnection;
@@ -58,6 +55,14 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    public List<PostDto> getAllPostsWithCurrentUser(Long userId) {
+        List<Post> posts = postRepository.findAll();
+        Collectors Collectors = null;
+        return posts.stream()
+                .map(post -> postConverter.toDto(post,userId))
+                .collect(Collectors.toList());
+    }
+
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
         Collectors Collectors = null;
@@ -66,14 +71,14 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
-    public List<PostDto> getPostByUser(Long userId) {
+    public List<PostDto> getPostByUser(Long userId, Long currentUserId) {
         User user = userRepository.searchByUserId(userId);
         if (user !=null) {
             System.out.println("Retrieving posts by "+ userId);
             List<Post> posts = postRepository.findAllByUser(user);
             Collectors Collectors = null;
             return posts.stream()
-                    .map(postConverter::toDto)
+                    .map(post -> postConverter.toDto(post,currentUserId))
                     .collect(Collectors.toList());
         } else return null;
     }
@@ -129,9 +134,7 @@ public class PostServiceImpl implements PostService {
         return postConverter.toDto(updated);
     }
 
-    // 2. 删除 Post
     public void deletePost(Long postId, Long userId) {
-        // 只有发帖人可以删除
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         if (!post.getUser().getId().equals(userId)) {
@@ -155,16 +158,12 @@ public class PostServiceImpl implements PostService {
         List<Post> likedPosts = user.getLikedPosts();
 
         if (likedPosts.contains(post)) {
-            // 已点赞 -> 取消点赞
             likedPosts.remove(post);
             post.getLikedByUsers().remove(user);
-            // likeCount -1
             post.setLikeCount(post.getLikeCount() - 1);
         } else {
-            // 未点赞 -> 点赞
             likedPosts.add(post);
             post.getLikedByUsers().add(user);
-            // likeCount +1
             post.setLikeCount(post.getLikeCount() + 1);
 
             redDotService.createLikeRedDot(
@@ -174,12 +173,9 @@ public class PostServiceImpl implements PostService {
             );
         }
 
-        // 保存
-        // 注意顺序，一般先保存 post 再保存 user 或都保存
         postRepository.save(post);
         userRepository.save(user);
 
-        // 这里需要一个带 currentUserId 的 toDto
         return postConverter.toDto(post, userId);
     }
 
@@ -192,18 +188,15 @@ public class PostServiceImpl implements PostService {
         List<Post> savedPosts = user.getSavedPosts();
 
         if (savedPosts.contains(post)) {
-            // 已收藏 -> 取消收藏
             savedPosts.remove(post);
             post.getSavedByUsers().remove(user);
             post.setSavedCount(post.getSavedCount() - 1);
         } else {
-            // 未收藏 -> 收藏
             savedPosts.add(post);
             post.getSavedByUsers().add(user);
             post.setSavedCount(post.getSavedCount() + 1);
         }
 
-        // 保存
         postRepository.save(post);
         userRepository.save(user);
 
@@ -213,21 +206,18 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public byte[] getImageDataByOid(Long oid) {
         try (Connection conn = dataSource.getConnection()) {
-            // 注：Spring @Transactional 默认已关了 autoCommit，
-            // 但仍可手动 setAutoCommit(false) 以防万一
+
             conn.setAutoCommit(false);
 
             PGConnection pgConn = conn.unwrap(PGConnection.class);
             LargeObjectManager lobj = pgConn.getLargeObjectAPI();
 
-            // 打开 OID 对应的大对象 (只读)
             LargeObject lo = lobj.open(oid, LargeObjectManager.READ);
             int size = (int) lo.size();
             byte[] data = new byte[size];
             lo.read(data, 0, size);
             lo.close();
 
-            // 不要忘了提交事务
             conn.commit();
 
             return data;
@@ -315,16 +305,13 @@ public class PostServiceImpl implements PostService {
 
     public Long saveImageToDatabase(byte[] imageBytes) {
         return jdbcTemplate.execute((Connection connection) -> {
-            // 获取 Large Object Manager
+
             LargeObjectManager lobj = connection.unwrap(org.postgresql.PGConnection.class).getLargeObjectAPI();
 
-            // 创建 Large Object，并返回 OID
             long oid = lobj.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
 
-            // 打开 Large Object
             LargeObject obj = lobj.open(oid, LargeObjectManager.WRITE);
 
-            // 写入数据
             obj.write(imageBytes);
             obj.close();
 
@@ -375,5 +362,22 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         post.setPostStatus("petition");
         postRepository.save(post);
+    }
+
+    public List<PostDto> getFollowingPosts(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Set<User> followingUsers = user.getFollowing();
+
+        return followingUsers.stream()
+                .flatMap(following -> following.getPosts().stream())
+                .map(post -> postConverter.toDto(post, userId))
+                .collect(Collectors.toList());
+    }
+
+    public List<PostDto> getSavedPosts(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getSavedPosts().stream()
+                .map(post -> postConverter.toDto(post, userId))
+                .collect(Collectors.toList());
     }
 }
