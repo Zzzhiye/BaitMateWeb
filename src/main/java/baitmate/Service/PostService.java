@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 public interface PostService {
 
     List<PostDto> getAllPosts();
+    List<PostDto> getAllPostsWithCurrentUser(Long userId);
     Long createPost(CreatedPostDto postDto);
     Long createComment(CreateCommentDto commentDto);
     PostDto updatePost(Long postId, PostDto postDto);
@@ -36,9 +37,11 @@ public interface PostService {
     List<Post> getAllPostsWithDetails();
     List<Post> findByPostTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<Post> getPostsByIds(List<Long> postIds);
-    List<PostDto> getPostByUser(Long userId);
+    List<PostDto> getPostByUser(Long userId, Long currentUserId);
 
     List<PostDto> findByUsername(String username);
 
     void updatePostStatus(Long postId);
+    List<PostDto> getFollowingPosts(Long userId);
+    List<PostDto> getSavedPosts(Long userId);
 }

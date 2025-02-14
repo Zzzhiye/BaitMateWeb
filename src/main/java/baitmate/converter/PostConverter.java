@@ -35,12 +35,6 @@ public class PostConverter {
     // user
     dto.setUser(userConverter.toDto(post.getUser()));
 
-    // 若 post 有 fishingLocation
-    //        if (post.getFishingLocation() != null) {
-    //            dto.setFishingLocationId(post.getFishingLocation().getId());
-    //            dto.setFishingLocationName(post.getFishingLocation().getLocationName());
-    //        }
-
     // comments
     if (post.getComments() != null) {
       List<CommentDto> cmtList =

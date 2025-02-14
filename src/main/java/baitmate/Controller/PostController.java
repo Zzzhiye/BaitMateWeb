@@ -46,6 +46,21 @@ public class PostController {
         return postService.getAllPosts();
     }
 
+    @GetMapping("/all/{userId}")
+    public List<PostDto> getAllPostsWithCurrentUser(@PathVariable Long userId) {
+        return postService.getAllPostsWithCurrentUser(userId);
+    }
+
+    @GetMapping("{userId}/following")
+    public List<PostDto> getFollowingPosts(@PathVariable Long userId) {
+        return postService.getFollowingPosts(userId);
+    }
+
+    @GetMapping("/{userId}/saved")
+    public List<PostDto> getSavedPosts(@PathVariable Long userId) {
+        return postService.getSavedPosts(userId);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable Long id) {
         try {
@@ -55,22 +70,23 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
     }
-    @GetMapping("/{Id}/by-user")
-    public ResponseEntity<PostDto> getPostById(
+    @GetMapping("/{postId}/by-user/{userId}")
+    public PostDto getPostById(
             @PathVariable Long postId,
-            @RequestParam(required = false) Long userId) {
+            @PathVariable Long userId) {
 
         Post post = postService.findById(postId);
 
-        PostDto dto = postConverter.toDto(post, userId);  // 这里会判断 likedByCurrentUser
+        PostDto dto = postConverter.toDto(post, userId);
 
-        return ResponseEntity.ok(dto);
+        return dto;
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getPostsByUserId(@PathVariable Long userId){
+    @GetMapping("/user/{userId}/{currentUserId}")
+    public ResponseEntity<?> getPostsByUserId(@PathVariable Long userId,
+                                              @PathVariable Long currentUserId) {
         try {
-            List<PostDto> userPosts = postService.getPostByUser(userId);
+            List<PostDto> userPosts = postService.getPostByUser(userId,currentUserId);
             return ResponseEntity.ok(userPosts);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
