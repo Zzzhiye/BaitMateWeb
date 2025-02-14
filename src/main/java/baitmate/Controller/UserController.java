@@ -97,6 +97,24 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "/user/{userId}/update", consumes = "application/json;charset=UTF-8")
+    public ResponseEntity<?> updateProfile(@PathVariable Long userId, @RequestBody UserDto updatedUser) {
+        User user = userService.searchByUserId(userId);
+        if (user != null) {
+            System.out.println("User with id " + userId + " found.");
+            user.setUsername(updatedUser.getUsername());
+            user.setPhoneNumber(updatedUser.getPhoneNumber());
+            user.setEmail(updatedUser.getEmail());
+            user.setGender(updatedUser.getGender());
+            user.setAddress(updatedUser.getAddress());
+            userService.save(user);
+            return ResponseEntity.ok("User updated successfully");
+        } else {
+            System.out.println("User with id " + userId + " not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
+
     @GetMapping("/validate-token")
     public ResponseEntity<?> validateToken(@RequestParam String token) {
         boolean isValid = tokenService.validateToken(token);
