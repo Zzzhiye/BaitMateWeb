@@ -1,4 +1,4 @@
-package baitmate.config; // 根据你的项目包结构调整
+package baitmate.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry
-        .addMapping("/**") // 允许所有路径
-        .allowedOriginPatterns("*") // 允许所有来源（Spring 6+ 推荐）
+        .addMapping("/**")
+        .allowedOriginPatterns("*")
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
         .allowedHeaders("*")
         .allowCredentials(true);
