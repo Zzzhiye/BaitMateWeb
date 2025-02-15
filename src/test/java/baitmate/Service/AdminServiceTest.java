@@ -39,7 +39,7 @@ class AdminServiceTest {
     Mockito.lenient().when(passwordEncoder.encode(any())).thenReturn("EncodeSecure@123");
   }
 
-  /** ✅ 测试 searchUserByUserName: 找到用户 */
+  
   @Test
   void testSearchUserByUserName_Found() {
 
@@ -50,10 +50,10 @@ class AdminServiceTest {
     assertEquals("admin123", admin.getUsername());
   }
 
-  /** ✅ 测试 getAdminById: 找到管理员 */
+  
   @Test
   void testGetAdminById_Found() {
-    when(adminRepository.findById(1)).thenReturn(Optional.of(testAdmin)); // Use 1L for Long
+    when(adminRepository.findById(1)).thenReturn(Optional.of(testAdmin)); 
 
     Admin admin = adminService.getAdminById(1);
 
@@ -61,30 +61,30 @@ class AdminServiceTest {
     assertEquals(1, admin.getId());
   }
 
-  /** ✅ 测试 getAdminById: 找不到管理员 */
+  
   @Test
   void testGetAdminById_NotFound() {
-    when(adminRepository.findById(2)).thenReturn(Optional.empty()); // Use 2L for Long
+    when(adminRepository.findById(2)).thenReturn(Optional.empty()); 
 
     Admin admin = adminService.getAdminById(2);
 
     assertNull(admin);
   }
 
-  /** ✅ 测试 updateAdmin: 成功更新管理员 */
+  
   @Test
   void testUpdateAdmin_Success() {
     Integer adminId = testAdmin.getId();
 
-    // 关键：Mock findById 返回存在的管理员
+    
     when(adminRepository.findById(adminId))
         .thenReturn(Optional.of(testAdmin));
-    // Mock the save method to return the updated admin.  Important for testing persistence.
+    
     when(adminRepository.saveAndFlush(any(Admin.class))).thenReturn(testAdmin);
 
     adminService.updateAdmin(testAdmin);
 
-    // Verify that the save method was called.  This is a crucial part of the test.
+    
     verify(adminRepository).saveAndFlush(testAdmin);
   }
 

@@ -25,8 +25,8 @@ public class PostReportController {
 
   @GetMapping("/posts/word")
   public ResponseEntity<Resource> downloadWordReport(
-      @RequestParam(required = false) List<Long> postIds, // Changed from userIds
-      @RequestParam(required = false) boolean allPosts, // Changed from allUsers
+      @RequestParam(required = false) List<Long> postIds, 
+      @RequestParam(required = false) boolean allPosts, 
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
           LocalDate startDate,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -54,8 +54,8 @@ public class PostReportController {
 
   @GetMapping("/posts/excel")
   public ResponseEntity<Resource> downloadExcelReport(
-      @RequestParam(required = false) List<Long> postIds, // Changed from userIds
-      @RequestParam(required = false) boolean allPosts, // Changed from allUsers
+      @RequestParam(required = false) List<Long> postIds, 
+      @RequestParam(required = false) boolean allPosts, 
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
           LocalDate startDate,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)

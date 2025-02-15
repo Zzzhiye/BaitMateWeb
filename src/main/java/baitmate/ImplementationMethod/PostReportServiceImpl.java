@@ -26,7 +26,7 @@ public class PostReportServiceImpl implements PostReportService {
   private static final DateTimeFormatter DATE_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-  // Filtering Method
+  
   public List<Post> getFilteredPosts(
       List<Long> postIds,
       boolean allPosts,
@@ -66,7 +66,7 @@ public class PostReportServiceImpl implements PostReportService {
     return posts;
   }
 
-  // Word Report Generation
+  
   public ByteArrayInputStream generateWordReport(
       List<Long> postIds,
       boolean allPosts,
@@ -225,7 +225,7 @@ public class PostReportServiceImpl implements PostReportService {
         });
   }
 
-  // Excel Report Generation
+  
   public ByteArrayInputStream generateExcelReport(
       List<Long> postIds,
       boolean allPosts,

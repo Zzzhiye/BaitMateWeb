@@ -9,10 +9,10 @@ public interface AdminService {
 
   void updatePassword(String email, String newPassword);
 
-  Admin save(Admin admin); // Standardized method name
+  Admin save(Admin admin); 
 
   void createAdmin(Admin admin);
 
   void updateAdmin(Admin admin);
-  // Added missing method
+  
 }

@@ -33,14 +33,14 @@ class PostControllerTest {
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
 
-    // 初始化 Mock 数据
+    
     mockPost = new PostDto();
     mockPost.setId(1L);
     mockPost.setPostTitle("Test Title");
     mockPost.setPostContent("Test Content");
   }
 
-  /** ✅ 测试获取所有帖子 */
+  
   @Test
   void getAllPosts() {
     List<PostDto> posts = Arrays.asList(mockPost);
@@ -51,7 +51,7 @@ class PostControllerTest {
     assertEquals("Test Title", result.get(0).getPostTitle());
   }
 
-  /** ✅ 测试获取单个帖子（成功） */
+  
   @Test
   void getPostById_Success() {
     when(postService.getPostById(1L)).thenReturn(mockPost);
@@ -61,7 +61,7 @@ class PostControllerTest {
     assertEquals("Test Title", response.getBody().getPostTitle());
   }
 
-  /** ✅ 测试删除帖子（成功） */
+  
   @Test
   void deletePost_Success() {
     doNothing().when(postService).deletePost(1L, 1L);
@@ -70,7 +70,7 @@ class PostControllerTest {
     assertEquals(204, response.getStatusCodeValue());
   }
 
-  /** ✅ 测试删除帖子（失败） */
+  
   @Test
   void deletePost_Fail() {
     doThrow(new RuntimeException()).when(postService).deletePost(1L, 1L);

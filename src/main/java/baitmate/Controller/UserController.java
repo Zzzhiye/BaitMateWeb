@@ -47,7 +47,7 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
-        System.out.println("Received Token: " + token); // Debugging
+        System.out.println("Received Token: " + token); 
 
         if (token == null || token.isEmpty()) {
             return ResponseEntity.badRequest().body("Token is missing");
@@ -70,10 +70,10 @@ public class UserController {
         }
 
         User user = userOptional.get();
-        //System.out.println("Checking if email " + request.getEmail() + " matches the user's email.");
+        
 
         if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
-            //System.out.println("Email does not match for username: " + request.getUsername() +". Provided: " + request.getEmail() + ". Stored: " + user.getEmail());
+            
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email does not match");
         }
 
@@ -138,7 +138,7 @@ public class UserController {
             User newUser = userService.registerUser(registerRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
         } catch (ConstraintViolationException ex) {
-            // Extract and return the validation messages
+            
             List<String> errors = ex.getConstraintViolations()
                     .stream()
                     .map(ConstraintViolation::getMessage)

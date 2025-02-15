@@ -34,7 +34,7 @@ public class ImageServiceImpl implements ImageService {
   public byte[] getImageByImageId(Long imageId) {
     try (Connection connection = dataSource.getConnection()) {
       connection.setAutoCommit(false);
-      // Retrieve the image OID from the repository
+      
       Image postImage =
           imageRepo.findById(imageId).orElseThrow(() -> new RuntimeException("Image not found"));
       if (postImage == null) {
@@ -44,9 +44,9 @@ public class ImageServiceImpl implements ImageService {
       LargeObjectManager lobjManager =
           connection.unwrap(org.postgresql.PGConnection.class).getLargeObjectAPI();
       Long imageOid = postImage.getImage();
-      // Access the Large Object using the OID
+      
       LargeObject largeObject = lobjManager.open(imageOid, LargeObjectManager.READ);
-      // Read the large object data
+      
       byte[] imageData = largeObject.read(largeObject.size());
 
       largeObject.close();

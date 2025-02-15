@@ -25,12 +25,12 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void createAdmin(Admin admin) {
         try {
-            // Check for unique username
+            
             if (adminRepository.searchUserByUserName(admin.getUsername()) != null) {
                 throw new RuntimeException("Username already exists");
             }
 
-            // Check for unique email
+            
             if (adminRepository.findAdminByEmail(admin.getEmail()).isPresent()) {
                 throw new RuntimeException("Email already exists");
             }
@@ -50,30 +50,30 @@ public class AdminServiceImpl implements AdminService {
             Admin existingAdmin = adminRepository.findById(admin.getId())
                     .orElseThrow(() -> new RuntimeException("Admin not found"));
 
-            // Check for unique username if changed
+            
             if (!existingAdmin.getUsername().equals(admin.getUsername()) &&
                     adminRepository.searchUserByUserName(admin.getUsername()) != null) {
                 throw new RuntimeException("Username already exists");
             }
 
-            // Check for unique email if changed
+            
             if (!existingAdmin.getEmail().equals(admin.getEmail()) &&
                     adminRepository.findAdminByEmail(admin.getEmail()).isPresent()) {
                 throw new RuntimeException("Email already exists");
             }
 
-            // Update fields
+            
             existingAdmin.setName(admin.getName());
             existingAdmin.setUsername(admin.getUsername());
             existingAdmin.setEmail(admin.getEmail());
             existingAdmin.setAddress(admin.getAddress());
 
-            // Handle password update
+            
             if (!existingAdmin.getPassword().equals(admin.getPassword())) {
                 existingAdmin.setPassword(admin.getPassword());
             }
 
-            // Save the updated admin
+            
             adminRepository.saveAndFlush(existingAdmin);
             logger.info("Admin updated successfully: {}", existingAdmin.getUsername());
         } catch (Exception e) {

@@ -11,38 +11,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Controller // Use @Controller
+@Controller 
 @RequestMapping("/admin")
 public class MessageController {
 
   private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
   @Autowired private MessageService messageService;
 
-  @GetMapping("/Message") // Maps to /api/announcement/message
+  @GetMapping("/Message") 
   public String getMessagePage() {
-    return "message"; // Looks for templates/Message.html
+    return "message"; 
   }
 
   @PostMapping("/send")
-  @ResponseBody // CRITICAL: Return the String directly as the response body
+  @ResponseBody 
   public ResponseEntity<String> sendAnnouncement(
       @RequestParam("sender") String sender,
       @RequestParam(value = "recipient", required = false)
-          String recipient, // Recipient is optional
+          String recipient, 
       @RequestParam("subject") String subject,
       @RequestParam("text") String text,
       @RequestParam("announcementType") String announcementType,
       @RequestParam("attachments") MultipartFile[] attachments) {
 
     try {
-      // Create the DTO
+      
       MessageDTO messageDTO = new MessageDTO();
       messageDTO.setSender(sender);
       messageDTO.setRecipient(recipient);
       messageDTO.setSubject(subject);
       messageDTO.setText(text);
       messageDTO.setAnnouncementType(announcementType);
-      // No need to set attachments here; they are passed directly to the service
+      
 
       messageService.sendAnnouncement(messageDTO, attachments);
       return ResponseEntity.ok("<p style='color:green;'>Announcement sent successfully!</p>");

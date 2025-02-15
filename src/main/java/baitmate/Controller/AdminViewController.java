@@ -13,6 +13,6 @@ public class AdminViewController {
 
   @GetMapping("/AdminResetPassword")
   public String showResetPasswordPage() {
-    return "adminResetPassword"; // Corrected: No .html extension
+    return "adminResetPassword"; 
   }
 }

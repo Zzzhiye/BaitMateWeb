@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller // Use @Controller
+@Controller 
 @RequestMapping("/api/admin")
 public class AdminPasswordController {
 
@@ -36,7 +36,7 @@ public class AdminPasswordController {
       @RequestBody ForgotPasswordRequest request, HttpSession session) {
     logger.info("Received forgot password request for admin: {}", request.getUsername());
 
-    // Input validation
+    
     if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
       return ResponseEntity.badRequest()
           .body("<p style='color:red;'>Username cannot be empty.</p>");
@@ -45,7 +45,7 @@ public class AdminPasswordController {
       return ResponseEntity.badRequest().body("<p style='color:red;'>Email cannot be empty.</p>");
     }
 
-    // Retrieve admin by username
+    
     Admin admin = adminService.searchUserByUserName(request.getUsername());
     if (admin == null) {
       logger.warn("Admin not found: {}", request.getUsername());
@@ -53,24 +53,24 @@ public class AdminPasswordController {
           .body("<p style='color:red;'>Admin not found</p>");
     }
 
-    // Email validation: Check if entered email matches the admin's actual email
+    
     if (!admin.getEmail().equalsIgnoreCase(request.getEmail())) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .body("<p style='color:red;'>Username and email do not match.</p>");
     }
 
-    // Generate OTP
+    
     String adminOTP = String.format("%06d", new Random().nextInt(999999));
     logger.info("Generated Admin OTP: {}", adminOTP);
 
-    // Store OTP and email in the session
+    
     session.setAttribute("otp", adminOTP);
-    session.setAttribute("email", admin.getEmail()); // Store the *correct* email
+    session.setAttribute("email", admin.getEmail()); 
 
     try {
-      // Send OTP email
+      
       emailService.sendSimpleMessage(
-          admin.getEmail(), // Send to the *correct* email
+          admin.getEmail(), 
           "Admin Password Reset OTP",
           "Your OTP for password reset is: " + adminOTP);
       return ResponseEntity.ok(
@@ -89,11 +89,11 @@ public class AdminPasswordController {
       return ResponseEntity.badRequest().body("<p style='color:red;'>OTP cannot be empty.</p>");
     }
 
-    // Retrieve OTP from session
+    
     String storedOtp = (String) session.getAttribute("otp");
 
     if (storedOtp != null && storedOtp.equals(otp)) {
-      // OTP is valid.  We *don't* clear the session here. We need the email in the next step.
+      
       return ResponseEntity.ok("<p style='color:green;'>OTP validated</p>");
     } else {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -106,28 +106,28 @@ public class AdminPasswordController {
   public ResponseEntity<?> resetPassword(
       @RequestBody ResetPasswordRequest request, HttpSession session) {
 
-    // Retrieve email from session.  This is now the ONLY place we get the email.
+    
     String email = (String) session.getAttribute("email");
 
     if (email == null) {
-      // If email is not in the session, it means the user didn't go through the forgot password
-      // flow.
+      
+      
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body("<p style='color:red;'>Session expired or invalid request.</p>");
     }
 
-    // Input validation for the new password.
+    
     if (request.getNewPassword() == null || request.getNewPassword().trim().isEmpty()) {
       return ResponseEntity.badRequest()
           .body("<p style='color:red;'>New password cannot be empty.</p>");
     }
 
     try {
-      logger.info("Updating password for email: {}", email); // Log the retrieved email
+      logger.info("Updating password for email: {}", email); 
       logger.info("New password (before encoding): {}", request.getNewPassword());
-      adminService.updatePassword(email, request.getNewPassword()); // Use email from session
+      adminService.updatePassword(email, request.getNewPassword()); 
 
-      // Clear session after successful password reset
+      
       session.invalidate();
       return ResponseEntity.ok("<p style='color:green;'>Password reset successfully</p>");
 
@@ -138,7 +138,7 @@ public class AdminPasswordController {
     }
   }
 
-  @GetMapping("/test-email") // Create temporary endpoint for test only
+  @GetMapping("/test-email") 
   public ResponseEntity<?> testEmail() {
     try {
       emailService.sendSimpleMessage(

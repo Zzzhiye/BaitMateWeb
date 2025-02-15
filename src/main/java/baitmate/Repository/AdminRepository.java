@@ -30,6 +30,6 @@ public interface AdminRepository extends JpaRepository<Admin, Integer> {
 
   List<Admin> findAll();
 
-  // Optional<Admin> findById(long id); No need to write query, spring data jpa provides.
+  
 
 }

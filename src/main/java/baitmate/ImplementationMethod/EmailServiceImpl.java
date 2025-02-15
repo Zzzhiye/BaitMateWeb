@@ -22,14 +22,14 @@ public class EmailServiceImpl implements EmailService {
 
   @Autowired private JavaMailSender emailSender;
 
-  @Value("${spring.mail.username}") // Use the configured username
+  @Value("${spring.mail.username}") 
   private String fromEmail;
 
   @Override
   public void sendSimpleMessage(String to, String subject, String text) {
     try {
       SimpleMailMessage message = new SimpleMailMessage();
-      message.setFrom(fromEmail); // Use the injected fromEmail
+      message.setFrom(fromEmail); 
       message.setTo(to);
       message.setSubject(subject);
       message.setText(text);
@@ -43,25 +43,25 @@ public class EmailServiceImpl implements EmailService {
     } catch (MailAuthenticationException ex) {
       logger.error("Authentication failure sending email to {}: {}", to, ex.getMessage());
       throw new RuntimeException(
-          "Authentication failed: " + ex.getMessage(), ex); // More specific exception
+          "Authentication failed: " + ex.getMessage(), ex); 
     } catch (MailSendException ex) {
       logger.error("Failed to send email to {}: {}", to, ex.getMessage());
       if (ex.getCause() != null) {
-        logger.error("  Caused by: {}", ex.getCause().getMessage()); // Log the cause!
+        logger.error("  Caused by: {}", ex.getCause().getMessage()); 
       }
-      for (Exception e : ex.getFailedMessages().values()) { // Check failed message
+      for (Exception e : ex.getFailedMessages().values()) { 
         logger.error("  Failed message: {}", e.getMessage());
       }
 
       throw new RuntimeException(
-          "Failed to send email: " + ex.getMessage(), ex); // More specific exception
+          "Failed to send email: " + ex.getMessage(), ex); 
     } catch (Exception e) {
       logger.error(
           "Failed to send simple email. From: {}, To: {}, Subject: {}, Error: {}",
           fromEmail,
           to,
           subject,
-          e.getMessage()); // Log full stack trace
+          e.getMessage()); 
       throw new RuntimeException("Failed to send email", e);
     }
   }
@@ -73,11 +73,11 @@ public class EmailServiceImpl implements EmailService {
       MimeMessage message = emailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-      helper.setFrom(fromEmail); // Use the injected fromEmail
+      helper.setFrom(fromEmail); 
       helper.setTo(to);
       helper.setSubject(subject);
 
-      helper.setText(text, true); // Enable HTML content
+      helper.setText(text, true); 
 
       if (attachments != null) {
         for (MultipartFile file : attachments) {

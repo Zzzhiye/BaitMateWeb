@@ -17,7 +17,7 @@ public interface PostReportService {
       LocalDate endDate,
       boolean includePosts);
 
-  // Word Report Generation
+  
   ByteArrayInputStream generateWordReport(
       List<Long> postIds,
       boolean allPosts,
@@ -38,7 +38,7 @@ public interface PostReportService {
 
   void addLocationAnalysis(XWPFDocument document, List<Post> posts);
 
-  // Excel Report Generation
+  
   ByteArrayInputStream generateExcelReport(
       List<Long> postIds,
       boolean allPosts,

@@ -21,7 +21,7 @@ public class TokenServiceImpl implements TokenService {
     newToken.setToken(token);
     newToken.setUserId(user.getId());
     newToken.setExpiryDate(LocalDateTime.now().plusHours(1));
-    newToken.setActive(true); // Set token as active
+    newToken.setActive(true); 
     tokenRepo.save(newToken);
     return token;
   }
@@ -41,7 +41,7 @@ public class TokenServiceImpl implements TokenService {
     return !storedToken.isActive();
   }
 
-  @Scheduled(fixedRate = 3600000) // Runs every hour
+  @Scheduled(fixedRate = 3600000) 
   public void deactivateExpiredTokens() {
     List<Token> expiredTokens = tokenRepo.findAllByExpiryDateBefore(LocalDateTime.now());
 
