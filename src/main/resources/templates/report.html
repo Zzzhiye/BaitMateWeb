@@ -298,23 +298,26 @@
                             <tr>
                                 <th>Location</th>
                                 <!--<th>Address</th>-->
-                                <th>Status</th>
+                                <th>Count</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="location : ${popularLocations}">
+                            <tr th:each="location : ${mostPopularLocations}">
                                 <td>
                                     <i class="fas fa-map-pin text-danger me-2"></i>
-                                    <span th:text="${location.locationName}">Location Name</span>
+                                    <span th:text="${location.mostPopularLocationName}">Location Name</span>
                                 </td>
+                                <td>
+                                    <span class="badge bg-success" th:text="${location.mostCatchCount}">Count</span>
+                                </td>
+                            </tr>
                                 <!--<td>
                                     <small th:text="${location.address}">Address</small>
-                                </td>-->
+                                </td>
                                 <td>
                                         <span th:class="${location.status == 'Open' ? 'badge bg-success' : 'badge bg-danger'}"
                                               th:text="${location.status}">Status</span>
-                                </td>
-                            </tr>
+                                </td>-->
                             </tbody>
                         </table>
                     </div>

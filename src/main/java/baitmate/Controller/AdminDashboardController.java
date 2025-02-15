@@ -79,6 +79,8 @@ public class AdminDashboardController {
     // Location Related
     model.addAttribute("popularLocations", dashboardServiceImpl.getPopularLocations());
 
+    model.addAttribute("mostPopularLocations", dashboardServiceImpl.get10MostPopularLocations());
+
     // Activity Summary
     model.addAttribute("activitySummary", dashboardServiceImpl.getActivitySummary());
 

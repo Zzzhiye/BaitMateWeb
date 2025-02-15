@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-  @Query("SELECT i FROM Image i where i.post.Id = :postId")
+  @Query("SELECT i FROM Image i where i.post.id = :postId")
   List<Image> findByPostId(@Param("postId") Long postId);
 }

@@ -2,6 +2,7 @@ package baitmate.Repository;
 
 import baitmate.model.FishingLocation;
 import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,4 +38,14 @@ public interface FishingLocationRepository extends JpaRepository<FishingLocation
       @Param("latitude") double latitude,
       @Param("longitude") double longitude,
       @Param("radius") double radius);
+
+  @Query(value = """
+    SELECT fl.location_id, fl.location_name, COUNT(cr.id) as mostCatchCount
+    FROM fishing_location fl
+    LEFT JOIN catch_record cr ON fl.location_id = cr.location_id
+    GROUP BY fl.location_id, fl.location_name
+    ORDER BY mostCatchCount DESC
+    LIMIT 10
+    """, nativeQuery = true)
+  List<Object[]> findTop10LocationsByTotalCatches();
 }

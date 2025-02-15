@@ -352,7 +352,7 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> findByUsername(String username) {
         List<Post> posts = postRepository.findByUserUsername(username);
         return posts.stream()
-                .map(postConverter::toDto)  // Post object ကို PostDto အဖြစ် convert လုပ်
+                .map(postConverter::toDto)  // Post object to PostDto convert
                 .collect(Collectors.toList());
     }
 

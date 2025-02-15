@@ -223,7 +223,7 @@ public class AdminController {
 
 		try {
 			// Save the new admin
-			adminServiceImpl.updateAdmin(admin);
+			adminServiceImpl.createAdmin(admin);
 			redirectAttributes.addFlashAttribute("successMessage",
 					"Admin account created successfully! You can now login.");
 			return "redirect:/login";

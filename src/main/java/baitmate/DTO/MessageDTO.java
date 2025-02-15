@@ -17,6 +17,5 @@ public class MessageDTO {
   private String announcementType;
   private List<String> attachmentFileNames;
   private MultipartFile[] attachments;
-
   public MessageDTO() {}
 }

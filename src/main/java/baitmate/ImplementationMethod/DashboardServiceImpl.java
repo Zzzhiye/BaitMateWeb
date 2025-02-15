@@ -12,6 +12,8 @@ import baitmate.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +116,17 @@ public class DashboardServiceImpl implements DashboardService {
   // Location Related
   public List<FishingLocation> getPopularLocations() {
     return fishingLocationRepository.findPopularLocations(PageRequest.of(0, 10));
+  }
+
+  public List<Map<String, Object>> get10MostPopularLocations() {
+    List<Object[]> results = fishingLocationRepository.findTop10LocationsByTotalCatches();
+
+    return results.stream().map(result -> {
+      Map<String, Object> locationData = new HashMap<>();
+      locationData.put("mostPopularLocationName", result[1]); // location_name
+      locationData.put("mostCatchCount", result[2]); // catch_count
+      return locationData;
+    }).collect(Collectors.toList());
   }
 
   // Activity Summary

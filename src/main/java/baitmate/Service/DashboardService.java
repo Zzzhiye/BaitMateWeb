@@ -26,6 +26,8 @@ public interface DashboardService {
 
   List<FishingLocation> getPopularLocations();
 
+  public List<Map<String, Object>> get10MostPopularLocations();
+
   Map<String, Object> getActivitySummary();
 
   Map<String, Long> getEngagementMetrics();
