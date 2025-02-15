@@ -45,7 +45,6 @@ class AdminControllerTest {
     mockAdmin.setEmail("admin@example.com");
   }
 
-  /** ✅ 测试管理员登录成功 */
   @Test
   void login_Success() {
     when(adminService.searchUserByUserName("adminUser")).thenReturn(mockAdmin);
@@ -56,7 +55,6 @@ class AdminControllerTest {
     verify(session).setAttribute("username", "adminUser");
   }
 
-  /** ✅ 测试管理员登录失败（用户不存在） */
   @Test
   void login_Fail_UserNotFound() {
     when(adminService.searchUserByUserName(anyString())).thenReturn(null);
@@ -67,17 +65,15 @@ class AdminControllerTest {
     verify(model).addAttribute(eq("errorMsg"), anyString());
   }
 
-  /** ✅ 修复 NullPointerException: 确保 sessionStatus 不为空 */
   @Test
   void logout_Success() {
-    String view = adminController.logout(session, model, sessionStatus); // 传递 sessionStatus
+    String view = adminController.logout(session, model, sessionStatus);
 
     assertEquals("redirect:/login", view);
     verify(session).invalidate();
-    verify(sessionStatus).setComplete(); // 确保 setComplete() 被调用
+    verify(sessionStatus).setComplete();
   }
 
-  /** ✅ 修复 UnnecessaryStubbing: 只 stub 必要的方法 */
   @Test
   void registerAdmin_Success() {
     when(adminService.searchUserByUserName("adminUser")).thenReturn(null);
@@ -88,10 +84,9 @@ class AdminControllerTest {
             mockAdmin, bindingResult, "Admin123!", redirectAttributes, model);
 
     assertEquals("redirect:/login", view);
-    verify(adminService).updateAdmin(mockAdmin);
+    verify(adminService).createAdmin(mockAdmin);
   }
 
-  /** ✅ 修复 UnnecessaryStubbing: 只 stub 必要的方法 */
   @Test
   void registerAdmin_Fail_UserExists() {
     when(adminService.searchUserByUserName("adminUser")).thenReturn(mockAdmin);
@@ -104,7 +99,6 @@ class AdminControllerTest {
     verify(model).addAttribute(eq("errorMessage"), anyString());
   }
 
-  /** ✅ 修复 UnnecessaryStubbing: 只 stub 必要的方法 */
   @Test
   void registerAdmin_Fail_PasswordMismatch() {
     String view =
