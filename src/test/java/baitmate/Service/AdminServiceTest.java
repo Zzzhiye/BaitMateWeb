@@ -74,13 +74,18 @@ class AdminServiceTest {
   /** ✅ 测试 updateAdmin: 成功更新管理员 */
   @Test
   void testUpdateAdmin_Success() {
+    Integer adminId = testAdmin.getId();
+
+    // 关键：Mock findById 返回存在的管理员
+    when(adminRepository.findById(adminId))
+        .thenReturn(Optional.of(testAdmin));
     // Mock the save method to return the updated admin.  Important for testing persistence.
-    when(adminRepository.save(any(Admin.class))).thenReturn(testAdmin);
+    when(adminRepository.saveAndFlush(any(Admin.class))).thenReturn(testAdmin);
 
     adminService.updateAdmin(testAdmin);
 
     // Verify that the save method was called.  This is a crucial part of the test.
-    verify(adminRepository).save(testAdmin);
+    verify(adminRepository).saveAndFlush(testAdmin);
   }
 
   @Test
