@@ -98,6 +98,7 @@ public class PostServiceImpl implements PostService {
         post.setLikeCount(0);
         post.setSavedCount(0);
         post.setPostStatus(postDto.getStatus());
+        post.setAccuracyScore(postDto.getAccuracyScore());
 
         Post saved = postRepository.save(post);
 
