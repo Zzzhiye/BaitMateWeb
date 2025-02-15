@@ -1,9 +1,6 @@
 package baitmate.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -80,7 +77,7 @@ public class User {
       name = "saved_locations",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "location_id"))
-  @JsonManagedReference
+  @JsonBackReference
   private List<FishingLocation> savedLocations;
 
   @ManyToMany
@@ -88,7 +85,7 @@ public class User {
       name = "saved_posts",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "post_id"))
-  @JsonManagedReference
+  @JsonBackReference
   private List<Post> savedPosts;
 
   @ManyToMany
@@ -96,7 +93,7 @@ public class User {
       name = "liked_posts",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "post_id"))
-  @JsonManagedReference
+  @JsonBackReference
   private List<Post> likedPosts;
 
   @ManyToMany
@@ -104,6 +101,6 @@ public class User {
       name = "user_following",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "following_id"))
-  @JsonManagedReference
+  @JsonBackReference
   private Set<User> following = new HashSet<>();
 }

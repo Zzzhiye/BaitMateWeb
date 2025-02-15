@@ -37,7 +37,7 @@ class UserControllerTest {
     mockUser.setEmail("test@example.com");
   }
 
-  
+
   @Test
   void login_Success() {
     LoginRequest request = new LoginRequest("testUser", "Test1234");
@@ -51,7 +51,7 @@ class UserControllerTest {
     assertEquals("mockToken", ((LoginResponse) response.getBody()).getToken());
   }
 
-  
+
   @Test
   void login_Fail_InvalidUser() {
     LoginRequest request = new LoginRequest("invalidUser", "wrongPass");
@@ -63,7 +63,7 @@ class UserControllerTest {
     assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
   }
 
-  
+
   @Test
   void logout_Success() {
     when(tokenService.deactivateToken("validToken")).thenReturn(true);
@@ -74,7 +74,7 @@ class UserControllerTest {
     assertEquals("Logged out successfully", response.getBody());
   }
 
-  
+
   @Test
   void logout_Fail_InvalidToken() {
     when(tokenService.deactivateToken("invalidToken")).thenReturn(false);
@@ -85,7 +85,7 @@ class UserControllerTest {
     assertEquals("Token not found or already invalidated", response.getBody());
   }
 
-  
+
   @Test
   void forgotPassword_Success() {
     ForgotPasswordRequest request = new ForgotPasswordRequest("testUser", "test@example.com");
@@ -98,7 +98,7 @@ class UserControllerTest {
     assertEquals("OTP sent successfully to test@example.com", response.getBody());
   }
 
-  
+
   @Test
   void forgotPassword_Fail_UserNotFound() {
     ForgotPasswordRequest request = new ForgotPasswordRequest("unknownUser", "unknown@example.com");
@@ -110,7 +110,7 @@ class UserControllerTest {
     assertEquals("User not found", response.getBody());
   }
 
-  
+
   @Test
   void resetPassword_Success() {
     ResetPasswordRequest request =
@@ -123,7 +123,7 @@ class UserControllerTest {
     assertEquals("Password reset successfully", response.getBody());
   }
 
-  
+
   @Test
   void resetPassword_Fail_InvalidOTP() {
     ResetPasswordRequest request =

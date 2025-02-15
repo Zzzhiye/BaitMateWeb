@@ -13,7 +13,7 @@ jobs:
         uses: zaproxy/action-full-scan@v0.8.0
         with:
           target: "http://47.129.5.86:8080"
-          cmd_options: "-I"  # 强制忽略所有错误
+          cmd_options: "-I"
 
       - name: Upload Result
         uses: actions/upload-artifact@v4

@@ -8,18 +8,18 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: ☕ Set up JDK
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: 🔍 Run Checkstyle
+      - name: Run Checkstyle
         run: mvn checkstyle:check
 
-      - name: 🚨 Run PMD
+      - name: Run PMD
         run: mvn pmd:check
 
