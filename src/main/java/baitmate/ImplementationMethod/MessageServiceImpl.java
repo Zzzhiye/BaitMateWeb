@@ -44,7 +44,7 @@ public class MessageServiceImpl implements MessageService {
 
 
     @PostConstruct
-    public void init() {  // Removed @Override as it's not from the interface
+    public void init() {  
         try {
             Path path = Paths.get(uploadPath);
             if (!Files.exists(path)) {
@@ -168,7 +168,7 @@ public class MessageServiceImpl implements MessageService {
                                     fileName,
                                     fileName,
                                     Files.probeContentType(file.toPath()),
-                                    Files.readAllBytes(file.toPath()) // No need for throws IOException here
+                                    Files.readAllBytes(file.toPath()) 
                             );
                         } else {
                             log.warn("Attachment file not found: {}", fileName);

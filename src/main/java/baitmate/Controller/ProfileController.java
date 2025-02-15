@@ -47,12 +47,12 @@ public class ProfileController {
             HttpSession session,
             Model model) {
 
-        // Handle validation errors
+        
         if (bindingResult.hasErrors()) {
             return "profile";
         }
 
-        // Get current admin
+        
         String username = (String) session.getAttribute("username");
         Admin currentAdmin = adminService.searchUserByUserName(username);
 
@@ -61,19 +61,19 @@ public class ProfileController {
             return "redirect:/login";
         }
 
-        // Verify current password
+        
         if (!currentAdmin.getPassword().equals(currentPassword)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Current password is incorrect");
             return "redirect:/admin/profile";
         }
 
         try {
-            // Set the ID
+            
             admin.setId(currentAdmin.getId());
 
-            // Handle password
+            
             if (newPassword != null && !newPassword.trim().isEmpty()) {
-                // Validate new password pattern
+                
                 if (!newPassword.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\\-+={[}]|:;\"'<,>.?/]).{6,10}$")) {
                     redirectAttributes.addFlashAttribute("errorMessage",
                             "Password must be 6-10 characters and include at least one number, uppercase letter, lowercase letter, and special character");
@@ -84,10 +84,10 @@ public class ProfileController {
                 admin.setPassword(currentPassword);
             }
 
-            // Update the admin
+            
             adminService.updateAdmin(admin);
 
-            // Update session if username changed
+            
             if (!username.equals(admin.getUsername())) {
                 session.setAttribute("username", admin.getUsername());
             }

@@ -28,7 +28,7 @@ public class PostReportService {
   private static final DateTimeFormatter DATE_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-  // Filtering Method
+  
   private List<Post> getFilteredPosts(
       List<Long> postIds,
       boolean allPosts,
@@ -68,7 +68,7 @@ public class PostReportService {
     return posts;
   }
 
-  // Word Report Generation
+  
   public ByteArrayInputStream generateWordReport(
       List<Long> postIds,
       boolean allPosts,
@@ -225,7 +225,7 @@ public class PostReportService {
         });
   }
 
-  // Excel Report Generation
+  
   public ByteArrayInputStream generateExcelReport(
       List<Long> postIds,
       boolean allPosts,

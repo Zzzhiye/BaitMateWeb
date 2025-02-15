@@ -26,7 +26,7 @@ public class FishingLocationController {
   @GetMapping("/search")
   public List<FishingLocation> searchFishingSpots(@RequestParam(required = false) String query) {
     if (query == null || query.trim().isEmpty()) {
-      return Collections.emptyList(); // 返回空列表，防止空查询导致异常
+      return Collections.emptyList(); 
     }
     return fishingLocationInt.searchFishingSpots(query);
   }
@@ -52,7 +52,7 @@ public class FishingLocationController {
     }
   }
 
-  // 删除钓鱼地点
+  
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteFishingSpotById(@PathVariable Long id) {
     try {

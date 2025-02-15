@@ -32,18 +32,18 @@ public class PostConverter {
     dto.setAccuracyScore(post.getAccuracyScore());
     dto.setLocation(post.getLocation());
 
-    // user
+    
     dto.setUser(userConverter.toDto(post.getUser()));
 
-    // comments
+    
     if (post.getComments() != null) {
       List<CommentDto> cmtList =
           post.getComments().stream().map(commentConverter::toDto).collect(Collectors.toList());
       dto.setComments(cmtList);
     }
 
-    // images
-    // images -> List<ImageDto>
+    
+    
     if (post.getImages() != null) {
       List<ImageDto> imageDtos =
           post.getImages().stream().map(this::imageToDto).collect(Collectors.toList());
@@ -65,18 +65,18 @@ public class PostConverter {
     dto.setAccuracyScore(post.getAccuracyScore());
     dto.setLocation(post.getLocation());
 
-    // user
+    
     dto.setUser(userConverter.toDto(post.getUser()));
 
-    // comments
+    
     if (post.getComments() != null) {
       List<CommentDto> cmtList =
           post.getComments().stream().map(commentConverter::toDto).collect(Collectors.toList());
       dto.setComments(cmtList);
     }
 
-    // images
-    // images -> List<ImageDto>
+    
+    
     if (post.getImages() != null) {
       List<ImageDto> imageDtos =
           post.getImages().stream().map(this::imageToDto).collect(Collectors.toList());
@@ -115,36 +115,36 @@ public class PostConverter {
     post.setSavedCount(dto.getSavedCount());
     post.setAccuracyScore(dto.getAccuracyScore());
     post.setLocation(dto.getLocation());
-    // user 需要再查数据库或根据 dto.getUser().getId() setUser
+    
     post.setUser(userConverter.toEntity(dto.getUser()));
-    // comments, images 一般新增Post时不一定包含，需要看业务需求
+    
     return post;
   }
 
-  // Image -> ImageDto (把 byte[] 转成 Base64)
+  
   private ImageDto imageToDto(Image image) {
     ImageDto dto = new ImageDto();
     dto.setId(image.getId());
-    dto.setImage(image.getImage()); // 这里就是 entity 的 String image
+    dto.setImage(image.getImage()); 
     return dto;
   }
 
-  // ImageDto -> Image (把 Base64 转回 byte[])
+  
   private Image imageToEntity(ImageDto dto) {
     Image image = new Image();
     image.setId(dto.getId());
-    image.setImage(dto.getImage()); // 直接赋值
+    image.setImage(dto.getImage()); 
     return image;
   }
 
-  // 一个方法，供 service 调用，把 List<ImageDto> 转为 List<Image>
+  
   public List<Image> toImageEntityList(List<ImageDto> imageDtos, Post post) {
     if (imageDtos == null) return Collections.emptyList();
     return imageDtos.stream()
         .map(
             imageDto -> {
               Image image = imageToEntity(imageDto);
-              // 这里要手动关联回去
+              
               image.setPost(post);
               return image;
             })

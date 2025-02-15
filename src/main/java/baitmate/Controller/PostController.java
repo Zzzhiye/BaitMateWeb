@@ -99,11 +99,11 @@ public class PostController {
         return ResponseEntity.ok(postId);
     }
 
-    // 删除 post
+    
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId,
                                            @RequestParam Long userId) {
-        // userId 可从 token 或请求里获取
+        
         try {
             postService.deletePost(postId, userId);
             return ResponseEntity.noContent().build();
@@ -139,12 +139,12 @@ public class PostController {
     @GetMapping("/oid/{oid}")
     public ResponseEntity<byte[]> getImageByOid(@PathVariable Long oid) {
         try {
-            // 调用 Service 获取二进制
+            
             byte[] imageData = postService.getImageDataByOid(oid);
 
             HttpHeaders headers = new HttpHeaders();
-            // 如果知道具体图片类型，比如 PNG，就用 IMAGE_PNG
-            // 如果不确定，就用 OCTET_STREAM
+            
+            
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
             return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
@@ -171,19 +171,19 @@ public class PostController {
             @RequestParam(required = false) String location,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size,
-            @RequestParam(required = false) String[] sort) {  // Changed this line
+            @RequestParam(required = false) String[] sort) {  
 
         try {
-            // Simple case: no filters provided
+            
             if (status == null && location == null &&
-                    page == 0 && size == 10 && (sort == null || sort.length == 0)) {  // Changed this condition
+                    page == 0 && size == 10 && (sort == null || sort.length == 0)) {  
                 List<PostDto> allPosts = postService.getAllPosts();
                 return ResponseEntity.ok(allPosts);
             }
 
-            // Create Sort object based on parameters
+            
             List<Sort.Order> orders = new ArrayList<>();
-            if (sort != null && sort.length > 0) {  // Added null check
+            if (sort != null && sort.length > 0) {  
                 for (String sortOrder : sort) {
                     String[] _sort = sortOrder.split(",");
                     String property = _sort[0];
@@ -192,19 +192,19 @@ public class PostController {
                     orders.add(new Sort.Order(direction, property));
                 }
             } else {
-                // Default sort by postTime desc if no sort provided
+                
                 orders.add(new Sort.Order(Sort.Direction.DESC, "postTime"));
             }
 
             Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
 
-            // Get the paginated results
+            
             Page<Post> postPage = postService.searchPostByFilter(
                     status != null && !status.isEmpty() ? status : null,
                     pageable
             );
 
-            // Create response with metadata
+            
             Map<String, Object> response = new HashMap<>();
             response.put("posts", postPage.getContent().stream()
                     .map(post -> postConverter.toDto(post))
@@ -215,8 +215,8 @@ public class PostController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Add logging
-            e.printStackTrace();  // This will help debug the issue
+            
+            e.printStackTrace();  
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error retrieving posts: " + e.getMessage());

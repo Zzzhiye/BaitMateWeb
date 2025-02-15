@@ -23,9 +23,9 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
     	.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-    	.csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity
+    	.csrf(AbstractHttpConfigurer::disable) 
         .authorizeHttpRequests(
-            auth -> auth.anyRequest().permitAll() // Allow all requests without authentication
+            auth -> auth.anyRequest().permitAll() 
             );
     return http.build();
   }
@@ -52,7 +52,7 @@ public class SecurityConfig {
   public WebServerFactoryCustomizer<TomcatServletWebServerFactory> customizer() {
     return factory -> {
       Connector connector = new Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL);
-      connector.setPort(8080); // HTTP port
+      connector.setPort(8080); 
       factory.addAdditionalTomcatConnectors(connector);
     };
   }

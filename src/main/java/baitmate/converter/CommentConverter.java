@@ -16,7 +16,7 @@ public class CommentConverter {
     dto.setComment(comment.getComment());
     dto.setTime(comment.getTime());
     dto.setLikeCount(comment.getLikeCount());
-    // user
+    
     dto.setUser(userConverter.toDto(comment.getUser()));
     return dto;
   }
@@ -28,7 +28,7 @@ public class CommentConverter {
     comment.setComment(dto.getComment());
     comment.setTime(dto.getTime());
     comment.setLikeCount(dto.getLikeCount());
-    // user 需要再查数据库 or 根据 dto.getUser().getId() 赋值
+    
     comment.setUser(userConverter.toEntity(dto.getUser()));
     return comment;
   }

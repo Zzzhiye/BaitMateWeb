@@ -38,7 +38,7 @@ public class DashboardServiceImpl implements DashboardService {
   private static final DateTimeFormatter DATE_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-  // Basic Statistics
+  
   public Map<String, Long> getDashboardStats() {
     Map<String, Long> stats = new HashMap<>();
     stats.put("totalUsers", userRepository.count());
@@ -48,7 +48,7 @@ public class DashboardServiceImpl implements DashboardService {
     return stats;
   }
 
-  // User Related
+  
   public List<User> getRecentUsers() {
     return userRepository
         .findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "joinDate")))
@@ -59,7 +59,7 @@ public class DashboardServiceImpl implements DashboardService {
     return userRepository.findMostActiveUsers(PageRequest.of(0, 5));
   }
 
-  // Post Related
+  
   public List<Post> getRecentPosts() {
     return postRepository.findRecentPostsWithUser().stream().limit(5).toList();
   }
@@ -68,7 +68,7 @@ public class DashboardServiceImpl implements DashboardService {
     return postRepository.findTopLikedPosts(PageRequest.of(0, 10));
   }
 
-  // Catch Record Related
+  
   public List<CatchRecord> getRecentCatches() {
     return catchRecordRepository
         .findAll(PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "time")))
@@ -91,7 +91,7 @@ public class DashboardServiceImpl implements DashboardService {
         logger.debug("Processing result: {}", java.util.Arrays.toString(result));
         Map<String, Object> summary = new HashMap<>();
 
-        // Create user object
+        
         Map<String, Object> user = new HashMap<>();
         user.put("username", result[0]);
         summary.put("user", user);
@@ -99,7 +99,7 @@ public class DashboardServiceImpl implements DashboardService {
         summary.put("fishType", result[1]);
         summary.put("weight", result[2]);
 
-        // Create fishingLocation object
+        
         Map<String, Object> fishingLocation = new HashMap<>();
         fishingLocation.put("locationName", result[3]);
         summary.put("fishingLocation", fishingLocation);
@@ -113,7 +113,7 @@ public class DashboardServiceImpl implements DashboardService {
     return catchSummary;
   }
 
-  // Location Related
+  
   public List<FishingLocation> getPopularLocations() {
     return fishingLocationRepository.findPopularLocations(PageRequest.of(0, 10));
   }
@@ -123,27 +123,27 @@ public class DashboardServiceImpl implements DashboardService {
 
     return results.stream().map(result -> {
       Map<String, Object> locationData = new HashMap<>();
-      locationData.put("mostPopularLocationName", result[1]); // location_name
-      locationData.put("mostCatchCount", result[2]); // catch_count
+      locationData.put("mostPopularLocationName", result[1]); 
+      locationData.put("mostCatchCount", result[2]); 
       return locationData;
     }).collect(Collectors.toList());
   }
 
-  // Activity Summary
+  
   public Map<String, Object> getActivitySummary() {
     Map<String, Object> summary = new HashMap<>();
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime weekAgo = now.minusWeeks(1);
 
-    // User stats use LocalDate
+    
     summary.put(
         "newUsersThisWeek",
         userRepository.countByJoinDateBetween(weekAgo.toLocalDate(), now.toLocalDate()));
 
-    // Post stats use LocalDateTime
+    
     summary.put("newPostsThisWeek", postRepository.countByPostTimeBetween(weekAgo, now));
 
-    // Catch stats use formatted date strings
+    
     String nowDate = now.format(DATE_FORMATTER);
     String weekAgoDate = weekAgo.format(DATE_FORMATTER);
     summary.put(
@@ -152,13 +152,13 @@ public class DashboardServiceImpl implements DashboardService {
     return summary;
   }
 
-  // Engagement Metrics
+  
   public Map<String, Long> getEngagementMetrics() {
     Map<String, Long> metrics = new HashMap<>();
     metrics.put("totalLikes", postRepository.sumLikeCount());
     metrics.put("totalComments", postRepository.countComments());
 
-    // Double တန်ဖိုးကို Long အဖြစ် ပြောင်းပြီးမှ Map ထဲ ထည့်ပါမယ်
+    
     Double avgCatches = catchRecordRepository.calculateAverageCatchesPerUser();
     metrics.put("averageCatchesPerUser", avgCatches != null ? Math.round(avgCatches) : 0L);
 
@@ -166,7 +166,7 @@ public class DashboardServiceImpl implements DashboardService {
   }
 
   public List<Map<String, Object>> getTodayMostCaughtFish() {
-    // Get current time in system timezone
+    
     LocalDateTime now = LocalDateTime.now();
     String today = now.format(DATE_FORMATTER);
 
@@ -214,15 +214,15 @@ public class DashboardServiceImpl implements DashboardService {
     return statistics;
   }
 
-  // Timeline Data
+  
   public Map<String, Object> getTimelineData() {
     Map<String, Object> timelineData = new HashMap<>();
 
-    // Initialize 24 hours with 0 counts
+    
     List<Integer> postCounts = new ArrayList<>(Collections.nCopies(24, 0));
     List<Integer> catchCounts = new ArrayList<>(Collections.nCopies(24, 0));
 
-    // Get post timeline data
+    
     List<Object[]> postData = postRepository.findHourlyPostCountForToday();
     logger.info("Found {} hourly post records", postData.size());
 
@@ -233,7 +233,7 @@ public class DashboardServiceImpl implements DashboardService {
       logger.debug("Hour {}: {} posts", hour, count);
     }
 
-    // Get catch timeline data
+    
     List<Object[]> catchData = catchRecordRepository.findHourlyCatchCountForToday();
     logger.info("Found {} hourly catch records", catchData.size());
 

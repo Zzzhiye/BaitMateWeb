@@ -30,7 +30,7 @@ class AdminControllerTest {
 
   @Mock private BindingResult bindingResult;
 
-  @Mock private SessionStatus sessionStatus; // ✅ 修复 logout 的 NullPointerException
+  @Mock private SessionStatus sessionStatus; 
 
   @InjectMocks private AdminController adminController;
 

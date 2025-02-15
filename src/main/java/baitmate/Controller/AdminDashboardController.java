@@ -22,38 +22,38 @@ public class AdminDashboardController {
 
   @GetMapping("/dashboard")
   public String getDashboard(Model model) {
-    // Basic Statistics
+    
     model.addAttribute("stats", dashboardServiceImpl.getDashboardStats());
 
-    // Timeline Data
+    
     model.addAttribute("timelineData", dashboardServiceImpl.getTimelineData());
 
-    // Catch Statistics
+    
     model.addAttribute("catchStats", dashboardServiceImpl.getCatchStatistics());
 
-    // Today's Most Caught Fish
+    
     List<Map<String, Object>> todayMostCaughtFish = dashboardServiceImpl.getTodayMostCaughtFish();
     model.addAttribute("todayMostCaughtFish", todayMostCaughtFish);
 
-    // User Related
+    
     model.addAttribute("recentUsers", dashboardServiceImpl.getRecentUsers());
     model.addAttribute("mostActiveUsers", dashboardServiceImpl.getMostActiveUsers());
 
-    // Post Related
+    
     model.addAttribute("recentPosts", dashboardServiceImpl.getRecentPosts());
     model.addAttribute("topLikedPosts", dashboardServiceImpl.getTopLikedPosts());
 
-    // Catch Record Related
+    
     model.addAttribute("recentCatches", dashboardServiceImpl.getRecentCatches());
     model.addAttribute("topCatches", dashboardServiceImpl.getTopCatches());
 
-    // Location Related
+    
     model.addAttribute("popularLocations", dashboardServiceImpl.getPopularLocations());
 
-    // Activity Summary
+    
     model.addAttribute("activitySummary", dashboardServiceImpl.getActivitySummary());
 
-    // Engagement Metrics
+    
     model.addAttribute("engagementMetrics", dashboardServiceImpl.getEngagementMetrics());
 
     return "dashboard";
@@ -61,33 +61,33 @@ public class AdminDashboardController {
 
   @GetMapping("/report")
   public String getReport(Model model) {
-    // Basic Statistics
+    
     model.addAttribute("stats", dashboardServiceImpl.getDashboardStats());
 
-    // User Related
+    
     model.addAttribute("recentUsers", dashboardServiceImpl.getRecentUsers());
     model.addAttribute("mostActiveUsers", dashboardServiceImpl.getMostActiveUsers());
 
-    // Post Related
+    
     model.addAttribute("recentPosts", dashboardServiceImpl.getRecentPosts());
     model.addAttribute("topLikedPosts", dashboardServiceImpl.getTopLikedPosts());
 
-    // Catch Record Related
+    
     model.addAttribute("recentCatches", dashboardServiceImpl.getRecentCatches());
     model.addAttribute("topCatches", dashboardServiceImpl.getTopCatches());
 
-    // Location Related
+    
     model.addAttribute("popularLocations", dashboardServiceImpl.getPopularLocations());
 
     model.addAttribute("mostPopularLocations", dashboardServiceImpl.get10MostPopularLocations());
 
-    // Activity Summary
+    
     model.addAttribute("activitySummary", dashboardServiceImpl.getActivitySummary());
 
-    // Engagement Metrics
+    
     model.addAttribute("engagementMetrics", dashboardServiceImpl.getEngagementMetrics());
 
-    // Today's Most Caught Fish
+    
     model.addAttribute("todayMostCaughtFish", dashboardServiceImpl.getTodayMostCaughtFish());
 
     return "report";
@@ -99,7 +99,7 @@ public class AdminDashboardController {
     return "grafana";
   }
 
-  // API endpoint for AJAX updates
+  
   @GetMapping("/api/dashboard-data")
   @ResponseBody
   public ResponseEntity<Map<String, Object>> getDashboardData() {

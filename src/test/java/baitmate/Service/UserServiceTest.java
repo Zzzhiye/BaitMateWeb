@@ -21,7 +21,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT) // ✅ 允许未使用的 stub，防止 UnnecessaryStubbingException
+@MockitoSettings(strictness = Strictness.LENIENT) 
 class UserServiceTest {
 
   @Mock private UserRepository userRepo;
@@ -41,14 +41,14 @@ class UserServiceTest {
     testUser.setEmail("test@example.com");
     testUser.setUserStatus("active");
 
-    // ✅ 允许未使用的 stub，防止 UnnecessaryStubbingException
+    
     Mockito.lenient().when(userRepo.findByUsername("testUser")).thenReturn(Optional.of(testUser));
     Mockito.lenient()
         .when(passwordEncoder.matches("password123", "encodedPassword"))
         .thenReturn(true);
   }
 
-  /** ✅ 测试 validateUser: 用户名和密码匹配 */
+  
   @Test
   void testValidateUser_Success() {
     User user = userService.validateUser("testUser", "password123");
@@ -57,7 +57,7 @@ class UserServiceTest {
     assertEquals("testUser", user.getUsername());
   }
 
-  /** ✅ 测试 registerUser: 成功注册 */
+  
   @Test
   void testRegisterUser_Success() {
     RegisterRequest request = new RegisterRequest();
@@ -68,18 +68,18 @@ class UserServiceTest {
     when(userRepo.existsByUsername("newUser")).thenReturn(false);
     when(passwordEncoder.encode("newPass123")).thenReturn("encodedPass");
 
-    // ✅ 只 mock 必要的 save
+    
     when(userRepo.save(any(User.class)))
         .thenAnswer(
             invocation -> {
               User user = invocation.getArgument(0);
-              user.setId(2L); // 模拟数据库存储后的 ID
+              user.setId(2L); 
               return user;
             });
 
     User user = userService.registerUser(request);
 
     assertNotNull(user);
-    assertEquals("newUser", user.getUsername()); // 确保返回的用户信息正确
+    assertEquals("newUser", user.getUsername()); 
   }
 }

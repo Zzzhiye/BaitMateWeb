@@ -119,7 +119,7 @@ public class AdminController {
 			byte[] imageData = imageServiceimpl.getImageByImageId(imageId);
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.set("Content-Type", "image/jpeg"); // Change MIME type as necessary
+			headers.set("Content-Type", "image/jpeg"); 
 
 			return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
 		} catch (Exception e) {
@@ -148,7 +148,7 @@ public class AdminController {
 
 	@GetMapping("/admin/post/user/userPost/{status}/{id}")
 	public String postStatus(@PathVariable int id, @PathVariable String status) {
-		// update post status
+		
 		Post post = postServiceImpl.findById((long) id);
 		if (post.getPostStatus().equals("pending") || post.getPostStatus().equals("petition")) {
 			post.setPostStatus(status);
@@ -160,7 +160,7 @@ public class AdminController {
 
 	@GetMapping("/admin/post/user/userAccount/{status}/{id}")
 	public String userStatus(@PathVariable int id, @PathVariable String status) {
-		// update user status
+		
 		User user = userServiceImpl.searchByUserId(id);
 		if (user.getUserStatus().equals("active")) {
 			user.setUserStatus(status);
@@ -203,26 +203,26 @@ public class AdminController {
 	public String registerAdmin(@Valid @ModelAttribute("admin") Admin admin, BindingResult bindingResult,
 			@RequestParam String confirmPassword, RedirectAttributes redirectAttributes, Model model) {
 
-		// Check if username already exists
+		
 		Admin existingAdmin = adminServiceImpl.searchUserByUserName(admin.getUsername());
 		if (existingAdmin != null) {
 			model.addAttribute("errorMessage", "Username already exists");
 			return "register";
 		}
 
-		// Validate password confirmation
+		
 		if (!admin.getPassword().equals(confirmPassword)) {
 			model.addAttribute("errorMessage", "Passwords do not match");
 			return "register";
 		}
 
-		// Handle validation errors
+		
 		if (bindingResult.hasErrors()) {
 			return "register";
 		}
 
 		try {
-			// Save the new admin
+			
 			adminServiceImpl.createAdmin(admin);
 			redirectAttributes.addFlashAttribute("successMessage",
 					"Admin account created successfully! You can now login.");
@@ -238,10 +238,10 @@ public class AdminController {
 	public Map<String, Object> getDashboardData() {
 		Map<String, Object> data = new HashMap<>();
 
-		// Get today's post activity (hourly)
+		
 		Map<Integer, Long> postActivity = postServiceImpl.getTodayPostActivity();
 
-		// Get today's catch records (hourly)
+		
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime startOfDay = now.with(LocalTime.MIN);
 		LocalDateTime endOfDay = now.with(LocalTime.MAX);
@@ -258,7 +258,7 @@ public class AdminController {
 			catchActivity.merge(hour, 1L, Long::sum);
 		}
 
-		// Convert to format needed by Chart.js
+		
 		List<Long> postData = new ArrayList<>(24);
 		List<Long> catchData = new ArrayList<>(24);
 

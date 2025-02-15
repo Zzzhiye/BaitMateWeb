@@ -88,10 +88,10 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Email not registered");
         }
 
-        String otp = String.valueOf(new Random().nextInt(900000) + 100000); // Generate 6-digit OTP
+        String otp = String.valueOf(new Random().nextInt(900000) + 100000); 
         otpStorage.put(email, otp);
 
-        // Send OTP via email
+        
         emailService.sendSimpleMessage(email, "Password Reset OTP", "Your OTP is: " + otp);
 
         return otp;
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User searchByUserId(long userId) {
-        // TODO Auto-generated method stub
+        
         User u = userRepo.searchByUserId(userId);
         return u;
     }
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
     @Override
 
     public User save(User user) {
-        // TODO Auto-generated method stub
+        
         User u = userRepo.save(user);
         return u;
     }

@@ -258,21 +258,21 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> searchPostByFilter(String status, Pageable pageable) {
-        // TODO Auto-generated method stub
+        
         Page<Post> postList=postRepository.searchPostByFilter(status, pageable);
         return postList;
     }
     @Override
     public Map<Integer, Long> getTodayPostActivity() {
-        // Get today's start and end time
+        
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startOfDay = now.with(LocalTime.MIN);
         LocalDateTime endOfDay = now.with(LocalTime.MAX);
 
-        // Get all posts for today
+        
         List<Post> todayPosts = postRepository.findByPostTimeBetween(startOfDay, endOfDay);
 
-        // Group posts by hour
+        
         Map<Integer, Long> hourlyActivity = new HashMap<>();
         for (Post post : todayPosts) {
             int hour = post.getPostTime().getHour();
@@ -284,21 +284,21 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post save(Post post) {
-        // TODO Auto-generated method stub
+        
         Post p=postRepository.save(post);
         return p;
     }
 
     @Override
     public Page<Post> findAll(Pageable pageable) {
-        // TODO Auto-generated method stub
+        
         Page<Post> postList=postRepository.findAll(pageable);
         return postList;
     }
 
     @Override
     public Post findById(Long id) {
-        // TODO Auto-generated method stub
+        
         Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
         return post;
     }
@@ -352,7 +352,7 @@ public class PostServiceImpl implements PostService {
     public List<PostDto> findByUsername(String username) {
         List<Post> posts = postRepository.findByUserUsername(username);
         return posts.stream()
-                .map(postConverter::toDto)  // Post object to PostDto convert
+                .map(postConverter::toDto)  
                 .collect(Collectors.toList());
     }
 

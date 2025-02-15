@@ -37,7 +37,7 @@ public class Message {
   }
 
   @Column(columnDefinition = "TEXT")
-  private String attachmentFileNames; // Add this field
+  private String attachmentFileNames; 
 
   public void setAttachmentFileNames(List<String> fileNames) {
     this.attachmentFileNames = String.join(",", fileNames);
