@@ -12,4 +12,5 @@ public class CreatedPostDto {
   private String location;
   private String status;
   private List<String> imageBase64List;
+  private Double AccuracyScore;
 }

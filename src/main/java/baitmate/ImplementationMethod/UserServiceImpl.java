@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepo.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setPassword(newPassword);
+            user.setPassword(passwordEncoder.encode(newPassword));
             userRepo.save(user);
         }
     }

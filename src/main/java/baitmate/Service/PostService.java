@@ -1,5 +1,6 @@
 package baitmate.Service;
 
+import baitmate.DTO.CommentDto;
 import baitmate.DTO.CreateCommentDto;
 import baitmate.DTO.CreatedPostDto;
 import baitmate.DTO.PostDto;
@@ -23,6 +24,8 @@ public interface PostService {
     PostDto getPostById(Long id);
     PostDto toggleLikePost(Long postId, Long userId);
     PostDto toggleSavePost(Long postId, Long userId);
+    CommentDto toggleLikeComment(Long commentId, Long userId);
+
     byte[] getImageDataByOid(Long oid);
 
     Page<Post> searchPostByFilter(String status, Pageable pageable);

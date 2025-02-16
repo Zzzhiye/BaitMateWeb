@@ -1,11 +1,13 @@
 package baitmate.ImplementationMethod;
 
+import baitmate.DTO.CommentDto;
 import baitmate.DTO.CreateCommentDto;
 import baitmate.DTO.CreatedPostDto;
 import baitmate.DTO.PostDto;
 import baitmate.Repository.*;
 import baitmate.Service.RedDotService;
 import baitmate.Service.PostService;
+import baitmate.converter.CommentConverter;
 import baitmate.converter.PostConverter;
 import baitmate.converter.UserConverter;
 import baitmate.model.Comment;
@@ -46,6 +48,8 @@ public class PostServiceImpl implements PostService {
     private PostConverter postConverter;
     @Autowired
     private UserConverter userConverter;
+    @Autowired
+    private CommentConverter commentConverter;
     @Autowired
     private RedDotService redDotService;
 
@@ -98,6 +102,7 @@ public class PostServiceImpl implements PostService {
         post.setLikeCount(0);
         post.setSavedCount(0);
         post.setPostStatus(postDto.getStatus());
+        post.setAccuracyScore(postDto.getAccuracyScore());
 
         Post saved = postRepository.save(post);
 
@@ -201,6 +206,31 @@ public class PostServiceImpl implements PostService {
         userRepository.save(user);
 
         return postConverter.toDto(post);
+    }
+
+    @Override
+    public CommentDto toggleLikeComment(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Comment> likedComments = user.getLikedComments();
+
+        if (likedComments.contains(comment)) {
+            likedComments.remove(comment);
+            comment.getLikedByUsers().remove(user);
+            comment.setLikeCount(comment.getLikeCount() - 1);
+        } else {
+            likedComments.add(comment);
+            comment.getLikedByUsers().add(user);
+            comment.setLikeCount(comment.getLikeCount() + 1);
+        }
+
+        commentRepository.save(comment);
+        userRepository.save(user);
+
+        return commentConverter.toDto(comment, userId);
     }
 
     @Transactional

@@ -1,9 +1,6 @@
 package baitmate.Controller;
 
-import baitmate.DTO.CreateCommentDto;
-import baitmate.DTO.CreatedPostDto;
-import baitmate.DTO.PostDto;
-import baitmate.DTO.PostReportRequest;
+import baitmate.DTO.*;
 import baitmate.Service.PostService;
 import baitmate.converter.PostConverter;
 import baitmate.model.Post;
@@ -99,11 +96,9 @@ public class PostController {
         return ResponseEntity.ok(postId);
     }
 
-    
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId,
                                            @RequestParam Long userId) {
-        
         try {
             postService.deletePost(postId, userId);
             return ResponseEntity.noContent().build();
@@ -136,15 +131,24 @@ public class PostController {
         }
     }
 
+    @PutMapping("/comment/{commentId}/like")
+    public ResponseEntity<CommentDto> toggleLikeComment(
+            @PathVariable Long commentId,
+            @RequestParam Long userId) {
+        try {
+            CommentDto updated = postService.toggleLikeComment(commentId, userId);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/oid/{oid}")
     public ResponseEntity<byte[]> getImageByOid(@PathVariable Long oid) {
         try {
-            
             byte[] imageData = postService.getImageDataByOid(oid);
 
             HttpHeaders headers = new HttpHeaders();
-            
-            
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
             return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
@@ -171,19 +175,19 @@ public class PostController {
             @RequestParam(required = false) String location,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int size,
-            @RequestParam(required = false) String[] sort) {  
+            @RequestParam(required = false) String[] sort) {
 
         try {
-            
+
             if (status == null && location == null &&
-                    page == 0 && size == 10 && (sort == null || sort.length == 0)) {  
+                    page == 0 && size == 10 && (sort == null || sort.length == 0)) {
                 List<PostDto> allPosts = postService.getAllPosts();
                 return ResponseEntity.ok(allPosts);
             }
 
-            
+
             List<Sort.Order> orders = new ArrayList<>();
-            if (sort != null && sort.length > 0) {  
+            if (sort != null && sort.length > 0) {
                 for (String sortOrder : sort) {
                     String[] _sort = sortOrder.split(",");
                     String property = _sort[0];
@@ -192,19 +196,19 @@ public class PostController {
                     orders.add(new Sort.Order(direction, property));
                 }
             } else {
-                
+
                 orders.add(new Sort.Order(Sort.Direction.DESC, "postTime"));
             }
 
             Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
 
-            
+
             Page<Post> postPage = postService.searchPostByFilter(
                     status != null && !status.isEmpty() ? status : null,
                     pageable
             );
 
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("posts", postPage.getContent().stream()
                     .map(post -> postConverter.toDto(post))
@@ -215,8 +219,8 @@ public class PostController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            
-            e.printStackTrace();  
+
+            e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error retrieving posts: " + e.getMessage());

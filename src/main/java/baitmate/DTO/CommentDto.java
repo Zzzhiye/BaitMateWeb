@@ -9,10 +9,8 @@ public class CommentDto {
   private String comment;
   private LocalDateTime time;
   private int likeCount;
-
-  
   private UserDto user;
-
-  
   private Long postId;
+
+  private boolean likedByCurrentUser;
 }
