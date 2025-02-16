@@ -1,8 +1,8 @@
 # BaitMateWeb - Your Fishing Companion App (Spring-Backend)
 
 > Spring Boot-based backend service for fish catch loging and sharing
-> Android App: [BaitMateMobile](https://github.com/Wionerlol/BaitmateMobile)
-> Python Backend: [BaitMatePython](https://github.com/HIT-cenhaoyang/BaitMatePython)
+Android App: [BaitMateMobile](https://github.com/Wionerlol/BaitmateMobile)
+Python Backend: [BaitMatePython](https://github.com/HIT-cenhaoyang/BaitMatePython)
 
 
 ## 📌 Project Overview
