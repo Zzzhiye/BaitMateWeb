@@ -32,18 +32,18 @@ public class PostConverter {
     dto.setAccuracyScore(post.getAccuracyScore());
     dto.setLocation(post.getLocation());
 
-    
+
     dto.setUser(userConverter.toDto(post.getUser()));
 
-    
+
     if (post.getComments() != null) {
       List<CommentDto> cmtList =
           post.getComments().stream().map(commentConverter::toDto).collect(Collectors.toList());
       dto.setComments(cmtList);
     }
 
-    
-    
+
+
     if (post.getImages() != null) {
       List<ImageDto> imageDtos =
           post.getImages().stream().map(this::imageToDto).collect(Collectors.toList());
@@ -65,18 +65,18 @@ public class PostConverter {
     dto.setAccuracyScore(post.getAccuracyScore());
     dto.setLocation(post.getLocation());
 
-    
+
     dto.setUser(userConverter.toDto(post.getUser()));
 
-    
+
     if (post.getComments() != null) {
       List<CommentDto> cmtList =
           post.getComments().stream().map(commentConverter::toDto).collect(Collectors.toList());
       dto.setComments(cmtList);
     }
 
-    
-    
+
+
     if (post.getImages() != null) {
       List<ImageDto> imageDtos =
           post.getImages().stream().map(this::imageToDto).collect(Collectors.toList());
@@ -115,36 +115,33 @@ public class PostConverter {
     post.setSavedCount(dto.getSavedCount());
     post.setAccuracyScore(dto.getAccuracyScore());
     post.setLocation(dto.getLocation());
-    
     post.setUser(userConverter.toEntity(dto.getUser()));
-    
     return post;
   }
 
-  
+  // Image -> ImageDto
+
   private ImageDto imageToDto(Image image) {
     ImageDto dto = new ImageDto();
     dto.setId(image.getId());
-    dto.setImage(image.getImage()); 
+    dto.setImage(image.getImage());
     return dto;
   }
 
-  
+  // ImageDto -> Image
   private Image imageToEntity(ImageDto dto) {
     Image image = new Image();
     image.setId(dto.getId());
-    image.setImage(dto.getImage()); 
+    image.setImage(dto.getImage());
     return image;
   }
 
-  
   public List<Image> toImageEntityList(List<ImageDto> imageDtos, Post post) {
     if (imageDtos == null) return Collections.emptyList();
     return imageDtos.stream()
         .map(
             imageDto -> {
               Image image = imageToEntity(imageDto);
-              
               image.setPost(post);
               return image;
             })
