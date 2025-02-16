@@ -103,4 +103,12 @@ public class User {
       inverseJoinColumns = @JoinColumn(name = "following_id"))
   @JsonBackReference
   private Set<User> following = new HashSet<>();
+
+  @ManyToMany
+  @JoinTable(
+          name = "liked_comments",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "comment_id"))
+  @JsonManagedReference
+  private List<Comment> likedComments;
 }

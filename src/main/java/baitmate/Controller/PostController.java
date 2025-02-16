@@ -1,9 +1,6 @@
 package baitmate.Controller;
 
-import baitmate.DTO.CreateCommentDto;
-import baitmate.DTO.CreatedPostDto;
-import baitmate.DTO.PostDto;
-import baitmate.DTO.PostReportRequest;
+import baitmate.DTO.*;
 import baitmate.Service.PostService;
 import baitmate.converter.PostConverter;
 import baitmate.model.Post;
@@ -128,6 +125,18 @@ public class PostController {
             @RequestParam Long userId) {
         try {
             PostDto updated = postService.toggleSavePost(postId, userId);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/comment/{commentId}/like")
+    public ResponseEntity<CommentDto> toggleLikeComment(
+            @PathVariable Long commentId,
+            @RequestParam Long userId) {
+        try {
+            CommentDto updated = postService.toggleLikeComment(commentId, userId);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

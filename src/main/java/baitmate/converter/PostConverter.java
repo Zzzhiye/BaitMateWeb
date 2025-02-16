@@ -71,7 +71,7 @@ public class PostConverter {
 
     if (post.getComments() != null) {
       List<CommentDto> cmtList =
-          post.getComments().stream().map(commentConverter::toDto).collect(Collectors.toList());
+          post.getComments().stream().map(comment ->commentConverter.toDto(comment, currentUserId)).collect(Collectors.toList());
       dto.setComments(cmtList);
     }
 

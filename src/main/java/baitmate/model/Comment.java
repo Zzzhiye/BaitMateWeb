@@ -3,6 +3,9 @@ package baitmate.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,4 +29,9 @@ public class Comment {
   @ManyToOne
   @JoinColumn(name = "post_id")
   private Post post;
+
+
+  @ManyToMany(mappedBy = "likedComments")
+  @JsonBackReference
+  private List<User> likedByUsers;
 }
